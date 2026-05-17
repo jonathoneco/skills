@@ -1,0 +1,14 @@
+[[source]]
+url = "https://github.com/mattpocock/skills/tree/main/skills/productivity"
+skills = ["grill-me", "handoff", "write-a-skill"]
+agents = ["claude-code"]
+
+[[source]]
+url = "https://github.com/mattpocock/skills/tree/main/skills/engineering"
+skills = ["diagnose", "grill-with-docs", "improve-codebase-architecture", "prototype", "setup-matt-pocock-skills", "tdd", "to-issues", "to-prd", "triage", "zoom-out"]
+agents = ["claude-code"]
+
+[[source]]
+url = "https://github.com/jonathoneco/skills/tree/main/dist/claude"
+skills = ["drive-issues", "next-afk", "teammate"]
+agents = ["claude-code"]
