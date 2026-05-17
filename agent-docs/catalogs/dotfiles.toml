@@ -1,0 +1,74 @@
+[[target]]
+name = "global-baseline"
+mode = "full"
+path = "~/src/dotfiles/home/.agents/AGENTS.md"
+fragments = [
+  "../fragments/global/intro.md",
+  "../fragments/global/voice.md",
+  "../fragments/global/environment.md",
+  "../fragments/global/git.md",
+  "../fragments/global/tool-discovery.md",
+  "../fragments/global/commands-and-loops.md",
+  "../fragments/global/orientation.md",
+  "../fragments/global/when-stuck.md",
+  "../fragments/global/error-handling.md",
+  "../fragments/global/language-conventions.md",
+  "../fragments/global/user-override.md",
+]
+
+[[target]]
+name = "claude-global"
+mode = "full"
+path = "~/src/dotfiles/home/.claude/CLAUDE.md"
+fragments = [
+  "../fragments/global/intro.md",
+  "../fragments/global/voice.md",
+  "../fragments/global/environment.md",
+  "../fragments/global/git.md",
+  "../fragments/global/tool-discovery.md",
+  "../fragments/global/commands-and-loops.md",
+  "../fragments/global/orientation.md",
+  "../fragments/global/when-stuck.md",
+  "../fragments/global/error-handling.md",
+  "../fragments/global/language-conventions.md",
+  "../fragments/global/user-override.md",
+  "../fragments/harness/claude.md",
+]
+
+[[target]]
+name = "codex-global"
+mode = "full"
+path = "~/src/dotfiles/home/.codex/AGENTS.md"
+fragments = [
+  "../fragments/global/intro.md",
+  "../fragments/global/voice.md",
+  "../fragments/global/environment.md",
+  "../fragments/global/git.md",
+  "../fragments/global/tool-discovery.md",
+  "../fragments/global/commands-and-loops.md",
+  "../fragments/global/orientation.md",
+  "../fragments/global/when-stuck.md",
+  "../fragments/global/error-handling.md",
+  "../fragments/global/language-conventions.md",
+  "../fragments/global/user-override.md",
+  "../fragments/harness/codex.md",
+]
+
+[[target]]
+name = "pi-global"
+mode = "full"
+path = "~/src/dotfiles/home/.pi/agent/AGENTS.md"
+fragments = [
+  "../fragments/global/intro.md",
+  "../fragments/global/voice.md",
+  "../fragments/global/environment.md",
+  "../fragments/global/git.md",
+  "../fragments/global/tool-discovery.md",
+  "../fragments/global/commands-and-loops.md",
+  "../fragments/global/orientation.md",
+  "../fragments/global/when-stuck.md",
+  "../fragments/global/error-handling.md",
+  "../fragments/global/language-conventions.md",
+  "../fragments/global/user-override.md",
+  "../fragments/harness/pi.md",
+]

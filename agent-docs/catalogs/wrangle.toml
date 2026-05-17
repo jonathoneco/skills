@@ -1,0 +1,52 @@
+[[target]]
+name = "wrangle-agents-shared"
+mode = "marked-block"
+path = "~/src/wrangle/AGENTS.md"
+marker = "agent-doc:shared"
+fragments = [
+  "../fragments/global/intro.md",
+  "../fragments/global/voice.md",
+  "../fragments/global/git.md",
+  "../fragments/global/tool-discovery.md",
+  "../fragments/global/commands-and-loops.md",
+  "../fragments/global/orientation.md",
+  "../fragments/global/when-stuck.md",
+  "../fragments/global/error-handling.md",
+  "../fragments/global/user-override.md",
+]
+
+[[target]]
+name = "wrangle-claude-shared"
+mode = "marked-block"
+path = "~/src/wrangle/CLAUDE.md"
+marker = "agent-doc:shared"
+fragments = [
+  "../fragments/global/intro.md",
+  "../fragments/global/voice.md",
+  "../fragments/global/git.md",
+  "../fragments/global/tool-discovery.md",
+  "../fragments/global/commands-and-loops.md",
+  "../fragments/global/orientation.md",
+  "../fragments/global/when-stuck.md",
+  "../fragments/global/error-handling.md",
+  "../fragments/global/user-override.md",
+  "../fragments/harness/claude.md",
+]
+
+[[target]]
+name = "wrangle-codex-shared"
+mode = "marked-block"
+path = "~/src/wrangle/.codex/AGENTS.md"
+marker = "agent-doc:shared"
+fragments = [
+  "../fragments/global/intro.md",
+  "../fragments/global/voice.md",
+  "../fragments/global/git.md",
+  "../fragments/global/tool-discovery.md",
+  "../fragments/global/commands-and-loops.md",
+  "../fragments/global/orientation.md",
+  "../fragments/global/when-stuck.md",
+  "../fragments/global/error-handling.md",
+  "../fragments/global/user-override.md",
+  "../fragments/harness/codex.md",
+]

@@ -1,0 +1,167 @@
+#!/usr/bin/env python3
+import argparse
+import difflib
+import os
+import re
+import sys
+from pathlib import Path
+
+try:
+    import tomllib
+except ModuleNotFoundError:  # pragma: no cover
+    import tomli as tomllib
+
+ROOT = Path(__file__).resolve().parents[1]
+START_TEMPLATE = "<!-- {marker}:start -->"
+END_TEMPLATE = "<!-- {marker}:end -->"
+
+
+def resolve_path(raw: str, catalog_dir: Path) -> Path:
+    expanded = os.path.expandvars(os.path.expanduser(raw))
+    p = Path(expanded)
+    if p.is_absolute():
+        return p
+    from_catalog = catalog_dir / p
+    if from_catalog.exists():
+        return from_catalog.resolve()
+    return (ROOT / p).resolve()
+
+
+def load_catalog(path: Path):
+    with path.open("rb") as f:
+        data = tomllib.load(f)
+    targets = data.get("target", [])
+    if not isinstance(targets, list):
+        raise SystemExit("catalog must contain [[target]] tables")
+    return targets
+
+
+def render_fragments(target: dict, catalog_dir: Path) -> str:
+    fragments = target.get("fragments", [])
+    if not fragments:
+        raise ValueError(f"target {target.get('name', '<unnamed>')} has no fragments")
+    parts = []
+    for raw in fragments:
+        p = resolve_path(raw, catalog_dir)
+        if not p.exists():
+            raise FileNotFoundError(f"fragment not found: {raw} -> {p}")
+        text = p.read_text()
+        if text.strip():
+            parts.append(text.strip())
+    return "\n\n".join(parts).rstrip() + "\n"
+
+
+def diff_text(path: Path, old: str, new: str) -> str:
+    return "".join(difflib.unified_diff(
+        old.splitlines(True),
+        new.splitlines(True),
+        fromfile=str(path),
+        tofile=f"{path} (rendered)",
+    ))
+
+
+def check_no_runtime_noise(path: Path, text: str):
+    banned = ["GENERATED", "Do not edit", "sidecar", "projection-meta"]
+    for token in banned:
+        if token in text:
+            raise ValueError(f"{path}: rendered runtime doc contains banned token {token!r}")
+
+
+def replace_marked_block(path: Path, old: str, rendered: str, marker: str, allow_create: bool) -> str:
+    start = START_TEMPLATE.format(marker=marker)
+    end = END_TEMPLATE.format(marker=marker)
+    start_count = old.count(start)
+    end_count = old.count(end)
+    if start_count == 0 and end_count == 0:
+        if allow_create:
+            title = path.stem if path.stem != "AGENTS" else "Agent rules"
+            return f"# {title}\n\n{start}\n{rendered.rstrip()}\n{end}\n\n## Project-owned rules\n\nAdd project-owned content here.\n"
+        raise ValueError(f"{path}: missing markers {start!r} / {end!r}; refusing to overwrite existing project doc")
+    if start_count != 1 or end_count != 1:
+        raise ValueError(f"{path}: marker count invalid ({start_count} start, {end_count} end)")
+    start_idx = old.find(start)
+    end_idx = old.find(end)
+    if end_idx < start_idx:
+        raise ValueError(f"{path}: end marker appears before start marker")
+    inner_start = start_idx + len(start)
+    between = old[inner_start:end_idx]
+    if start in between or end in between:
+        raise ValueError(f"{path}: nested markers are not allowed")
+    return old[:inner_start] + "\n" + rendered.rstrip() + "\n" + old[end_idx:]
+
+
+def render_target(target: dict, catalog_dir: Path, apply: bool) -> tuple[bool, str]:
+    name = target.get("name", "<unnamed>")
+    mode = target.get("mode", "full")
+    path = resolve_path(target["path"], catalog_dir)
+    rendered = render_fragments(target, catalog_dir)
+
+    if mode == "full":
+        new = rendered
+        old = path.read_text() if path.exists() else ""
+    elif mode == "marked-block":
+        marker = target.get("marker", "agent-doc:shared")
+        if path.exists():
+            old = path.read_text()
+            new = replace_marked_block(path, old, rendered, marker, allow_create=False)
+        else:
+            old = ""
+            new = replace_marked_block(path, old, rendered, marker, allow_create=True)
+    else:
+        raise ValueError(f"{name}: unsupported mode {mode!r}")
+
+    check_no_runtime_noise(path, new)
+    symlink_needs_materializing = mode == "full" and path.is_symlink()
+    if old == new and not symlink_needs_materializing:
+        return False, ""
+    if apply:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if path.is_symlink():
+            path.unlink()
+        path.write_text(new)
+        action = "materialized" if symlink_needs_materializing and old == new else "updated"
+        return True, f"{action} {path}"
+    return True, diff_text(path, old, new)
+
+
+def run(args):
+    catalog = Path(args.catalog).expanduser().resolve()
+    targets = load_catalog(catalog)
+    changed = False
+    outputs = []
+    for target in targets:
+        target_changed, output = render_target(target, catalog.parent, apply=args.command == "apply")
+        changed = changed or target_changed
+        if output:
+            outputs.append(output)
+    if args.command == "check":
+        if changed:
+            for output in outputs:
+                print(output, end="" if output.endswith("\n") else "\n")
+            return 1
+        print("agent-doc-render check passed")
+    else:
+        for output in outputs:
+            print(output)
+        if not outputs:
+            print("agent-doc-render apply completed; no changes")
+    return 0
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Render clean agent docs from TOML catalogs.")
+    sub = parser.add_subparsers(dest="command", required=True)
+    for cmd in ("check", "apply"):
+        p = sub.add_parser(cmd, help=f"{cmd} a doc render catalog")
+        p.add_argument("catalog", help="Path to TOML catalog")
+        p.set_defaults(func=run)
+    args = parser.parse_args()
+    return args.func(args)
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except Exception as exc:
+        print(f"agent-doc-render: {exc}", file=sys.stderr)
+        sys.exit(1)
