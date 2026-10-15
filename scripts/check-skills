@@ -1,0 +1,145 @@
+#!/usr/bin/env python3
+"""Check that every skill and file a skill names exists, and that Codex treats each skill
+the way Claude Code does.
+
+Usage: scripts/check-skills [repo]
+
+Reads every .md under <repo>/skills and reports, as file:line, each pointer that reaches
+nothing: a skill named in backticks or bold that no installed skill carries, a file named
+as "the `x` skill's `file.md`" that is not in that skill's folder, a relative link that does
+not resolve, and a SKILL.md whose frontmatter lacks a name matching its folder or a
+description. It also reports a skill Claude Code keeps from firing on its own (a
+`disable-model-invocation: true` in its frontmatter, or `name-only` in the user's
+`~/.claude/settings.json` `skillOverrides`) whose `agents/openai.yaml` lacks Codex's
+`allow_implicit_invocation: false`, and the reverse. Exits 1 when it finds any.
+"""
+import glob
+import json
+import os
+import re
+import sys
+
+ROOT = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(__file__), ".."))
+# Global skills, then the project skills each repo under ~/src carries for its own sessions.
+INSTALLED = [os.path.expanduser(p) for p in ("~/.claude/skills", "~/.agents/skills", "~/.codex/skills")] + sorted(
+    os.path.join(d, sub)
+    for d in glob.glob(os.path.expanduser("~/src/*"))
+    for sub in (".claude/skills", ".agents/skills")
+)
+# Skills the harness carries itself, with no folder on disk.
+BUILTIN = {"loop"}
+# Skills that live where this machine can't see, such as another host's agent, one name per line in
+# skills-elsewhere.txt at the repo root, which only an install that needs it carries.
+try:
+    with open(os.path.join(ROOT, "skills-elsewhere.txt")) as f:
+        ELSEWHERE = {l.split("#")[0].strip() for l in f if l.split("#")[0].strip()}
+except OSError:
+    ELSEWHERE = set()
+
+NAMED = re.compile(r"`([a-z0-9][a-z0-9-]*)` skill(?:'s `([^`]+)`)?")
+PRINCIPLE = re.compile(r"`(principle-[a-z0-9-]+)`")
+BOLD = re.compile(r"(?:\*\*([a-z0-9][a-z0-9-]*)\*\* principle skill|(?:[Tt]he|[Rr]un|via|per) \*\*([a-z0-9][a-z0-9-]*)\*\* skill)")
+LINK = re.compile(r"\]\(<?([^)\s#>]+)>?(?:#[^)]*)?\)")
+FENCE = re.compile(r"^\s*```")
+
+
+def skill_dirs():
+    found = {}
+    for top in [os.path.join(ROOT, "skills")] + INSTALLED:
+        if not os.path.isdir(top):
+            continue
+        for dirpath, _, files in os.walk(top, followlinks=True):
+            if "SKILL.md" in files:
+                found.setdefault(os.path.basename(dirpath), dirpath)
+    return found
+
+
+def frontmatter(path):
+    with open(path) as f:
+        lines = f.read().split("\n")
+    if not lines or lines[0] != "---":
+        return None
+    fields = {}
+    for line in lines[1:]:
+        if line == "---":
+            return fields
+        key, _, value = line.partition(":")
+        fields[key.strip()] = value.strip()
+    return None
+
+
+def name_only():
+    try:
+        with open(os.path.expanduser("~/.claude/settings.json")) as f:
+            overrides = json.load(f).get("skillOverrides", {})
+    except (OSError, ValueError):
+        return set()
+    return {name for name, mode in overrides.items() if mode == "name-only"}
+
+
+def codex_parity(path, rel, fields, quiet):
+    """Codex's allow_implicit_invocation: false mirrors Claude Code's user-only and name-only."""
+    claude_quiet = fields.get("disable-model-invocation") == "true" or quiet
+    yaml = os.path.join(os.path.dirname(path), "agents", "openai.yaml")
+    codex_quiet = os.path.isfile(yaml) and re.search(r"allow_implicit_invocation:\s*false", open(yaml).read())
+    if claude_quiet and not codex_quiet:
+        return f"{rel}:1: Claude Code keeps it from firing on its own, but Codex can: add `policy: allow_implicit_invocation: false` to agents/openai.yaml"
+    if codex_quiet and not claude_quiet:
+        return f"{rel}:1: Codex keeps it from firing on its own, but Claude Code can: set `disable-model-invocation: true` or a name-only override"
+    return None
+
+
+def main():
+    skills = skill_dirs()
+    quiet = name_only()
+    errors = []
+    for dirpath, _, files in os.walk(os.path.join(ROOT, "skills")):
+        for name in sorted(files):
+            if not name.endswith(".md"):
+                continue
+            path = os.path.join(dirpath, name)
+            rel = os.path.relpath(path, ROOT)
+            if name == "SKILL.md":
+                fields = frontmatter(path)
+                folder = os.path.basename(dirpath)
+                if fields is None:
+                    errors.append(f"{rel}:1: no frontmatter")
+                else:
+                    if fields.get("name") != folder:
+                        errors.append(f"{rel}:1: name {fields.get('name')!r} does not match folder {folder!r}")
+                    if not fields.get("description"):
+                        errors.append(f"{rel}:1: no description")
+                    parity = codex_parity(path, rel, fields, folder in quiet)
+                    if parity:
+                        errors.append(parity)
+            in_fence = False
+            with open(path) as f:
+                for n, line in enumerate(f, 1):
+                    if FENCE.match(line):
+                        in_fence = not in_fence
+                    if in_fence:
+                        continue
+                    for skill, file in NAMED.findall(line):
+                        if skill not in skills and skill not in BUILTIN | ELSEWHERE:
+                            errors.append(f"{rel}:{n}: no skill named `{skill}`")
+                        elif file and skill in skills and not os.path.exists(os.path.join(skills[skill], file)):
+                            errors.append(f"{rel}:{n}: the `{skill}` skill has no `{file}`")
+                    for skill in PRINCIPLE.findall(line):
+                        if skill not in skills:
+                            errors.append(f"{rel}:{n}: no skill named `{skill}`")
+                    for skill in (a or b for a, b in BOLD.findall(line)):
+                        if skill not in skills and skill not in BUILTIN | ELSEWHERE:
+                            errors.append(f"{rel}:{n}: **{skill}** names no skill; use the exact name in backticks")
+                    for target in LINK.findall(line):
+                        if "://" in target or target.startswith("mailto:") or not re.search(r"[./]", target):
+                            continue
+                        if not os.path.exists(os.path.join(dirpath, target)):
+                            errors.append(f"{rel}:{n}: link to {target} does not resolve")
+    for e in errors:
+        print(e)
+    print(f"{len(errors)} problem(s)" if errors else "OK")
+    return 1 if errors else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

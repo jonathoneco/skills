@@ -1,0 +1,5 @@
+interface:
+  display_name: "Hillclimb"
+  short_description: "Climb one replayable metric past its noise"
+policy:
+  allow_implicit_invocation: false

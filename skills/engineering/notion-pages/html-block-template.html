@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  /* Notion's palette as tokens; the dark set below follows the reader's theme. */
+  :root {
+    --bg: #ffffff; --text: #37352f; --muted: #787774; --line: #d3d1cb; --box: #f7f6f3;
+    --gray: #787774; --brown: #9f6b53; --orange: #d9730d; --green: #448361;
+    --blue: #337ea9; --purple: #9065b0; --pink: #c14c8a; --red: #d44c47;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #191919; --text: rgba(255, 255, 255, 0.81); --muted: #9b9b9b; --line: #474747; --box: #252525;
+      --gray: #9b9b9b; --brown: #ba856f; --orange: #c77d48; --green: #529e72;
+      --blue: #5e87c9; --purple: #9d68d3; --pink: #d15796; --red: #df5452;
+    }
+  }
+  /* The drawing fills the frame at any size: the viewBox is the 670 x 500 frame. */
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); overflow: hidden; }
+  svg { display: block; width: 100%; height: 100%; font: 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  text { fill: currentColor; }
+  .muted { fill: var(--muted); }
+  .part { fill: var(--box); stroke: var(--line); stroke-width: 1.5; }
+  /* One class per mechanism kind: colour, dash and weight together, so it reads without colour.
+     Triggers: person, webhook, call, timer. Reactions: event, read, write, port. */
+  .person  { stroke: var(--purple); stroke-width: 3;   stroke-dasharray: 2 4;   fill: none; stroke-linecap: round; }
+  .webhook { stroke: var(--red);    stroke-width: 2;   stroke-dasharray: 10 3 2 3; fill: none; }
+  .call    { stroke: var(--gray);   stroke-width: 2;   fill: none; }
+  .timer   { stroke: var(--brown);  stroke-width: 2;   stroke-dasharray: 12 4;  fill: none; }
+  .event   { stroke: var(--orange); stroke-width: 2;   stroke-dasharray: 2 3;   fill: none; }
+  .read    { stroke: var(--green);  stroke-width: 2;   stroke-dasharray: 6 4;   fill: none; }
+  .write   { stroke: var(--blue);   stroke-width: 2.5; fill: none; }
+  .port    { stroke: var(--pink);   stroke-width: 2;   stroke-dasharray: 8 3 2 3 2 3; fill: none; }
+  .h-person { fill: var(--purple); } .h-webhook { fill: var(--red); }   .h-call { fill: var(--gray); }
+  .h-timer  { fill: var(--brown); }  .h-event   { fill: var(--orange); } .h-read { fill: var(--green); }
+  .h-write  { fill: var(--blue); }   .h-port    { fill: var(--pink); }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 670 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Replace with the caption's claim">
+  <defs>
+    <!-- One arrowhead per mechanism kind, filled from its line's token. Prefix ids per figure
+         ("fig-") so two drawings in one file don't share them. -->
+    <marker id="fig-person"  viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="h-person"/></marker>
+    <marker id="fig-webhook" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="h-webhook"/></marker>
+    <marker id="fig-call"    viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="h-call"/></marker>
+    <marker id="fig-timer"   viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="h-timer"/></marker>
+    <marker id="fig-event"   viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="h-event"/></marker>
+    <marker id="fig-read"    viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="h-read"/></marker>
+    <marker id="fig-write"   viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="h-write"/></marker>
+    <marker id="fig-port"    viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="h-port"/></marker>
+  </defs>
+
+  <g id="figure">
+    <!-- Example: a person acts, a webhook writes, a timer reads. Replace with the diagram;
+         keep it inside 0..670 x 0..400 so the legend below has room. Boxes: 7 units per
+         character plus 8 each side, one height per row, shared baselines. -->
+    <circle class="part" cx="70" cy="90" r="22"/>
+    <text x="70" y="94" text-anchor="middle">Reviewer</text>
+    <rect class="part" x="250" y="66" width="140" height="48" rx="6"/>
+    <text x="320" y="94" text-anchor="middle">Reminders app</text>
+    <rect class="part" x="490" y="196" width="140" height="48" rx="6"/>
+    <text x="560" y="224" text-anchor="middle">Snooze table</text>
+    <rect class="part" x="250" y="306" width="140" height="48" rx="6"/>
+    <text x="320" y="334" text-anchor="middle">Wake job</text>
+    <line class="person" x1="94" y1="90" x2="246" y2="90" marker-end="url(#fig-person)"/>
+    <text x="170" y="80" text-anchor="middle" class="muted">snoozes for 1h</text>
+    <polyline class="write" points="390,90 560,90 560,192" marker-end="url(#fig-write)"/>
+    <text x="475" y="80" text-anchor="middle" class="muted">writes wake time</text>
+    <polyline class="read" points="390,330 560,330 560,248" marker-end="url(#fig-read)"/>
+    <text x="475" y="320" text-anchor="middle" class="muted">reads due rows</text>
+  </g>
+
+  <g id="legend" transform="translate(20 420)">
+    <!-- Triggers first, then reactions, as the explainer's diagrams.md Rules group them.
+         Keep only the kinds the figure uses. -->
+    <text x="0" y="12" class="muted">Triggers</text>
+    <line class="person"  x1="70"  y1="8" x2="100" y2="8"/><text x="106" y="12">person</text>
+    <line class="webhook" x1="160" y1="8" x2="190" y2="8"/><text x="196" y="12">webhook</text>
+    <line class="call"    x1="260" y1="8" x2="290" y2="8"/><text x="296" y="12">direct call</text>
+    <line class="timer"   x1="370" y1="8" x2="400" y2="8"/><text x="406" y="12">timer</text>
+    <text x="0" y="44" class="muted">Reactions</text>
+    <line class="event" x1="70"  y1="40" x2="100" y2="40"/><text x="106" y="44">event</text>
+    <line class="read"  x1="160" y1="40" x2="190" y2="40"/><text x="196" y="44">read</text>
+    <line class="write" x1="260" y1="40" x2="290" y2="40"/><text x="296" y="44">write</text>
+    <line class="port"  x1="370" y1="40" x2="400" y2="40"/><text x="406" y="44">provider port</text>
+  </g>
+</svg>
+</body>
+</html>

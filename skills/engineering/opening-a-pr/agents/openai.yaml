@@ -1,0 +1,3 @@
+interface:
+  display_name: "Opening a PR"
+  short_description: "Open a PR with a body a reviewer can act on"

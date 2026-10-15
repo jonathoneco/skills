@@ -1,0 +1,3 @@
+interface:
+  display_name: "Principle: Laziness Protocol"
+  short_description: "Prefer deletion and the smallest change"

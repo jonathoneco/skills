@@ -1,0 +1,3 @@
+interface:
+  display_name: "Principle: Attack the Premise"
+  short_description: "Question the shared premise after repeated failures"

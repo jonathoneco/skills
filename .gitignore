@@ -1,0 +1,17 @@
+# Third-party skills restored from skills-lock.json by `npx skills experimental_install`.
+# The lock is the record; the restored copies are not tracked. The one tracked skill
+# under them, updating-vendored, is for working on this repo and is never installed.
+.agents/*
+!.agents/skills/
+.agents/skills/*
+!.agents/skills/updating-vendored/
+.claude/*
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/updating-vendored
+.DS_Store
+
+# Git worktrees made inside the repo for branch work.
+.worktrees/
+__pycache__/
+*.pyc

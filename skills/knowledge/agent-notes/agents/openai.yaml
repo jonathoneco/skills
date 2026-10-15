@@ -1,0 +1,3 @@
+interface:
+  display_name: "Agent Notes"
+  short_description: "Leave machine-local notes for the next session"

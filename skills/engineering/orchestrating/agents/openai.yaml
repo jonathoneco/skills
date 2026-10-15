@@ -1,0 +1,3 @@
+interface:
+  display_name: "Orchestrating"
+  short_description: "Run worker lanes through to merged work"

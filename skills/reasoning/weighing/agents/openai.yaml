@@ -1,0 +1,3 @@
+interface:
+  display_name: "Weighing"
+  short_description: "Weigh options by cost, benefit, and a pick"

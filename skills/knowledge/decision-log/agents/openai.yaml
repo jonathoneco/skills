@@ -1,0 +1,3 @@
+interface:
+  display_name: "Decision Log"
+  short_description: "Log calls made in the user's place"

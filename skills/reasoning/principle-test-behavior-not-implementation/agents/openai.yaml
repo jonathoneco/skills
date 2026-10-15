@@ -1,0 +1,3 @@
+interface:
+  display_name: "Principle: Test Behavior"
+  short_description: "Assert what users observe, not internals"

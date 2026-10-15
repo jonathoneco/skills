@@ -1,0 +1,3 @@
+interface:
+  display_name: "Principle: Prove It Works"
+  short_description: "Verify against the real artifact before done"

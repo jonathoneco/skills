@@ -1,0 +1,6 @@
+interface:
+  display_name: "Setup Skills"
+  short_description: "Install or update the shared skills, rules, and hooks"
+  default_prompt: "Update my skills install from the checkout."
+policy:
+  allow_implicit_invocation: false

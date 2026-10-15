@@ -1,0 +1,3 @@
+interface:
+  display_name: "Principle: Encode Lessons in Structure"
+  short_description: "Turn repeated instructions into lints or checks"

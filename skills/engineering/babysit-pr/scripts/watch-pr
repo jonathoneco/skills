@@ -1,0 +1,249 @@
+#!/usr/bin/env python3
+# watch-pr: poll one GitHub pull request's checks and comments through `gh`, print
+# each change as it happens, and exit when the PR needs an agent: checks green, a
+# check red, a new comment, a merge conflict, or the PR closed.
+# Standard library only; runs on the macOS /usr/bin/python3 (3.9).
+# Adapted from pstack's watch-pr (MIT, Lauren Tan).
+import argparse
+import datetime
+import json
+import subprocess
+import sys
+import time
+
+GREEN, RED, USAGE, COMMENT, CONFLICT, CLOSED, TIMEOUT, NO_CHECKS, GH_ERROR = range(9)
+PENDING = 10  # --once only: nothing has settled yet
+VERDICTS = {
+    GREEN: "GREEN", RED: "RED", COMMENT: "COMMENT", CONFLICT: "CONFLICT",
+    CLOSED: "CLOSED", TIMEOUT: "TIMEOUT", NO_CHECKS: "NO-CHECKS",
+    GH_ERROR: "GH-ERROR", PENDING: "PENDING",
+}
+GH_RETRIES = 3       # consecutive failed polls before giving up
+NO_CHECK_POLLS = 3   # polls with no checks at all before saying so
+THREADS_QUERY = """
+query($owner: String!, $repo: String!, $pr: Int!) {
+  repository(owner: $owner, name: $repo) {
+    pullRequest(number: $pr) { reviewThreads(first: 100) { nodes { isResolved } } }
+  }
+}"""
+
+
+class GhError(Exception):
+    pass
+
+
+def gh(args, ok_codes=(0,)):
+    proc = subprocess.run(["gh"] + args, capture_output=True, text=True)
+    if proc.returncode not in ok_codes:
+        raise GhError("gh %s: exit %d: %s" % (" ".join(args[:3]), proc.returncode, proc.stderr.strip()))
+    return proc
+
+
+def parse_time(value):
+    return datetime.datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+
+def now_utc():
+    return datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
+
+
+def stamp():
+    return time.strftime("%H:%M:%S")
+
+
+def one_line(text, limit=200):
+    flat = " ".join((text or "").split())
+    return flat if len(flat) <= limit else flat[: limit - 1] + "…"
+
+
+class Watcher:
+    def __init__(self, opts):
+        self.opts = opts
+        self.repo_flag = ["-R", opts.repo] if opts.repo else []
+        self.required_only = True
+        self.checks = {}
+        self.head = None
+        self.merge_state = None
+        self.review_decision = None
+        self.seen = set()
+        self.empty_polls = 0
+
+    def view(self):
+        fields = "number,url,state,isDraft,headRefOid,mergeable,mergeStateStatus,reviewDecision,comments,reviews"
+        out = gh(["pr", "view"] + self.pr_arg() + self.repo_flag + ["--json", fields]).stdout
+        return json.loads(out)
+
+    def pr_arg(self):
+        return [self.opts.pr] if self.opts.pr else []
+
+    def read_checks(self, number):
+        args = ["pr", "checks", str(number)] + self.repo_flag + ["--json", "name,bucket,link,workflow"]
+        if self.required_only:
+            proc = subprocess.run(["gh"] + args + ["--required"], capture_output=True, text=True)
+            if proc.returncode in (0, 8) and proc.stdout.strip():
+                return json.loads(proc.stdout)
+            if "no required checks" in proc.stderr:
+                print("%s base branch requires no checks; watching every check instead" % stamp())
+                self.required_only = False
+            elif "no checks reported" in proc.stderr:
+                return []
+            elif proc.returncode not in (0, 8):
+                raise GhError("gh pr checks --required: exit %d: %s" % (proc.returncode, proc.stderr.strip()))
+            else:
+                return []
+        proc = subprocess.run(["gh"] + args, capture_output=True, text=True)
+        if proc.returncode in (0, 8) and proc.stdout.strip():
+            return json.loads(proc.stdout)
+        if "no checks reported" in proc.stderr or proc.returncode in (0, 8):
+            return []
+        raise GhError("gh pr checks: exit %d: %s" % (proc.returncode, proc.stderr.strip()))
+
+    def inline_comments(self, owner, repo, number):
+        out = gh(["api", "--paginate", "--slurp", "repos/%s/%s/pulls/%d/comments" % (owner, repo, number)]).stdout
+        return [c for page in json.loads(out) for c in page]
+
+    def unresolved_threads(self, owner, repo, number):
+        try:
+            out = gh(["api", "graphql", "-f", "query=" + THREADS_QUERY, "-F", "owner=" + owner,
+                      "-F", "repo=" + repo, "-F", "pr=%d" % number]).stdout
+            nodes = json.loads(out)["data"]["repository"]["pullRequest"]["reviewThreads"]["nodes"]
+            return sum(1 for n in nodes if not n["isResolved"])
+        except (GhError, KeyError, TypeError, ValueError):
+            return None
+
+    def new_comments(self, pr, owner, repo):
+        """Comments, reviews, and inline review comments created after --since."""
+        found = []
+        for c in pr.get("comments") or []:
+            found.append((c.get("url"), c.get("createdAt"), (c.get("author") or {}).get("login"),
+                          "comment", c.get("body")))
+        for r in pr.get("reviews") or []:
+            # A bare COMMENTED review only wraps inline comments, which are read below.
+            if r.get("state") == "COMMENTED" and not (r.get("body") or "").strip():
+                continue
+            found.append((r.get("id"), r.get("submittedAt"), (r.get("author") or {}).get("login"),
+                          "review " + (r.get("state") or "").lower(), r.get("body")))
+        for c in self.inline_comments(owner, repo, pr["number"]):
+            where = "%s:%s" % (c.get("path"), c.get("line") or c.get("original_line") or "?")
+            found.append((c.get("html_url"), c.get("created_at"), (c.get("user") or {}).get("login"),
+                          "inline " + where, c.get("body")))
+        fresh = []
+        for key, created, author, kind, body in found:
+            if not created or key in self.seen or parse_time(created) <= self.opts.since:
+                continue
+            self.seen.add(key)
+            fresh.append((created, author, kind, body, key))
+        return sorted(fresh)
+
+    def poll(self):
+        pr = self.view()
+        owner, repo = pr["url"].split("/")[3:5]
+        number = pr["number"]
+        if self.head is None:
+            threads = self.unresolved_threads(owner, repo, number)
+            print("%s watching %s head=%s draft=%s unresolved-threads=%s since=%s"
+                  % (stamp(), pr["url"], pr["headRefOid"][:10], pr["isDraft"],
+                     "?" if threads is None else threads, self.opts.since.isoformat()))
+        elif pr["headRefOid"] != self.head:
+            print("%s head moved %s -> %s; checks restart" % (stamp(), self.head[:10], pr["headRefOid"][:10]))
+            self.checks = {}
+        self.head = pr["headRefOid"]
+
+        for label, attr, value in (("merge state", "merge_state", pr.get("mergeStateStatus")),
+                                   ("review decision", "review_decision", pr.get("reviewDecision"))):
+            if getattr(self, attr) != value:
+                if getattr(self, attr) is not None or value:
+                    print("%s %s: %s -> %s" % (stamp(), label, getattr(self, attr) or "-", value or "-"))
+                setattr(self, attr, value)
+
+        if pr["state"] != "OPEN":
+            return CLOSED, "PR is " + pr["state"].lower()
+
+        fresh = self.new_comments(pr, owner, repo)
+        for created, author, kind, body, key in fresh:
+            print("%s new %s by @%s at %s: %s  %s" % (stamp(), kind, author, created, one_line(body), key or ""))
+
+        checks = self.read_checks(number)
+        for c in checks:
+            name = "%s / %s" % (c.get("workflow"), c["name"]) if c.get("workflow") else c["name"]
+            before = self.checks.get(name)
+            if before != c["bucket"]:
+                print("%s check %s: %s -> %s  %s" % (stamp(), name, before or "-", c["bucket"], c.get("link") or ""))
+                self.checks[name] = c["bucket"]
+
+        buckets = [c["bucket"] for c in checks]
+        failed = [c["name"] for c in checks if c["bucket"] in ("fail", "cancel")]
+        skipped = [c["name"] for c in checks if c["bucket"] == "skipping"] if self.required_only else []
+        if pr.get("mergeable") == "CONFLICTING":
+            return CONFLICT, "merge conflict with the base branch"
+        if failed:
+            return RED, "failed: " + ", ".join(failed)
+        if fresh:
+            return COMMENT, "%d new comment(s)" % len(fresh)
+        if not checks:
+            self.empty_polls += 1
+            if self.empty_polls >= NO_CHECK_POLLS:
+                return NO_CHECKS, "no checks reported on this head"
+            return None, "waiting for checks to register"
+        self.empty_polls = 0
+        if "pending" in buckets:
+            return None, "%d of %d checks pending" % (buckets.count("pending"), len(buckets))
+        if skipped:
+            return RED, "required checks skipped, so they never ran: " + ", ".join(skipped)
+        scope = "required" if self.required_only else "all (no required checks)"
+        return GREEN, "%d of %d checks passed, %s" % (buckets.count("pass"), len(buckets), scope)
+
+
+def main():
+    sys.stdout.reconfigure(line_buffering=True)
+    p = argparse.ArgumentParser(
+        prog="watch-pr",
+        description="Poll a PR's checks and comments until it needs an agent. Exit codes: "
+        "0 green, 1 red, 2 bad arguments, 3 new comment, 4 merge conflict, 5 closed or merged, "
+        "6 timed out, 7 no checks, 8 gh failing, 10 pending (--once).")
+    p.add_argument("pr", nargs="?", help="PR number, URL, or branch (default: the current branch's PR)")
+    p.add_argument("-R", "--repo", help="OWNER/REPO (default: the current directory's repo)")
+    p.add_argument("--interval", type=int, default=60, help="seconds between polls (default 60)")
+    p.add_argument("--timeout", type=int, default=60, help="minutes before giving up; 0 means never (default 60)")
+    p.add_argument("--since", help="ISO time; only comments after it count as new (default: now)")
+    p.add_argument("--once", action="store_true", help="print the current state once and exit")
+    opts = p.parse_args()
+    if opts.interval < 5:
+        p.error("--interval must be at least 5 seconds")
+    try:
+        opts.since = parse_time(opts.since) if opts.since else now_utc()
+    except ValueError:
+        p.error("--since must be an ISO time, such as 2026-10-01T14:00:00Z")
+    if opts.since.tzinfo is None:
+        opts.since = opts.since.replace(tzinfo=datetime.timezone.utc)
+
+    watcher = Watcher(opts)
+    deadline = time.time() + opts.timeout * 60 if opts.timeout else None
+    failures = 0
+    while True:
+        polled_at = now_utc()
+        try:
+            code, reason = watcher.poll()
+            failures = 0
+        except (GhError, ValueError, KeyError) as err:
+            failures += 1
+            print("%s gh failed (%d of %d): %s" % (stamp(), failures, GH_RETRIES, err))
+            give_up = opts.once or failures >= GH_RETRIES or watcher.head is None
+            code, reason = (GH_ERROR, str(err)) if give_up else (None, "retrying")
+        if code is None and opts.once:
+            code = PENDING
+        if code is None and deadline and time.time() >= deadline:
+            code, reason = TIMEOUT, "still %s after %d minutes" % (reason, opts.timeout)
+        if code is not None:
+            print("watch-pr: %s (exit %d) %s; head=%s seen-through=%s"
+                  % (VERDICTS[code], code, reason, (watcher.head or "?")[:10],
+                     polled_at.isoformat().replace("+00:00", "Z")))
+            return code
+        time.sleep(opts.interval)
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except KeyboardInterrupt:
+        sys.exit(130)

@@ -1,0 +1,3 @@
+interface:
+  display_name: "Principle: Never Block on the Human"
+  short_description: "Decide calls inside the ask; propose the rest"

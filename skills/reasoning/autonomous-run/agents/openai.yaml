@@ -1,0 +1,3 @@
+interface:
+  display_name: "Autonomous run"
+  short_description: "Drive to a checkable exit condition without stopping"

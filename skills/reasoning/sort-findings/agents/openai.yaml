@@ -1,0 +1,3 @@
+interface:
+  display_name: "Sort Findings"
+  short_description: "Sort findings into fix, repair, call, noted, dismissed"

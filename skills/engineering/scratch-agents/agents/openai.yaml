@@ -1,0 +1,4 @@
+interface:
+  display_name: "Scratch Agents"
+  short_description: "Start helper agents and pick each one's model"
+  default_prompt: "Start a scratch agent for this job and read back its result."

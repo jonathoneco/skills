@@ -1,0 +1,3 @@
+interface:
+  display_name: "Principle: Boundary Discipline"
+  short_description: "Validate at boundaries, trust internal types"

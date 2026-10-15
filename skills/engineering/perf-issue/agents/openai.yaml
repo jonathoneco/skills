@@ -1,0 +1,3 @@
+interface:
+  display_name: "Perf Issue"
+  short_description: "Make a known path faster, measured before and after"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ticket"
+  short_description: "Write, check, or estimate one ticket"
+  default_prompt: "Write or check this implementation ticket against the ticket bar."

@@ -1,0 +1,5 @@
+interface:
+  display_name: "Swarm"
+  short_description: "Split a large task into parallel parts"
+policy:
+  allow_implicit_invocation: false

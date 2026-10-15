@@ -1,0 +1,3 @@
+interface:
+  display_name: "Linear"
+  short_description: "File and fix tickets in Linear, with its quirks"

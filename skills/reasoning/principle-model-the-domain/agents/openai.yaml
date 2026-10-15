@@ -1,0 +1,3 @@
+interface:
+  display_name: "Principle: Model the Domain"
+  short_description: "Encode the domain in structure, not conditionals"

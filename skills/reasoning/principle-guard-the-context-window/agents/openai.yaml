@@ -1,0 +1,3 @@
+interface:
+  display_name: "Principle: Guard the Context Window"
+  short_description: "Send bulk work to subagents"

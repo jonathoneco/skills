@@ -1,0 +1,169 @@
+#!/bin/bash
+# worktree-audit: list a repo's git worktrees and say which are safe to remove.
+# A worktree is safe when its work has landed on the trunk and it holds nothing
+# uncommitted. Removes the safe ones only with --remove, and never with --force.
+# Bash 3.2 compatible (the macOS /bin/bash); needs git, and gh for squash merges.
+# Adapted from pstack's worktree-audit.sh (MIT, Lauren Tan).
+set -u
+set -o pipefail
+
+usage() {
+  cat <<'USAGE'
+usage: worktree-audit [--repo PATH] [--trunk REF] [--no-fetch] [--only NAME]... [--remove]
+
+  --repo      the repo to audit (default: the current directory's repo)
+  --trunk     the ref work must land on (default: origin's HEAD, else origin/main)
+  --no-fetch  skip `git fetch origin`; a stale trunk makes merged work look unmerged
+  --only      audit only the worktree with this folder name (repeatable)
+  --remove    remove every worktree marked safe, then `git worktree prune`
+
+A worktree is safe when both hold:
+  merged  its HEAD is an ancestor of the trunk, or its branch's merged PR has the
+          same head and that PR's merge commit is an ancestor of the trunk
+          (a squash merge never makes the branch itself an ancestor)
+  clean   `git status --porcelain` is empty: no tracked edits, no untracked files
+Anything locked, missing, or in use (a running process has its cwd inside) is held.
+The main worktree is never listed.
+USAGE
+}
+
+repo=""
+trunk=""
+fetch=yes
+remove=no
+only=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --repo) repo="${2:-}"; shift 2 ;;
+    --trunk) trunk="${2:-}"; shift 2 ;;
+    --no-fetch) fetch=no; shift ;;
+    --only) only="$only${2:-}"$'\n'; shift 2 ;;
+    --remove) remove=yes; shift ;;
+    -h|--help) usage; exit 0 ;;
+    *) echo "worktree-audit: unknown argument: $1" >&2; usage >&2; exit 2 ;;
+  esac
+done
+
+if [ -z "$repo" ]; then
+  repo=$(git rev-parse --show-toplevel 2>/dev/null) || { echo "worktree-audit: not in a git repo; pass --repo" >&2; exit 2; }
+fi
+cd "$repo" || exit 2
+
+if [ "$fetch" = yes ]; then
+  git fetch origin --quiet || echo "worktree-audit: git fetch origin failed; the trunk may be stale" >&2
+fi
+if [ -z "$trunk" ]; then
+  trunk=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null || echo origin/main)
+fi
+git rev-parse --verify --quiet "$trunk^{commit}" >/dev/null || { echo "worktree-audit: no trunk ref $trunk" >&2; exit 2; }
+
+have_gh=no
+command -v gh >/dev/null 2>&1 && have_gh=yes
+
+# Working directories of every running process, read once; a worktree holding one is in use.
+cwds=$(lsof -a -d cwd -Fn 2>/dev/null | sed -n 's/^n//p')
+
+# merged_via_pr <branch> <head>: print "#N" when the branch's merged PR carries this
+# head and its merge commit is on the trunk.
+merged_via_pr() {
+  local branch=$1 head=$2 rows number pr_head merge_commit
+  [ "$have_gh" = yes ] || return 1
+  rows=$(gh pr list --head "$branch" --state merged --limit 20 \
+    --json number,headRefOid,mergeCommit \
+    --jq '.[] | "\(.number) \(.headRefOid) \(.mergeCommit.oid // "")"' 2>/dev/null) || return 1
+  while read -r number pr_head merge_commit; do
+    [ -n "$merge_commit" ] || continue
+    # The worktree's HEAD must be the PR's head, or behind it; later commits never landed.
+    if [ "$pr_head" = "$head" ] || git merge-base --is-ancestor "$head" "$pr_head" 2>/dev/null; then
+      if git merge-base --is-ancestor "$merge_commit" "$trunk" 2>/dev/null; then
+        echo "#$number"
+        return 0
+      fi
+    fi
+  done <<EOF
+$rows
+EOF
+  return 1
+}
+
+main_wt=""
+safe_paths=""
+safe_count=0
+held_count=0
+printf '%-6s %-28s %-34s %s\n' STATE NAME BRANCH REASON
+
+# Porcelain blocks: "worktree <path>", "HEAD <sha>", "branch refs/heads/x" or
+# "detached", optional "locked" and "prunable", then a blank line.
+while IFS= read -r line || [ -n "$line" ]; do
+  case "$line" in
+    "worktree "*) wt=${line#worktree }; head=""; branch=""; locked=no; prunable=no ;;
+    "HEAD "*) head=${line#HEAD } ;;
+    "branch "*) branch=${line#branch refs/heads/} ;;
+    locked*) locked=yes ;;
+    prunable*) prunable=yes ;;
+    "")
+      [ -n "${wt:-}" ] || continue
+      if [ -z "$main_wt" ]; then main_wt=$wt; wt=""; continue; fi
+      name=$(basename "$wt")
+      if [ -n "$only" ] && ! printf '%s' "$only" | grep -qxF "$name"; then wt=""; continue; fi
+      reasons=""
+      merged=""
+      if [ "$prunable" = yes ] || [ ! -d "$wt" ]; then
+        reasons="folder missing; \`git worktree prune\` clears the record"
+      elif [ "$locked" = yes ]; then
+        reasons="locked"
+      else
+        if git merge-base --is-ancestor "$head" "$trunk" 2>/dev/null; then
+          merged="merged (ancestor of $trunk)"
+        elif [ -n "$branch" ] && pr=$(merged_via_pr "$branch" "$head"); then
+          merged="merged via PR $pr (merge commit on $trunk)"
+        else
+          ahead=$(git rev-list --count "$trunk..$head" 2>/dev/null || echo "?")
+          reasons="not merged: $ahead commit(s) not on $trunk"
+        fi
+        status=$(git -C "$wt" status --porcelain 2>/dev/null)
+        if [ -n "$status" ]; then
+          tracked=$(printf '%s\n' "$status" | grep -cv '^??')
+          untracked=$(printf '%s\n' "$status" | grep -c '^??')
+          reasons="${reasons:+$reasons; }uncommitted: $tracked tracked, $untracked untracked"
+        fi
+        if printf '%s\n' "$cwds" | awk -v p="$wt" '$0 == p || index($0, p "/") == 1 {f = 1} END {exit !f}'; then
+          reasons="${reasons:+$reasons; }in use: a running process has its cwd inside"
+        fi
+      fi
+      if [ -z "$reasons" ]; then
+        state=safe
+        reasons=$merged
+        safe_paths="$safe_paths$wt"$'\n'
+        safe_count=$((safe_count + 1))
+      else
+        state=hold
+        held_count=$((held_count + 1))
+      fi
+      printf '%-6s %-28s %-34s %s\n' "$state" "$name" "${branch:-(detached ${head:0:8})}" "$reasons"
+      wt=""
+      ;;
+  esac
+done <<EOF
+$(git worktree list --porcelain)
+
+EOF
+
+echo "worktree-audit: $safe_count safe, $held_count held, trunk $trunk, main worktree $main_wt"
+
+if [ "$remove" = yes ] && [ "$safe_count" -gt 0 ]; then
+  failed=0
+  while IFS= read -r path; do
+    [ -n "$path" ] || continue
+    if git worktree remove "$path"; then
+      echo "removed $path"
+    else
+      echo "worktree-audit: could not remove $path; left in place" >&2
+      failed=$((failed + 1))
+    fi
+  done <<EOF
+$safe_paths
+EOF
+  git worktree prune
+  [ "$failed" -eq 0 ] || exit 1
+fi

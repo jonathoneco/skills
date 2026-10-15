@@ -1,0 +1,108 @@
+#!/usr/bin/env python3
+"""Draft the check-in digest from a decision log (the decision-log skill).
+
+usage: digest DECISIONS.md [--since D-<n>]
+
+Reads every entry after the one the log's `Last digest:` line names (or after
+--since), and prints the digest skeleton with the counts, the entry lines, and the
+candidates filled in. Writes nothing; the `<...>` fields are for the agent to fill.
+"""
+import re
+import sys
+from datetime import datetime
+
+GRADES = ("user", "direct", "analog", "principle")
+# Weakest first: an entry with several Precedent lines takes the weakest grade among them.
+WEAKEST_FIRST = ("principle", "analog", "direct", "user")
+
+
+def main(argv):
+    since = None
+    if "--since" in argv:
+        i = argv.index("--since")
+        since = int(argv[i + 1].lstrip("D-"))
+        del argv[i:i + 2]
+    if len(argv) != 1:
+        sys.exit(__doc__)
+    text = open(argv[0], encoding="utf-8").read()
+    if since is None:
+        m = re.search(r"^Last digest:.*?through D-(\d+)", text, re.M)
+        since = int(m.group(1)) if m else 0
+
+    entries = []
+    for block in re.split(r"^(?=### D-\d)", text, flags=re.M)[1:]:
+        head, _, body = block.partition("\n")
+        n = int(re.match(r"### D-(\d+)", head).group(1))
+        if n <= since:
+            continue
+        fields = dict(re.findall(r"^- ([A-Z][a-z ]+?):[ \t]*(.*)$", body, re.M))
+        fields["Precedents"] = re.findall(r"^- Precedent:[ \t]*(.*)$", body, re.M)
+        parts = head[4:].split(" · ")
+        entries.append((n, " · ".join(parts[2:]) or parts[-1], fields))
+    entries.sort()
+
+    def field(e, k):
+        return e[2].get(k, "")
+
+    def precedents(e):
+        return "; ".join(e[2]["Precedents"])
+
+    def grade_line(p):
+        # The grade is the line's last word; a quoted ruling before it may hold grade words too.
+        m = re.search(r"\b(direct|analog|principle|user)\W*$", p.lower())
+        return m.group(1) if m else "ungraded"
+
+    def grade(e):
+        grades = [g for g in map(grade_line, e[2]["Precedents"]) if g != "ungraded"]
+        return min(grades, key=WEAKEST_FIRST.index) if grades else "ungraded"
+
+    def has_ungraded_line(e):
+        lines = e[2]["Precedents"]
+        return not lines or any(grade_line(p) == "ungraded" for p in lines)
+
+    def is_overturn(e):
+        return "overturn of" in e[1]
+
+    def look_first(e):
+        undo = field(e, "Undo")
+        scope = field(e, "Scope change")
+        return bool(field(e, "Look first")) or grade(e) == "principle" \
+            or (scope and not scope.startswith("none")) \
+            or (undo and "nothing hard to undo" not in undo)
+
+    first = [e for e in entries if look_first(e)]
+    rest = [e for e in entries if not look_first(e)]
+    overturns = [e for e in entries if is_overturn(e)]
+    standing = [e for e in entries if "standing" in field(e, "Tier").lower()]
+    cands = [e for e in entries if field(e, "Candidate") and not field(e, "Candidate").startswith("dropped")]
+    count = {g: sum(1 for e in entries if grade(e) == g) for g in GRADES}
+    lo = entries[0][0] if entries else since
+    hi = entries[-1][0] if entries else since
+    now = datetime.now().astimezone().isoformat(timespec="seconds")
+
+    print(f"# Digest · {now} · D-{lo} to D-{hi}\n")
+    print(f"{len(entries)} entries since the last check-in: {count['direct']} direct, {count['analog']} analog, "
+          f"{count['principle']} principle calls; {count['user']} user answers; {len(standing)} standing-rule actions; "
+          f"{len(overturns)} overturns. <n> questions waiting.\n")
+    print("## Look at these first")
+    for e in first:
+        print(f"- D-{e[0]} · {e[1]}\n  Pick: {field(e, 'Pick')}\n  Precedent: {precedents(e)}\n  Undo: {field(e, 'Undo')}")
+    print("\n## The rest")
+    for e in rest:
+        print(f"- D-{e[0]} · {e[1]} → {field(e, 'Pick')} · {precedents(e)}")
+    print("\n## Waiting on you\n<n> questions in the user queue: <path to the queue>.\n")
+    print("## Candidate precedents")
+    for e in cands:
+        print(f"- From D-{e[0]}: {field(e, 'Candidate')}")
+    print('\nAnswer with "ok" to confirm everything not named, "overturn D-<n>: <reason>", '
+          "the queue's questions by number, or \"promote\", \"drop\" or an edit for each candidate.")
+
+    # An overturn has no Precedent line by design (digest.md's overturn form).
+    ungraded = [str(e[0]) for e in entries if has_ungraded_line(e) and not is_overturn(e)]
+    if ungraded:
+        shown = ", D-".join(ungraded[:12]) + (", ..." if len(ungraded) > 12 else "")
+        print(f"digest: {len(ungraded)} of {len(entries)} entries have a Precedent line with no grade, or none: D-{shown}", file=sys.stderr)
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])

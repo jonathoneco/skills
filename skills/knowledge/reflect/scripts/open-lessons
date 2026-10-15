@@ -1,0 +1,111 @@
+#!/usr/bin/env python3
+"""List lessons, rulings, and decisions still marked `→ open` in agent notes, oldest first.
+
+Usage: open-lessons [--unmarked] [ROOT]   (ROOT defaults to ~/.local/state/agent-notes)
+
+The arrow alone is noisy: research reports, check logs, copied transcripts and
+vendored files use it too. An entry counts only when all of these hold:
+
+- it is in a markdown note (`*.md`), outside `sources/` and any vendored download;
+- it sits in a lessons, rulings, or decisions note, or under a heading that starts
+  with one of those words (`## Lessons`, `### Rulings, round 2`). A note's kind is
+  its file name: a hyphen-separated part reads `lessons`, `rulings`, or `decisions`,
+  and no part names a report (`review`, `check`, `coverage`, `search`, `part`);
+- the mark ends the entry's last line, as the agent-notes skill places it.
+
+An entry is the paragraph or list item that the mark ends. Its date is the first
+YYYY-MM-DD in the entry, else the note's `Touched:` date, else the file's mtime.
+Prints the in-scope count, the count left out, one line per entry, and the kind
+notes that carry no harvest mark at all (`--unmarked` lists them).
+"""
+
+import datetime
+import os
+import re
+import sys
+
+KINDS = {"lessons", "rulings", "decisions"}
+REPORT_PARTS = {"review", "check", "coverage", "search", "part"}
+SKIP_DIRS = {"sources", "source-closure-downloads", "node_modules", ".git"}
+MARK_ANY = re.compile(r"→ open\b")
+HARVEST = re.compile(r"→ \S")
+MARK_END = re.compile(r"→ open[.)]?\s*$")
+HEADING = re.compile(r"^#{1,6}\s+(.*)$")
+SCOPED_HEADING = re.compile(r"^(lessons|rulings|decisions)\b", re.I)
+ENTRY_START = re.compile(r"^\s*([-*+]|\d+[.)])\s+|^\*\*")
+DATE = re.compile(r"\b(20\d\d-\d\d-\d\d)\b")
+
+
+def kind_file(name):
+    parts = set(re.split(r"[-_.]", name.lower().removesuffix(".md")))
+    return bool(parts & KINDS) and not parts & REPORT_PARTS
+
+
+def scan(path, rel):
+    found, out_of_scope, unmarked = [], 0, False
+    try:
+        with open(path, encoding="utf-8", errors="replace") as f:
+            lines = f.read().splitlines()
+    except OSError as err:
+        print(f"open-lessons: cannot read {rel}: {err}", file=sys.stderr)
+        return found, 0, False
+    in_kind = kind_file(os.path.basename(path))
+    unmarked = in_kind and not any(HARVEST.search(l) for l in lines)
+    touched = next((DATE.search(l).group(1) for l in lines[:6]
+                    if l.startswith("Touched:") and DATE.search(l)), None)
+    heading, entry_start = "", 0
+    for i, line in enumerate(lines):
+        m = HEADING.match(line)
+        if m:
+            heading, entry_start = m.group(1).strip(), i + 1
+            continue
+        if not line.strip():
+            entry_start = i + 1
+            continue
+        if ENTRY_START.match(line):
+            entry_start = i
+        if not MARK_ANY.search(line):
+            continue
+        if MARK_END.search(line) and (in_kind or SCOPED_HEADING.match(heading)):
+            text = " ".join(l.strip() for l in lines[entry_start:i + 1])
+            d = DATE.search(text)
+            date = d.group(1) if d else touched or datetime.date.fromtimestamp(
+                os.path.getmtime(path)).isoformat()
+            found.append((date, rel, entry_start + 1, heading, text))
+        else:
+            out_of_scope += 1
+    return found, out_of_scope, unmarked
+
+
+def main():
+    args = sys.argv[1:]
+    list_unmarked = "--unmarked" in args
+    args = [a for a in args if a != "--unmarked"]
+    root = os.path.expanduser(args[0] if args else "~/.local/state/agent-notes")
+    if not os.path.isdir(root):
+        sys.exit(f"open-lessons: no notes folder at {root}")
+    entries, left_out, unmarked = [], 0, []
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS]
+        for name in filenames:
+            if name.endswith(".md"):
+                path = os.path.join(dirpath, name)
+                rel = os.path.relpath(path, root)
+                found, skipped, bare = scan(path, rel)
+                entries += found
+                left_out += skipped
+                if bare:
+                    unmarked.append(rel)
+    entries.sort(key=lambda e: (e[0], e[1], e[2]))
+    print(f"{len(entries)} open entries in scope; {left_out} other `→ open` lines in markdown left out")
+    for date, rel, line, heading, text in entries:
+        summary = text.removesuffix("→ open").strip()
+        print(f"{date}  {rel}:{line}  [{heading}]  {summary[:140]}")
+    print(f"{len(unmarked)} lessons, rulings, or decisions notes carry no harvest mark at all")
+    if list_unmarked:
+        for rel in sorted(unmarked):
+            print(f"  {rel}")
+
+
+if __name__ == "__main__":
+    main()

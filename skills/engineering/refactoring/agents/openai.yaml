@@ -1,0 +1,3 @@
+interface:
+  display_name: "Refactoring"
+  short_description: "Change structure, hold behavior, prove it unchanged"

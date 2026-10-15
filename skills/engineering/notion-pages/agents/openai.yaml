@@ -1,0 +1,3 @@
+interface:
+  display_name: "Notion Pages"
+  short_description: "Build, check, and comment on Notion pages"

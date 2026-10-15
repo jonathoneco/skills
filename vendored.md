@@ -1,0 +1,75 @@
+# Vendored skills
+
+These skills were copied in from upstream repos and are edited here; this repo owns them now. Each row says where a skill came from and the upstream commit it was last brought up to. The `updating-vendored` skill in `.agents/skills/` walks through bringing in upstream changes, and bumps the commit here when they are in.
+
+Both sources are MIT licensed. Their licence texts are kept word for word in [`licenses/`](./licenses/): [mattpocock/skills](./licenses/mattpocock.txt) and [cursor/plugins pstack](./licenses/pstack.txt).
+
+| Skill | Here | Source | Upstream path | Last synced |
+| --- | --- | --- | --- | --- |
+| architect | `skills/engineering/architect` | cursor/plugins | `pstack/skills/architect` | `9f451cf` |
+| automate-me | `skills/knowledge/automate-me` | cursor/plugins | `pstack/skills/automate-me` | `9f451cf` |
+| benchmark-checklist | `skills/engineering/benchmark-checklist` | cursor/plugins | `pstack/skills/benchmark-checklist` | `9f451cf` |
+| blast-radius | `skills/engineering/blast-radius` | cursor/plugins | `pstack/skills/blast-radius` | `9f451cf` |
+| bro | `skills/reasoning/bro` | cursor/plugins | `pstack/skills/bro` | `9f451cf` |
+| correct | `skills/engineering/correct` | cursor/plugins | `pstack/skills/correct` | `9f451cf` |
+| create-verification-skill | `skills/engineering/create-verification-skill` | cursor/plugins | `pstack/skills/create-verification-skill` | `9f451cf` |
+| figure-it-out | `skills/reasoning/figure-it-out` | cursor/plugins | `pstack/skills/figure-it-out` | `9f451cf` |
+| interrogate | `skills/reasoning/interrogate` | cursor/plugins | `pstack/skills/interrogate` | `9f451cf` |
+| maintain-verification-skill | `skills/engineering/maintain-verification-skill` | cursor/plugins | `pstack/skills/maintain-verification-skill` | `9f451cf` |
+| no-comments | `skills/engineering/no-comments` | cursor/plugins | `pstack/skills/no-comments` | `9f451cf` |
+| principle-attack-the-premise | `skills/reasoning/principle-attack-the-premise` | cursor/plugins | `pstack/skills/principle-attack-the-premise` | `9f451cf` |
+| principle-boundary-discipline | `skills/reasoning/principle-boundary-discipline` | cursor/plugins | `pstack/skills/principle-boundary-discipline` | `9f451cf` |
+| principle-build-the-lever | `skills/reasoning/principle-build-the-lever` | cursor/plugins | `pstack/skills/principle-build-the-lever` | `9f451cf` |
+| principle-encode-lessons-in-structure | `skills/reasoning/principle-encode-lessons-in-structure` | cursor/plugins | `pstack/skills/principle-encode-lessons-in-structure` | `9f451cf` |
+| principle-exhaust-the-design-space | `skills/reasoning/principle-exhaust-the-design-space` | cursor/plugins | `pstack/skills/principle-exhaust-the-design-space` | `9f451cf` |
+| principle-experience-first | `skills/reasoning/principle-experience-first` | cursor/plugins | `pstack/skills/principle-experience-first` | `9f451cf` |
+| principle-explain-the-number | `skills/reasoning/principle-explain-the-number` | cursor/plugins | `pstack/skills/principle-explain-the-number` | `9f451cf` |
+| principle-fix-root-causes | `skills/reasoning/principle-fix-root-causes` | cursor/plugins | `pstack/skills/principle-fix-root-causes` | `9f451cf` |
+| principle-foundational-thinking | `skills/reasoning/principle-foundational-thinking` | cursor/plugins | `pstack/skills/principle-foundational-thinking` | `9f451cf` |
+| principle-guard-the-context-window | `skills/reasoning/principle-guard-the-context-window` | cursor/plugins | `pstack/skills/principle-guard-the-context-window` | `9f451cf` |
+| principle-laziness-protocol | `skills/reasoning/principle-laziness-protocol` | cursor/plugins | `pstack/skills/principle-laziness-protocol` | `9f451cf` |
+| principle-make-operations-idempotent | `skills/reasoning/principle-make-operations-idempotent` | cursor/plugins | `pstack/skills/principle-make-operations-idempotent` | `9f451cf` |
+| principle-migrate-callers-then-delete-legacy-apis | `skills/reasoning/principle-migrate-callers-then-delete-legacy-apis` | cursor/plugins | `pstack/skills/principle-migrate-callers-then-delete-legacy-apis` | `9f451cf` |
+| principle-minimize-reader-load | `skills/reasoning/principle-minimize-reader-load` | cursor/plugins | `pstack/skills/principle-minimize-reader-load` | `9f451cf` |
+| principle-model-the-domain | `skills/reasoning/principle-model-the-domain` | cursor/plugins | `pstack/skills/principle-model-the-domain` | `9f451cf` |
+| principle-never-block-on-the-human | `skills/reasoning/principle-never-block-on-the-human` | cursor/plugins | `pstack/skills/principle-never-block-on-the-human` | `9f451cf` |
+| principle-outcome-oriented-execution | `skills/reasoning/principle-outcome-oriented-execution` | cursor/plugins | `pstack/skills/principle-outcome-oriented-execution` | `9f451cf` |
+| principle-prove-it-works | `skills/reasoning/principle-prove-it-works` | cursor/plugins | `pstack/skills/principle-prove-it-works` | `9f451cf` |
+| principle-redesign-from-first-principles | `skills/reasoning/principle-redesign-from-first-principles` | cursor/plugins | `pstack/skills/principle-redesign-from-first-principles` | `9f451cf` |
+| principle-separate-before-serializing-shared-state | `skills/reasoning/principle-separate-before-serializing-shared-state` | cursor/plugins | `pstack/skills/principle-separate-before-serializing-shared-state` | `9f451cf` |
+| principle-sequence-verifiable-units | `skills/reasoning/principle-sequence-verifiable-units` | cursor/plugins | `pstack/skills/principle-sequence-verifiable-units` | `9f451cf` |
+| principle-subtract-before-you-add | `skills/reasoning/principle-subtract-before-you-add` | cursor/plugins | `pstack/skills/principle-subtract-before-you-add` | `9f451cf` |
+| principle-test-behavior-not-implementation | `skills/reasoning/principle-test-behavior-not-implementation` | cursor/plugins | `pstack/skills/principle-test-behavior-not-implementation` | `9f451cf` |
+| principle-type-system-discipline | `skills/reasoning/principle-type-system-discipline` | cursor/plugins | `pstack/skills/principle-type-system-discipline` | `9f451cf` |
+| show-me-your-work | `skills/reasoning/show-me-your-work` | cursor/plugins | `pstack/skills/show-me-your-work` | `9f451cf` |
+| technical-writing | `skills/knowledge/technical-writing` | cursor/plugins | `pstack/skills/technical-writing` | `9f451cf` |
+| typescript-best-practices | `skills/engineering/typescript-best-practices` | cursor/plugins | `pstack/skills/typescript-best-practices` | `9f451cf` |
+| unslop | `skills/knowledge/unslop` | cursor/plugins | `pstack/skills/unslop` | `9f451cf` |
+| why | `skills/engineering/why` | cursor/plugins | `pstack/skills/why` | `9f451cf` |
+| ask-matt | `skills/engineering/ask-matt` | mattpocock/skills | `skills/engineering/ask-matt` | `8b36d4f` |
+| code-review | `skills/engineering/code-review` | mattpocock/skills | `skills/engineering/code-review` | `8b36d4f` |
+| codebase-design | `skills/engineering/codebase-design` | mattpocock/skills | `skills/engineering/codebase-design` | `8b36d4f` |
+| domain-modeling | `skills/engineering/domain-modeling` | mattpocock/skills | `skills/engineering/domain-modeling` | `8b36d4f` |
+| grill-me | `skills/reasoning/grill-me` | mattpocock/skills | `skills/productivity/grill-me` | `8b36d4f` |
+| grill-with-docs | `skills/reasoning/grill-with-docs` | mattpocock/skills | `skills/engineering/grill-with-docs` | `8b36d4f` |
+| grilling | `skills/reasoning/grilling` | mattpocock/skills | `skills/productivity/grilling` | `8b36d4f` |
+| implement | `skills/engineering/implement` | mattpocock/skills | `skills/engineering/implement` | `8b36d4f` |
+| improve-codebase-architecture | `skills/engineering/improve-codebase-architecture` | mattpocock/skills | `skills/engineering/improve-codebase-architecture` | `8b36d4f` |
+| loop-me | `skills/reasoning/loop-me` | mattpocock/skills | `skills/in-progress/loop-me` | `8b36d4f` |
+| research | `skills/reasoning/research` | mattpocock/skills | `skills/engineering/research` | `8b36d4f` |
+| resolving-merge-conflicts | `skills/engineering/resolving-merge-conflicts` | mattpocock/skills | `skills/engineering/resolving-merge-conflicts` | `8b36d4f` |
+| setup-matt-pocock-skills | `skills/engineering/setup-matt-pocock-skills` | mattpocock/skills | `skills/engineering/setup-matt-pocock-skills` | `8b36d4f` |
+| tdd | `skills/engineering/tdd` | mattpocock/skills | `skills/engineering/tdd` | `8b36d4f` |
+| teach | `skills/reasoning/teach` | mattpocock/skills | `skills/productivity/teach` | `8b36d4f` |
+| to-spec | `skills/engineering/to-spec` | mattpocock/skills | `skills/engineering/to-spec` | `8b36d4f` |
+| to-tickets | `skills/engineering/to-tickets` | mattpocock/skills | `skills/engineering/to-tickets` | `8b36d4f` |
+| triage | `skills/engineering/triage` | mattpocock/skills | `skills/engineering/triage` | `8b36d4f` |
+| wait-what | `skills/reasoning/wait-what` | mattpocock/skills | `skills/productivity/wait-what` | `8b36d4f` |
+| wayfinder | `skills/engineering/wayfinder` | mattpocock/skills | `skills/engineering/wayfinder` | `8b36d4f` |
+| wizard | `skills/engineering/wizard` | mattpocock/skills | `skills/engineering/wizard` | `8b36d4f` |
+| writing-beats | `skills/knowledge/writing-beats` | mattpocock/skills | `skills/in-progress/writing-beats` | `8b36d4f` |
+| writing-for-agents | `skills/knowledge/writing-for-agents` | mattpocock/skills | `skills/productivity/writing-for-agents` | `8b36d4f` |
+| writing-fragments | `skills/knowledge/writing-fragments` | mattpocock/skills | `skills/in-progress/writing-fragments` | `8b36d4f` |
+| writing-shape | `skills/knowledge/writing-shape` | mattpocock/skills | `skills/in-progress/writing-shape` | `8b36d4f` |
+
+`skills/engineering/no-comments/references/comment-sicko.md` is pstack's `pstack/agents/comment-sicko.md` at `c47b128`, the subagent `no-comments` briefs; Cursor ran it as a custom agent type.
