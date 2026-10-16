@@ -7,6 +7,7 @@ the user made themselves (a skill folder, a link into another checkout, text out
 block) is left as it is and reported.
 """
 
+import hashlib
 import json
 import os
 import re
@@ -14,6 +15,9 @@ import sys
 
 ROOT = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 HOME = os.path.expanduser("~")
+# Both tools move their config folder when these are set, so the install follows them.
+CLAUDE = os.environ.get("CLAUDE_CONFIG_DIR") or os.path.join(HOME, ".claude")
+CODEX = os.environ.get("CODEX_HOME") or os.path.join(HOME, ".codex")
 SHARED = ("engineering", "knowledge", "reasoning")
 
 BEGIN = "<!-- from jonathoneco/skills · rerun /setup-skills to update · edit outside this block -->"
@@ -69,7 +73,7 @@ def ours(link):
 
 
 def link_skills(skills):
-    for target in (os.path.join(HOME, ".agents", "skills"), os.path.join(HOME, ".claude", "skills")):
+    for target in (os.path.join(HOME, ".agents", "skills"), os.path.join(CLAUDE, "skills")):
         os.makedirs(target, exist_ok=True)
         added = 0
         for name in sorted(os.listdir(target)):
@@ -96,7 +100,7 @@ def link_skills(skills):
 def write_rules():
     core = open(os.path.join(ROOT, "rules", "core.md")).read().strip()
     block = f"{BEGIN}\n{core}\n{END}"
-    for path in (os.path.join(HOME, ".claude", "CLAUDE.md"), os.path.join(HOME, ".codex", "AGENTS.md")):
+    for path in (os.path.join(CLAUDE, "CLAUDE.md"), os.path.join(CODEX, "AGENTS.md")):
         if os.path.islink(path):
             note(f"kept {path}: it is a link, so the rules come from where it points")
             continue
@@ -153,24 +157,59 @@ def claude_settings(quiet):
         overrides = data.setdefault("skillOverrides", {})
         for name in quiet:
             overrides[name] = "name-only"
-    update_json(os.path.join(HOME, ".claude", "settings.json"), change)
+    update_json(os.path.join(CLAUDE, "settings.json"), change)
+
+
+def event_key(name):
+    return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()
+
+
+def trust_hash(event, group, hook):
+    """Codex's hook_hash: the key-sorted, compact JSON of the normalized entry."""
+    handler = {"type": hook["type"], "command": hook["command"], "timeout": hook["timeout"], "async": False}
+    identity = {"event_name": event_key(event), "hooks": [handler]}
+    if "matcher" in group:
+        identity["matcher"] = group["matcher"]
+    return "sha256:" + hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
 def codex_settings():
-    update_json(os.path.join(HOME, ".codex", "hooks.json"), lambda data: merge_hooks(data, codex=True))
-    path = os.path.join(HOME, ".codex", "config.toml")
-    text = open(path).read() if os.path.exists(path) else ""
+    hooks_path = os.path.join(CODEX, "hooks.json")
+    update_json(hooks_path, lambda data: merge_hooks(data, codex=True))
+    path = os.path.join(CODEX, "config.toml")
+    before = open(path).read() if os.path.exists(path) else ""
+    text = before
     section = re.search(r"^\[features\]\n(.*?)(?=^\[|\Z)", text, re.M | re.S)
-    if section and re.search(r"^hooks\s*=\s*true", section.group(1), re.M):
-        note(f"{path}: hooks already on")
-    elif section and re.search(r"^hooks\s*=", section.group(1), re.M):
-        note(f"kept {path}: [features] sets hooks to something other than true; set `hooks = true` to turn the working mode on")
+    if section and re.search(r"^hooks\s*=", section.group(1), re.M):
+        if not re.search(r"^hooks\s*=\s*true", section.group(1), re.M):
+            note(f"kept {path}: [features] sets hooks to something other than true; set `hooks = true` to turn the working mode on")
     elif section:
-        open(path, "w").write(text[: section.start(1)] + "hooks = true\n" + text[section.start(1):])
-        note(f"{path}: hooks turned on")
+        text = text[: section.start(1)] + "hooks = true\n" + text[section.start(1):]
     else:
-        open(path, "w").write((text.rstrip() + "\n\n" if text.strip() else "") + "[features]\nhooks = true\n")
-        note(f"{path}: hooks turned on")
+        text = (text.rstrip() + "\n\n" if text.strip() else "") + "[features]\nhooks = true\n"
+    # Codex runs a hook only once it is trusted, and pins that trust to the entry's text. The
+    # working-mode entries come from this checkout, so the install trusts them; other hooks keep
+    # Codex's own prompt.
+    ours = {hook_command(sub, codex=True) for _, sub, _, _ in HOOKS}
+    for event, groups in json.load(open(hooks_path))["hooks"].items():
+        for gi, group in enumerate(groups):
+            for hi, hook in enumerate(group.get("hooks", [])):
+                if hook.get("command") not in ours:
+                    continue
+                header = f'[hooks.state."{hooks_path}:{event_key(event)}:{gi}:{hi}"]'
+                line = f'{header}\ntrusted_hash = "{trust_hash(event, group, hook)}"'
+                pin = re.compile(re.escape(header) + r'\ntrusted_hash = "[^"]*"')
+                if pin.search(text):
+                    text = pin.sub(lambda _: line, text, count=1)
+                else:
+                    if "[hooks.state]" not in text:
+                        text = text.rstrip("\n") + "\n\n[hooks.state]\n"
+                    text = text.rstrip("\n") + "\n\n" + line + "\n"
+    if text != before:
+        open(path, "w").write(text)
+        note(f"{path}: hooks on and the working-mode hooks trusted")
+    else:
+        note(f"{path}: already current")
 
 
 def main():
@@ -182,7 +221,6 @@ def main():
     codex_settings()
     print("\n".join(report))
     print(f"name-only in Claude Code: {', '.join(quiet)}")
-    print("Codex asks you to trust the working-mode hooks on its next start, and again whenever their entries change.")
 
 
 if __name__ == "__main__":
