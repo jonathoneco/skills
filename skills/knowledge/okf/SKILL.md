@@ -51,9 +51,9 @@ One source fans out across the bundle — every doc the source touches, not just
    in `knowledge/README.md`) naming the source and the docs touched.
 5. Apply the Markdown rendering contract in `knowledge/README.md`, including one physical line per prose paragraph and list item.
 6. Validate every touched bundle (invocation lives in `knowledge/README.md`) when you add or move a file, and again before landing — each prints `OK` with zero warnings. An orphan or a broken link is cheapest to fix while the file that caused it is the only thing that changed.
-7. Land it. Commit the files you changed, by name, and push, following the repo's landing rule in `AGENTS.md`.
+7. Land it. A bundle in a repo lands by that repo's rule in `AGENTS.md`: commit the files you changed, by name, and push. A bundle in a synced folder outside git has landed once step 6 passes.
 
-Done means every affected validator prints `OK` with zero warnings and the change has landed as the repo's rule says (on `origin/main`, or in an open PR where the repo lands through PRs).
+Done means every affected validator prints `OK` with zero warnings and the change has landed: on `origin/main`, in an open PR where the repo lands through PRs, or saved in place for a bundle outside git.
 
 **File answers back.** When a session produces a durable synthesis — a vendor
 comparison, a deep-research conclusion, a design investigation — that synthesis is a
