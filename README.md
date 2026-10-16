@@ -49,10 +49,11 @@ The 24 `principle-*` skills in `skills/reasoning/` auto-load by their descriptio
 
 ```bash
 git clone https://github.com/jonathoneco/skills.git ~/src/skills
+cd ~/src/skills && DO_NOT_TRACK=1 npx skills experimental_install
 python3 -I ~/src/skills/skills/engineering/setup-skills/setup.py
 ```
 
-The script links every skill into `~/.agents/skills` (Codex) and `~/.claude/skills` (Claude Code), writes `rules/core.md` between marker comments in `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`, and adds the [working mode](./mode/README.md)'s hooks to both tools. Your own text outside the markers, your own skill folders, and your own hooks stay as they are. Type `/setup-skills` later to pull the checkout and run it again; a rerun with nothing new changes nothing. `python3 -I skills/engineering/setup-skills/selftest.py` checks the script against throwaway home folders.
+The `npx` line fetches the pinned third-party skills into the checkout; the script then links the ones a shared skill names (today `herdr`, `notion-cli`, `playwright-cli`), and names any still missing. The script links every skill into `~/.agents/skills` (Codex) and `~/.claude/skills` (Claude Code), writes `rules/core.md` between marker comments in `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`, and adds the [working mode](./mode/README.md)'s hooks to both tools. Your own text outside the markers, your own skill folders, and your own hooks stay as they are. Type `/setup-skills` later to pull the checkout and run it again; a rerun with nothing new changes nothing. `python3 -I skills/engineering/setup-skills/selftest.py` checks the script against throwaway home folders.
 
 ### Single skills with the `skills` CLI
 

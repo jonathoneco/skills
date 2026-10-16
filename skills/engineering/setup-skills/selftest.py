@@ -3,6 +3,7 @@
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -104,6 +105,25 @@ import setup  # noqa: E402
 stop_hook = {"command": 'm="$HOME/src/skills/mode/hooks/mode.py"; [ ! -f "$m" ] || python3 -I "$m" --codex stop', "timeout": 5, "type": "command"}
 check("trust: the hash matches a pin Codex accepts for the same entry",
       setup.trust_hash("Stop", {"hooks": [stop_hook]}, stop_hook) == "sha256:11cff0242e17141334bb418496d552845ab48ee703ccc4bebb6b46fe64d61833")
+
+# Pinned third-party skills a shared skill names: linked once `npx skills experimental_install` restores them.
+check("third-party: the pinned skills shared skills name are herdr, notion-cli, playwright-cli",
+      sorted(setup.third_party(setup.shared_skills())) == ["herdr", "notion-cli", "playwright-cli"])
+restored = os.path.join(ROOT, ".agents", "skills", "herdr")
+made = not os.path.exists(restored)
+try:
+    home = tempfile.mkdtemp()
+    out = run(home)
+    if made:
+        check("third-party: a skill not restored yet is named with the command that adds it",
+              "not installed: herdr" in out and "npx skills experimental_install" in out)
+        write(os.path.join(restored, "SKILL.md"), "---\nname: herdr\n---\n")
+        out = run(home)
+    check("third-party: a restored skill is linked into both tools",
+          all(os.path.isfile(os.path.join(home, d, "skills", "herdr", "SKILL.md")) for d in (".agents", ".claude")))
+finally:
+    if made:
+        shutil.rmtree(restored, ignore_errors=True)
 
 print(f"{len(failures)} failures")
 sys.exit(1 if failures else 0)
