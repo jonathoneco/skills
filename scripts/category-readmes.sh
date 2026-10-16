@@ -5,10 +5,15 @@
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
-# description_of <SKILL.md>: the frontmatter description on one line, quotes removed.
+# description_of <SKILL.md>: the frontmatter description on one line, quotes removed. A folded
+# (`>`) or literal (`|`) description continues on the indented lines below it, joined with spaces.
 description_of() {
-  awk 'NR == 1 && /^---/ {f = 1; next} f && /^---/ {exit}
-       f && /^description:/ {sub(/^description:[[:space:]]*/, ""); print; exit}' "$1" \
+  awk 'NR == 1 && /^---/ {f = 1; next} f && /^---/ {if (block) print text; exit}
+       block && /^[[:space:]]/ {sub(/^[[:space:]]+/, ""); text = text (text ? " " : "") $0; next}
+       block {print text; exit}
+       f && /^description:/ {sub(/^description:[[:space:]]*/, "")
+                             if ($0 ~ /^[>|][-+]?$/) {block = 1; next}
+                             print; exit}' "$1" \
     | sed -e 's/^"\(.*\)"$/\1/' -e "s/^'\(.*\)'\$/\1/"
 }
 
