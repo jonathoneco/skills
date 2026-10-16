@@ -50,6 +50,22 @@ def shared_skills():
     return found
 
 
+NAMED = re.compile(r"`([a-z0-9][a-z0-9-]*)` skill")
+
+
+def third_party(skills):
+    """The pinned third-party skills a shared skill names, each at the folder `npx skills experimental_install`
+    restores it to in the checkout."""
+    pinned = json.load(open(os.path.join(ROOT, "skills-lock.json")))["skills"]
+    named = set()
+    for folder in skills.values():
+        for dirpath, _, files in os.walk(folder):
+            for f in files:
+                if f.endswith(".md"):
+                    named.update(NAMED.findall(open(os.path.join(dirpath, f)).read()))
+    return {name: os.path.join(ROOT, ".agents", "skills", name) for name in sorted(named & pinned.keys())}
+
+
 def frontmatter(path):
     text = open(path).read()
     m = re.match(r"---\n(.*?)\n---", text, re.S)
@@ -94,7 +110,7 @@ def link_skills(skills):
                 continue
             os.symlink(folder, link)
             added += 1
-        note(f"{target}: {added} skill links added or moved, {len(skills)} shared skills in the checkout")
+        note(f"{target}: {added} skill links added or moved, {len(skills)} skills to link")
 
 
 def write_rules():
@@ -214,7 +230,12 @@ def codex_settings():
 
 def main():
     skills = shared_skills()
-    link_skills(skills)
+    pinned = third_party(skills)
+    fetched = {name: folder for name, folder in pinned.items() if os.path.isfile(os.path.join(folder, "SKILL.md"))}
+    link_skills({**skills, **fetched})
+    missing = sorted(pinned.keys() - fetched.keys())
+    if missing:
+        note(f"not installed: {', '.join(missing)}, which shared skills name; run `npx skills experimental_install` in {ROOT}, then run this again")
     write_rules()
     quiet = name_only(skills)
     claude_settings(quiet)
