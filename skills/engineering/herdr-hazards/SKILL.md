@@ -27,10 +27,14 @@ Claude Code's input box also shows grayed suggested prompts. They are inert: not
 - `herdr worktree create` makes a new workspace each time. It does not add a tab to the workspace you name; `--workspace` only names the source repo.
 - The first `claude` launch in a new worktree can be eaten by the mise trust prompt, because the worktree's `mise.toml` is untrusted. Launch with `herdr pane run <pane> "mise trust && claude"`. If the prompt already ate a launch, stray keystrokes stay on the shell line; send a fresh corrected command once the prompt clears, since `ctrl-u` through `send-keys` does not reliably clear it.
 - After `herdr agent start`, read the pane before prompting; a startup dialog swallows the first prompt. Claude's folder-trust question (it blocks startup, so `agent start` returns `agent_not_ready`; it hit an explainer writer started in a skill folder and an agent started in a new `/tmp` folder on a remote machine): send `enter` only after reading that the highlighted option trusts the folder. Codex's model-upgrade prompt or hook-trust dialog ("1 hook is new or changed ... 1. Review hooks 2. Trust all and continue"): `esc` without trusting, unless the user reviewed the hook. Done when the input box is empty (Codex: "Ask Codex to do anything").
+- `herdr agent start` into a freshly split pane can return without registering the agent; the next call fails with `agent_not_found`. Check with `herdr agent get` and start it again.
 
 ## Watching panes as an orchestrator
 
 Run `herdr pane list` in every periodic check, so a pane that vanished shows up on the next check. A worker pane once vanished and went unnoticed for an hour.
+
+- A Codex agent's pane can read as empty through `herdr agent read` while it works. Judge it by its session log under `~/.codex/sessions/<date>/rollout-*.jsonl`, or by its result file.
+- An agent that fans out to its own helpers can go idle while they still run. Wait on its report file, not its idle status.
 
 ## Missing HERDR values
 
