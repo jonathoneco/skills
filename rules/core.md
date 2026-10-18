@@ -58,7 +58,7 @@ The `principle-*` skills each cover a moment in the work, such as a plan turning
 - Keep secrets out of commits: `auth.json`, `*.env`, `*.pem`, `secrets/`, and anything that looks like a credential.
 - When you search config or the environment, print variable names only, so a value never lands in a transcript: `env | cut -d= -f1 | grep -i proxy`.
 - When a rebase conflicts in a file you didn't change, abort it and ask.
-- Run these only when the user names them: `git add -A`, `git add .`, `git reset --hard`, `git checkout .`, `git stash`, `git clean -fd`, `git commit --no-verify`.
+- The user runs these themselves, with `!`, when they want one: `git add -A`, `git add .`, `git reset --hard`, `git checkout .`, `git stash`, `git clean -fd`, `git commit --no-verify`. The git guardrail blocks them for agents.
 - Never force-push `main` or `master`.
 - Merge a PR only when the user says to merge it.
 - Stacked PRs: merge bottom-up with delete-branch-on-merge, and check `git merge-base --is-ancestor <mergeCommit> origin/main` before calling a stacked merge landed.
