@@ -279,6 +279,32 @@ for CODEX_TEST in (False, True):
            "verify against the real artifact", "principle-fix-root-causes traced the defect.")
     paired("later edit resets verification", [prompt, load, edit] + shell("python3 importer.py") + [edit] + shell("git status"),
            "verify against the real artifact", "principle-fix-root-causes traced the defect.")
+    for path, command, success, counts in (
+        ("/tmp/x.py", "ssh host 'python3 -I -' < /tmp/x.py", True, True),
+        ("/tmp/x.py", "ssh host 'python3 -I -' < /tmp/x.py 2>&1 | tail -3", True, True),
+        ("x.sh", "bash -s < x.sh", True, True),
+        ("x.py", "cat x.py | python3 -", True, True),
+        ("x.py", "python3 - < x.py", True, True),
+        ("x.sh", "sh -s < x.sh", True, True),
+        ("x.py", "node - < x.py", True, True),
+        ("x.py", "docker exec -i app python3 - < x.py", True, True),
+        ("x.py", "cat x.py | ssh host 'python3 -'", True, True),
+        ("/tmp/x.py", "ssh host 'python3 -I -' < /tmp/x.py", False, False),
+        ("x.py", "python3 - < x.py", False, False),
+        ("x.py", "cat x.py", True, False),
+        ("x.py", "wc -l < x.py", True, False),
+        ("x.py", "cat x.py | wc -l", True, False),
+        ("x.py", "cat x.py; python3 -", True, False),
+        ("x.py", "cat x.py | cat other.py | python3 -", True, False),
+        ("x.py", "ssh host 'cat x.py'", True, False),
+        ("x.py", "ssh host 'python3 -c pass' < x.py", True, False),
+    ):
+        stdin_edit = cx("FileChange", status="completed", changes={path: {"unified_diff": "+x\n" * 20}}) if CODEX_TEST else line(
+            "tool", "Write", {"file_path": path, "content": "x\n" * 20})
+        paired("stdin run: " + command + (" failed" if not success else ""),
+               [prompt, load, stdin_edit] + shell(command, success),
+               "" if counts else "verify against the real artifact",
+               "principle-fix-root-causes traced the defect.")
     for command in ("head -1", "tail -1", "sed -n '1,20p'", "cat"):
         transcript = [prompt] + shell(command + " /r/principle-fix-root-causes/SKILL.md")
         paired("partial_read_unnamed: " + command, transcript, '"decision": "block"')

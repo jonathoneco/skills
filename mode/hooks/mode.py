@@ -248,8 +248,56 @@ def commands(command):
 RUNNERS = ("python", "python3", "bash", "sh", "zsh", "node", "deno", "bun", "ruby", "tsx", "pytest", "uv", "go", "npx")
 
 
+def stdin_run(command, names, piped=False):
+    try:
+        lexer = shlex.shlex(command, posix=True, punctuation_chars="<>|;&\n")
+        lexer.whitespace = " \t\r"
+        lexer.whitespace_split = True
+        tokens = list(lexer) + [";"]
+    except ValueError:
+        return False
+    words = []
+    for token in tokens:
+        if token not in ("|", ";", "&&", "||", "&", "\n"):
+            words.append(token)
+            continue
+        for op in (">", ">>", ">&"):
+            while op in words:
+                i = words.index(op)
+                start = i - 1 if i and words[i - 1].isdigit() else i
+                del words[start:i + 2]
+        source = piped
+        if "<" in words:
+            i = words.index("<")
+            source = i + 1 < len(words) and os.path.basename(words[i + 1]) in names
+            words = words[:i] + words[i + 2:]
+        if words:
+            program = os.path.basename(words[0])
+            args = words[1:]
+            if source and ((program in ("python", "python3", "node") and "-" in args
+                            and not any(a in args for a in ("-c", "-m", "-e", "--eval")))
+                           or (program in ("bash", "sh", "zsh") and "-s" in args and "-c" not in args)):
+                return True
+            if program == "ssh" and len(args) >= 2:
+                remote = args[-1] if len(args) == 2 else shlex.join(args[1:])
+                if stdin_run(remote, names, source):
+                    return True
+            if program == "docker" and args[:1] == ["exec"] and any(a in args for a in ("-i", "-it", "--interactive")):
+                rest = args[1:]
+                while rest and rest[0].startswith("-"):
+                    rest = rest[1:]
+                if len(rest) > 1 and stdin_run(shlex.join(rest[1:]), names, source):
+                    return True
+        piped = token == "|" and bool(words) and os.path.basename(words[0]) == "cat" and any(
+            os.path.basename(w) in names for w in words[1:])
+        words = []
+    return False
+
+
 def verification_command(command, edited):
     names = {os.path.basename(p) for p in edited}
+    if stdin_run(command, names):
+        return True
     stems = {os.path.splitext(p)[0] for p in names}
     for words in commands(command):
         program = os.path.basename(words[0])
