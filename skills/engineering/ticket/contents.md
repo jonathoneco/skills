@@ -31,6 +31,7 @@ Every ticket carries the **core**: Title, Outcome, Decided, Steps, Done, Relatio
 - **Decided:** every decision the work depends on, settled and stated as decided: the decision, the reason, who decided and when.
   - Paid runs, production reads and writes, migrations and backfills, and real emails or SMS are always decisions, even when the step looks routine. For each, the ticket says whether it is allowed, how many times, and where it may run, or that the operator does it.
   - A defect ticket states its fix here like any other decision, unless the ticket exists to ratify a fix already chosen.
+  - A decision that contradicts an ADR names the ADR and why it is reopened; reopening it is the user's call.
 - **Evidence,** when an investigation fed the ticket: its findings with their date and SHA. A defect ticket's Evidence carries observed behavior and a reproduction against current `main` or production.
 - **Refresh if drifted,** on every ticket that is filed rather than built at once: how the implementer brings the ticket up to date before Step 1, since `main` moves while filed work waits:
   - one base SHA and the date the ticket was written against; a refresh replaces both;
