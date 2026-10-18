@@ -14,15 +14,14 @@ One script, one subcommand per hook event:
                               a helper, writing to an outside system, merging, deleting, stashing,
                               committing, or editing a shell script
   posttool  PostToolUse       output of a benchmark run, and oversized tool output
-  stop      Stop              one follow-up when the task's routed principles are unloaded and the
-                              reply names none, or when a substantial edit was never run
+  stop      Stop              one follow-up when a routed task's reply attributes no principle,
+                              or when a substantial edit was never verified
 
 Every hook only adds context; none denies a tool call. Each reads its evidence back
 from the session transcript and writes nothing to disk. Missing or unreadable
-evidence, bad input, or any exception means exit 0 with no output. Two hooks
-run without a transcript: the prompt hook at a session's
-first prompt, where Claude Code has not created the transcript yet, so a
-missing file means nothing is loaded.
+evidence, bad input, or any exception means exit 0 with a one-line diagnostic
+on stderr. The prompt hook can run before a transcript exists, so a missing
+file there means nothing is loaded.
 """
 import json
 import os
@@ -67,8 +66,7 @@ def route(prompt):
 
 
 def shell_writes(command):
-    """Code files a shell command writes by redirect or tee, so heredoc edits count as edits."""
-    return [p for p in SHELL_WRITE.findall(command or "") if CODE_EXT.search(p)]
+    return SHELL_WRITE.findall(command or "")
 
 
 def edit_lines(name, inp):
@@ -83,11 +81,14 @@ def edit_lines(name, inp):
 def read_claude_session(path):
     """What the transcript says about the current task (since the last real user prompt)
     and the current context window (since the last compaction). None if it can't be read."""
-    s = {"prompt": "", "loaded": set(), "marks": "", "edits": [], "edit_lines": 0,
+    s = {"prompt": "", "loaded": set(), "turn_loaded": set(), "marks": "", "edits": [], "edit_lines": 0,
          "ran_after_edit": False, "reply": ""}
+    pending = {}
     with open(path, "rb") as f:
         f.seek(0, os.SEEK_END)
-        f.seek(max(0, f.tell() - TAIL_BYTES))
+        offset = max(0, f.tell() - TAIL_BYTES)
+        s["tail_cut"] = bool(offset)
+        f.seek(offset)
         lines = f.read().decode("utf-8", "replace").splitlines()
     for line in lines:
         if '"user"' not in line and '"assistant"' not in line and "compact" not in line \
@@ -108,11 +109,18 @@ def read_claude_session(path):
             continue
         content = (e.get("message") or {}).get("content")
         if e.get("type") == "user":
+            for c in content if isinstance(content, list) else []:
+                if c.get("type") == "tool_result":
+                    command, written = pending.pop(c.get("tool_use_id"), ("", []))
+                    if not c.get("is_error") and command and s["edits"]:
+                        s["ran_after_edit"] |= (runs_after_write(command, written) if written else
+                                                verification_command(command, s["edits"]))
             text = content if isinstance(content, str) else " ".join(
                 c.get("text", "") for c in content or [] if c.get("type") == "text")
             is_result = isinstance(content, list) and any(c.get("type") == "tool_result" for c in content)
             if text and not is_result and not text.lstrip().startswith("<"):
-                s.update(prompt=text, marks="", edits=[], edit_lines=0, ran_after_edit=False, reply="")
+                s.update(prompt=text, marks="", edits=[], edit_lines=0, ran_after_edit=False, reply="", turn_loaded=set())
+                pending.clear()
             continue
         for c in content if isinstance(content, list) else []:
             if c.get("type") == "text":
@@ -121,21 +129,25 @@ def read_claude_session(path):
                 continue
             name, inp = c.get("name"), c.get("input") or {}
             if name == "Skill":
-                s["loaded"].add(str(inp.get("skill", "")).split(":")[-1])
+                skill = str(inp.get("skill", "")).split(":")[-1]
+                s["loaded"].add(skill)
+                s["turn_loaded"].add(skill)
             elif name in EDIT_TOOLS:
                 path = str(inp.get("file_path") or inp.get("notebook_path") or "")
                 if CODE_EXT.search(path):
+                    pending.clear()
                     s["edits"].append(path)
                     s["edit_lines"] += edit_lines(name, inp)
                     s["ran_after_edit"] = False
             elif name == "Bash":
-                written = shell_writes(inp.get("command"))
+                command = inp.get("command") or ""
+                written = [p for p in shell_writes(command) if CODE_EXT.search(p)]
                 if written:
+                    pending.clear()
                     s["edits"].extend(written)
                     s["edit_lines"] += edit_lines(name, inp)
-                    s["ran_after_edit"] = runs_after_write(inp.get("command"), written)
-                elif s["edits"]:
-                    s["ran_after_edit"] = True
+                    s["ran_after_edit"] = False
+                pending[c.get("id")] = (command, written)
     return s
 
 
@@ -147,17 +159,26 @@ def patch_paths(command):
 def skill_reads(command):
     # A pathname mentioned by echo/ls is not a read. Commands are evidence of
     # a load, not proof the model understood every byte of the file.
-    if not re.search(r"\b(cat|head|tail|sed|less|more|read_text|open)\b", command or ""):
+    if re.search(r"\|\s*(head|tail|sed|cut|awk)\b|(?:^|\s)>{1,2}", command or ""):
         return []
-    return re.findall(r"(?:^|/)([a-zA-Z0-9_-]+)/SKILL\.md\b", command or "")
+    found = []
+    for words in commands(command):
+        if words[0] == "cat" and not any(w in ("head", "tail", "sed", "cut", "awk") for w in words):
+            found.extend(re.findall(r"(?:^|/)([a-zA-Z0-9_-]+)/SKILL\.md\b", " ".join(words[1:])))
+        elif re.search(r"\.read_text\(\)|\.read\(\)", " ".join(words)) and not re.search(
+                r"\b(head|tail|sed|splitlines)\b|\)\s*\[", " ".join(words)):
+            found.extend(re.findall(r"(?:^|/)([a-zA-Z0-9_-]+)/SKILL\.md\b", " ".join(words)))
+    return found
 
 
 def read_codex_session(path):
-    s = {"prompt": "", "loaded": set(), "marks": "", "edits": [], "edit_lines": 0,
+    s = {"prompt": "", "loaded": set(), "turn_loaded": set(), "marks": "", "edits": [], "edit_lines": 0,
          "ran_after_edit": False, "reply": ""}
     with open(path, "rb") as f:
         f.seek(0, os.SEEK_END)
-        f.seek(max(0, f.tell() - TAIL_BYTES))
+        offset = max(0, f.tell() - TAIL_BYTES)
+        s["tail_cut"] = bool(offset)
+        f.seek(offset)
         lines = f.read().decode("utf-8", "replace").splitlines()
     for line in lines:
         try:
@@ -175,21 +196,23 @@ def read_codex_session(path):
             kind = item.get("type")
             if kind == "UserMessage":
                 text = " ".join(c.get("text", "") for c in item.get("content", []))
-                s.update(prompt=text, marks="", edits=[], edit_lines=0, ran_after_edit=False, reply="")
+                s.update(prompt=text, marks="", edits=[], edit_lines=0, ran_after_edit=False, reply="", turn_loaded=set())
             elif kind == "AgentMessage" and item.get("phase") == "final_answer":
                 s["reply"] = " ".join(c.get("text", "") for c in item.get("content", []))
             elif kind == "CommandExecution" and item.get("exit_code") == 0:
                 command = item.get("command") or ""
                 if isinstance(command, list):
                     command = command[-1] if command else ""
-                s["loaded"].update(skill_reads(command))
-                written = shell_writes(command)
+                read = skill_reads(command)
+                s["loaded"].update(read)
+                s["turn_loaded"].update(read)
+                written = [p for p in shell_writes(command) if CODE_EXT.search(p)]
                 if written:
                     s["edits"].extend(written)
                     s["edit_lines"] += edit_lines("Bash", {"command": command})
                     s["ran_after_edit"] = runs_after_write(command, written)
                 elif s["edits"]:
-                    s["ran_after_edit"] = True
+                    s["ran_after_edit"] |= verification_command(command, s["edits"])
             elif kind == "FileChange" and item.get("status") == "completed":
                 changes = item.get("changes") or {}
                 for path, change in changes.items():
@@ -225,6 +248,25 @@ def commands(command):
 RUNNERS = ("python", "python3", "bash", "sh", "zsh", "node", "deno", "bun", "ruby", "tsx", "pytest", "uv", "go", "npx")
 
 
+def verification_command(command, edited):
+    names = {os.path.basename(p) for p in edited}
+    stems = {os.path.splitext(p)[0] for p in names}
+    for words in commands(command):
+        program = os.path.basename(words[0])
+        if READ_ONLY_CMD.match(program) or re.search(r"SKILL\.md|\.read_text\(|\.read\(", " ".join(words)):
+            continue
+        check = re.search(r"\b(test\w*|\w*test|check\w*|verify|lint|typecheck|build)\b", " ".join(words))
+        if program in ("pytest", "shellcheck", "ruff", "eslint", "tsc"):
+            return True
+        if program in RUNNERS + ("npm", "pnpm", "yarn", "cargo", "make") and (check or any(
+                os.path.basename(w) in names or re.search(r"\b(?:%s)\b" % "|".join(map(re.escape, stems)), w)
+                for w in words[1:])):
+            return True
+        if program in names and words[0] != program:
+            return True
+    return False
+
+
 def runs_after_write(command, written):
     """True when a later command in the same shell line runs a file this line wrote: an
     interpreter given the file, or the file run as a program."""
@@ -235,7 +277,7 @@ def runs_after_write(command, written):
         if not seen_write:
             seen_write = named
             continue
-        if named and (words[0] in RUNNERS or os.path.basename(words[0]) in names):
+        if named and verification_command(shlex.join(words), written):
             return True
     return False
 
@@ -430,19 +472,24 @@ def on_stop(ev, path):
         return
     s = read_session(path)
     reply = ev.get("last_assistant_message") or s["reply"]
-    if not s["prompt"] or not reply:
+    if not s["prompt"]:
+        diagnostic("current prompt absent from transcript tail" + (" (8 MiB limit)" if s["tail_cut"] else ""))
+        return
+    if not reply:
         return
     routed = route(s["prompt"])
     asks = []
-    missing = unloaded(routed, s)
-    if missing and "principle-" not in reply:
-        asks.append("This task called for %s, and the reply names no principle. Load each with the Skill tool "
-                    "now, check your work and reply against it, and send the corrected reply; if nothing "
-                    "changes, say which principle confirmed what." % skills(missing))
-    verify = BY_TOOL["unverified-edit"]
+    eligible = {"principle-" + r["p"] for r in routed} | s["turn_loaded"]
+    named = set(re.findall(r"\bprinciple-[a-zA-Z0-9_-]+\b", reply))
+    no_change = re.search(r"\b(?:none(?: of (?:the |these |those )?(?:(?:loaded|routed|applicable) )?principles)?|no principles) "
+                          r"changed (?:a|any|my|the) choices?\b", reply, re.I)
+    if routed and not (eligible & named or no_change):
+        asks.append("This task called for %s. In the corrected reply, name a principle routed or loaded "
+                    "this turn and the choice it changed, or say plainly that none changed a choice. "
+                    "Load any missing principles with the Skill tool and check your work against them." % skills(routed))
     substantial = routed or s["edit_lines"] > SMALL_EDIT_LINES
-    if s["edits"] and substantial and not s["ran_after_edit"] and unloaded([verify], s):
-        asks.append("You changed %s and ran nothing after the last edit. Before you call it done, load the "
+    if s["edits"] and substantial and not s["ran_after_edit"]:
+        asks.append("You changed %s and ran nothing that successfully verified the last edit. Before you call it done, load the "
                     "`principle-prove-it-works` skill and verify against the real artifact." % s["edits"][-1])
     if asks:
         emit({"decision": "block", "reason": "%s %s" % (MARK, " ".join(asks))})
@@ -451,19 +498,28 @@ def on_stop(ev, path):
 HANDLERS = {"prompt": on_prompt, "pretool": on_pretool, "posttool": on_posttool, "stop": on_stop}
 
 
+def diagnostic(message):
+    sys.stderr.write("%s diagnostic: %s\n" % (MARK, " ".join(message.splitlines())))
+
+
 def main():
-    if CODEX:
-        sys.argv.remove("--codex")
     try:
+        if CODEX:
+            sys.argv.remove("--codex")
         ev = json.load(sys.stdin)
-        if not isinstance(ev, dict) or ev.get("agent_id"):
+        if not isinstance(ev, dict):
+            raise ValueError("hook event must be an object")
+        if ev.get("agent_id"):
             return
+        if "tool_input" in ev and not isinstance(ev["tool_input"], dict):
+            raise ValueError("tool_input must be an object")
         path = ev.get("transcript_path")
         if not path and sys.argv[1] != "prompt":
+            diagnostic("missing transcript_path")
             return
         HANDLERS[sys.argv[1]](ev, path)
-    except Exception:  # missing evidence, bad input, or a bug: say nothing, never fail the turn
-        return
+    except Exception as exc:
+        diagnostic("%s: %s" % (type(exc).__name__, exc))
 
 
 if __name__ == "__main__":
