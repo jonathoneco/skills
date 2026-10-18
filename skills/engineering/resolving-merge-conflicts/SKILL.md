@@ -12,3 +12,5 @@ description: "Use when you need to resolve an in-progress git merge/rebase confl
 4. Discover the project's **automated checks** and run them — typically typecheck, then tests, then format. Fix anything the merge broke.
 
 5. **Finish the merge/rebase.** Stage each resolved file by name (`git add <path>`), check `git status` shows no other file staged, and commit. If rebasing, continue the rebase process until all commits are rebased.
+
+Adapted from Matt Pocock's resolving-merge-conflicts (mattpocock/skills, MIT), which upstream deleted at `daa01d8`.
