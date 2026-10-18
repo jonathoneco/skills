@@ -5,7 +5,7 @@ description: Use when placing work in the tracker (a new project, work for an ex
 
 # Tracker hygiene
 
-This skill holds the rules for where work goes in the tracker and what each ticket carries; each workspace's **tracker doc** (usually named in the repo's `AGENTS.md` or `docs/`) holds the values: its states, labels, estimate scale, and whether triage is on. The `linear` skill holds how to write to Linear. A grooming pass of a project or a workspace runs as [grooming.md](grooming.md) says.
+This skill holds the rules for where work goes in the tracker and what each ticket carries; each workspace's **tracker doc** (usually named in the repo's `AGENTS.md` or `docs/`) holds the values: its states, labels, estimate scale, and whether triage is on. When the repo names no tracker doc, ask the user for these values before the first write, and propose saving them as the repo's tracker doc, linked from its `AGENTS.md`. The `linear` skill holds how to write to Linear. A grooming pass of a project or a workspace runs as [grooming.md](grooming.md) says.
 
 ## The clean state
 
@@ -18,7 +18,7 @@ The **clean state** is what every write leaves the tracker in, and what grooming
 - **A project states its outcome.** Its overview says what will be true when it is done, its lead is set, its status matches the work, and it has dates only when they are known. Its overview and its issue list describe the same work.
 - **A project with stages has milestones,** each a point the team checks progress at, and each open issue sits in its stage.
 - **An initiative holds a goal that spans several projects;** a single project's goal is that project's overview.
-- **Triage holds only work from outside the team**: automatic filings such as error trackers and in-product QA reports, intake flows, other teams, customers, and filings from a QA pass, whoever runs it. A filing by a team member or an agent carries its project, owner, and priority and skips triage. Work leaves triage one of four ways: accepted (project, owner, and priority set), declined (canceled with the reason), duplicate (related to the original first), or snoozed (with the reason and a wake date).
+- **Triage holds only work from outside the team**: automatic filings such as error trackers and in-product QA reports, intake flows, other teams, customers, and filings from a QA pass, whoever runs it. A filing by a team member or an agent carries its project, owner, and priority and skips triage. Work leaves triage one of four ways: accepted (project, owner, and priority set), declined (canceled with a reason a later search for the same request will find), duplicate (related to the original first), or snoozed (with the reason and a wake date).
 - **Open work moves.** An open issue untouched for 30 days gets a disposition at the next grooming pass: re-prioritized, re-assigned, folded into another, or closed with a reason. The team's auto-close, at the period the tracker doc names, catches what grooming misses.
 - **A project's plan and its record agree.** After a blueprint filing or a grooming pass that changes a project, draft a project update (health, decisions, blockers, scope changes) and publish it on the user's word.
 - Cycles are off; no ticket is placed in one.
@@ -29,7 +29,7 @@ Each starting point ends with every ticket it touched meeting the clean state.
 
 - **A new body of work:** name the outcome first. A concrete task is an issue; a small bundle that must land together is a parent with sub-issues; work toward one deliverable that needs coordinating is a project, with milestones when it has stages; several projects toward one goal are an initiative. Propose the project with its outcome, overview, and lead, cut its tickets with the `blueprint` skill, and create the project on the user's go, before its tickets are filed.
 - **Work for an existing project:** compare it with the project's outcome. Work that serves the outcome joins the project in its stage. Work that changes the outcome is a scope change: bring it to the user with what it does to the plan and dates. A separate deliverable is its own project.
-- **A stray ticket:** search for an open issue that already covers it, and fold into that one if so. Otherwise place it in the project whose outcome it serves, or keep it standalone, and set its Metadata; then write, check, and file it with the `blueprint` skill, whose short path shows the user its values before filing. Work that turns out to need coordinating is a proposal for a new project, brought to the user.
+- **A stray ticket:** search for an open issue that already covers it, and fold into that one if so. Search canceled issues too: a match declined before goes to the user with its reason ("declined on <date> because …; does that still hold?") before the new one is accepted. Otherwise place it in the project whose outcome it serves, or keep it standalone, and set its Metadata; then write, check, and file it with the `blueprint` skill, whose short path shows the user its values before filing. Work that turns out to need coordinating is a proposal for a new project, brought to the user.
 - **A project that has drifted:** groom it, as [grooming.md](grooming.md) says.
 
 ## Metadata
