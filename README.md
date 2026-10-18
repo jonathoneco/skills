@@ -37,7 +37,7 @@ Every skill here is installed at all times, so a skill's `description` decides w
 
 - **Auto-load**, the default: the agent loads the skill when it spots the skill's moment in the work. The frontmatter has no `disable-model-invocation`, and `agents/openai.yaml`, where present, sets no `policy`.
 - **Typed-only**: the skill runs only when a person types its name. It sets `disable-model-invocation: true` in its frontmatter for Claude Code, and `policy: allow_implicit_invocation: false` in `agents/openai.yaml` for Codex, which ignores the frontmatter flag.
-  These are the skills that would misfire if the agent loaded them on its own: `setup-matt-pocock-skills`, `grill-me`, `wait-what`, `bro`.
+  These are the skills that would misfire if the agent loaded them on its own: `grill-me`, `wait-what`, `bro`.
 - **Name-only**: other skills load these by name, and the model sees no description that would tempt it to load one by itself. In Claude Code, the user settings in dotfiles must set each one to `name-only` under `skillOverrides`.
   - Skills that launch several model runs, so a description must not start one by accident: `arena`, `swarm`, `hillclimb`, `interrogate`. Their `agents/openai.yaml` sets `allow_implicit_invocation: false`, which keeps them out of Codex's list.
 
