@@ -27,7 +27,7 @@ Tie decisions, handoffs, and status to what the user does, sees, or loses. Lead 
 
 Trust what is on disk over your training data and earlier sessions. A one-off question needs only what answers it.
 
-- Read the root docs the repo carries (`AGENTS.md`, `ARCHITECTURE.md`, `CONTEXT.md`, `DESIGN.md`, `DEVELOPMENT.md`), the parts of `docs/` the change touches, and open work in the tracker the repo names. Open the files themselves, not just their names.
+- Read the root docs the repo carries (`AGENTS.md`, `ARCHITECTURE.md`, `DESIGN.md`, `DEVELOPMENT.md`, `GLOSSARY.md`), the parts of `docs/` the change touches, and open work in the tracker the repo names. Open the files themselves, not just their names.
 - Keep reading until you can name the files the change touches and the decisions that constrain it.
 - Send broad reading (all of `docs/`, "find every place that does X") to parallel sub-agents, briefed like a cold colleague: goal, scope, and the shape of the report. Build on their summaries.
 - When you delegate, start each helper as a scratch agent, as the `scratch-agents` skill says.
