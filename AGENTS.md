@@ -22,4 +22,4 @@ The user's agent skills for Claude Code and Codex, and the rules both tools read
 - Run `scripts/check-skills`. It reports a skill or file named that does not exist, frontmatter that does not name its folder or holds an unquoted value with `: ` (invalid YAML), a skill Codex and Claude Code disagree on letting fire on its own.
 - After adding a skill or changing a description, run `scripts/category-readmes.sh`.
 - A new skill gets `agents/openai.yaml`. A skill only the user invokes carries `disable-model-invocation: true` in its frontmatter and `policy: allow_implicit_invocation: false` in that file, so both tools treat it alike.
-- A new skill loads only once the dotfiles repo links it; open that PR beside this one.
+- A new skill loads only once the dotfiles repo links it; open that PR beside this one. A removed skill leaves those links dangling, so its dotfiles PR goes beside this one too.
