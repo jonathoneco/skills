@@ -5,8 +5,9 @@
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
-# description_of <SKILL.md>: the frontmatter description on one line, quotes removed. A folded
-# (`>`) or literal (`|`) description continues on the indented lines below it, joined with spaces.
+# description_of <SKILL.md>: the frontmatter description on one line, quotes and their escapes
+# removed. A folded (`>`) or literal (`|`) description continues on the indented lines below it,
+# joined with spaces.
 description_of() {
   awk 'NR == 1 && /^---/ {f = 1; next} f && /^---/ {if (block) print text; exit}
        block && /^[[:space:]]/ {sub(/^[[:space:]]+/, ""); text = text (text ? " " : "") $0; next}
@@ -14,7 +15,7 @@ description_of() {
        f && /^description:/ {sub(/^description:[[:space:]]*/, "")
                              if ($0 ~ /^[>|][-+]?$/) {block = 1; next}
                              print; exit}' "$1" \
-    | sed -e 's/^"\(.*\)"$/\1/' -e "s/^'\(.*\)'\$/\1/"
+    | sed -e '/^".*"$/{s/^"\(.*\)"$/\1/;s/\\"/"/g;}' -e "/^'.*'\$/{s/^'\(.*\)'\$/\1/;s/''/'/g;}"
 }
 
 # write_category_readme <category>: one line per skill, split by who invokes it.
