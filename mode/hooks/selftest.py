@@ -21,7 +21,7 @@ def line(kind, *content):
     if kind == "text":
         return {"type": "assistant", "message": {"content": [{"type": "text", "text": content[0]}]}}
     name, inp = content
-    return {"type": "assistant", "message": {"content": [{"type": "tool_use", "name": name, "input": inp}]}}
+    return {"type": "assistant", "message": {"content": [{"type": "tool_use", "id": "call-" + name, "name": name, "input": inp}]}}
 
 
 def run(sub, event, transcript):
@@ -44,12 +44,12 @@ def run(sub, event, transcript):
     elif transcript is not None:
         os.unlink(path)
     os.rmdir(tmp)
-    return out.returncode, out.stdout
+    return out.returncode, out.stdout, out.stderr
 
 
 def check(label, sub, event, transcript, expect, absent=None):
     global failures
-    code, out = run(sub, event, transcript)
+    code, out, _ = run(sub, event, transcript)
     ok = code == 0 and '"deny"' not in out and (expect in out if expect else out == "")
     ok = ok and not (absent and absent in out)
     if not ok:
@@ -60,8 +60,15 @@ def check(label, sub, event, transcript, expect, absent=None):
 BUG = "count_rows in importer.py reports 4 rows for sample.csv. Fix it."
 EDIT = ("Edit", {"file_path": "/r/importer.py", "old_string": "a", "new_string": "b"})
 edited = [line("prompt", BUG), line("tool", *EDIT)]
+
+
+def result(name="Bash", error=False):
+    return {"type": "user", "message": {"content": [{"type": "tool_result",
+            "tool_use_id": "call-" + name, "content": "check output", "is_error": error}]}}
+
+
 loaded = edited + [line("tool", "Skill", {"skill": "principle-fix-root-causes"}),
-                   line("tool", "Bash", {"command": "python3 -c 'import importer'"})]
+                   line("tool", "Bash", {"command": "python3 -c 'import importer'"}), result()]
 STOP = {"stop_hook_active": False, "last_assistant_message": "Fixed it."}
 
 # Routing: one generic word never fires; strong cues do.
@@ -106,15 +113,15 @@ check("stop: routed, unloaded, unverified", "stop", STOP, edited, "principle-pro
 # A file written and run in the same shell line counts as run; a write alone or a git add doesn't.
 WRITE = "cat > /tmp/count.py <<EOF\nx = 0\nx = 1\nx = 2\nx = 3\nx = 4\nx = 5\nx = 6\nx = 7\nx = 8\nx = 9\nx = 10\nx = 11\nx = 12\nx = 13\nx = 14\nx = 15\nx = 16\nx = 17\nx = 18\nx = 19\nx = 20\nx = 21\nx = 22\nx = 23\nx = 24\nx = 25\nx = 26\nx = 27\nx = 28\nx = 29\nEOF"
 check("stop: write then run in one command", "stop", STOP,
-      [line("prompt", BUG), line("tool", "Bash", {"command": WRITE + "\npython3 /tmp/count.py"})], "principle-fix-root-causes", "ran nothing")
+      [line("prompt", BUG), line("tool", "Bash", {"command": WRITE + "\npython3 /tmp/count.py"}), result()], "principle-fix-root-causes", "ran nothing")
 check("stop: write alone is reminded", "stop", STOP, [line("prompt", BUG), line("tool", "Bash", {"command": WRITE})], "ran nothing")
 check("stop: write then git add is not a run", "stop", STOP,
       [line("prompt", BUG), line("tool", "Bash", {"command": WRITE + "\ngit add /tmp/count.py"})], "ran nothing")
 NAMED = dict(STOP, last_assistant_message="principle-fix-root-causes: traced it")
 check("stop: reply names a principle, edit unverified", "stop", NAMED, edited, "principle-prove-it-works", "This task called for")
 check("stop: reply names a principle, edit verified", "stop", NAMED,
-      edited + [line("tool", "Bash", {"command": "python3 -c 'import importer'"})], "")
-check("stop: loaded and ran", "stop", STOP, loaded, "")
+      edited + [line("tool", "Bash", {"command": "python3 -c 'import importer'"}), result()], "")
+check("stop: loaded and ran still needs attribution", "stop", STOP, loaded, "reply")
 check("stop: active continuation", "stop", dict(STOP, stop_hook_active=True), edited, "")
 check("stop: flag absent", "stop", {"last_assistant_message": "ok"}, edited, "")
 check("stop: missing transcript", "stop", STOP, None, "")
@@ -217,7 +224,7 @@ check("codex patch test edit", "pretool", {"tool_name": "apply_patch", "tool_inp
 check("codex doc patch quiet", "pretool", {"tool_name": "apply_patch", "tool_input": {"command": patch.replace("a.py", "a.md")}}, cx_edited, "")
 check("codex missing transcript", "pretool", {"tool_name": "apply_patch", "tool_input": {"command": patch}}, None, "")
 check("codex stop unverified", "stop", STOP, cx_edited, "principle-prove-it-works")
-check("codex stop loaded verified", "stop", STOP, cx_loaded, "")
+check("codex stop loaded verified still needs attribution", "stop", STOP, cx_loaded, "reply")
 check("codex stop bounded", "stop", dict(STOP, stop_hook_active=True), cx_edited, "")
 check("codex compaction forgets loads", "stop", STOP, cx_loaded + [{"type": "compacted", "payload": {"replacement_history": []}}], "principle-fix-root-causes")
 check("codex failed skill read not loaded", "prompt", {"prompt": BUG}, [cx_prompt, cx("CommandExecution", exit_code=1, command="cat /r/principle-fix-root-causes/SKILL.md")], "principle-fix-root-causes")
@@ -232,6 +239,80 @@ check("codex shell script patch", "pretool", pre("apply_patch", {"command": patc
 check("codex outside write", "pretool", pre("mcp__linear__create_issue", {"title": "x"}), [cx_prompt], "outside-write:")
 check("codex benchmark", "posttool", {"tool_name": "Bash", "tool_input": {"command": "hyperfine ./a"}, "tool_response": "1s"}, cx_edited, "principle-explain-the-number")
 check("codex oversized output", "posttool", {"tool_name": "Bash", "tool_input": {"command": "cat a.log"}, "tool_response": "x" * 40000}, cx_edited, "principle-guard-the-context-window")
+
+# Paired regressions use parity/replay.py's completed-runtime and Claude tool shapes.
+for CODEX_TEST in (False, True):
+    harness = "codex" if CODEX_TEST else "claude"
+    prompt = cx_prompt if CODEX_TEST else line("prompt", BUG)
+    load = cx_load if CODEX_TEST else line("tool", "Skill", {"skill": "principle-fix-root-causes"})
+    edit = cx("FileChange", status="completed", changes={"/r/importer.py": {"unified_diff": "+x\n" * 20}}) if CODEX_TEST else line(
+        "tool", "Write", {"file_path": "/r/importer.py", "content": "x\n" * 20})
+
+    def shell(command, success=True):
+        if CODEX_TEST:
+            return [cx("CommandExecution", exit_code=0 if success else 1, command=command)]
+        return [line("tool", "Bash", {"command": command}), result(error=not success)]
+
+    def paired(label, transcript, expect, reply="Done.", absent=None):
+        check(harness + " " + label, "stop", dict(STOP, last_assistant_message=reply), transcript, expect, absent)
+
+    paired("loaded_unnamed", [prompt, load], '"decision": "block"')
+    paired("routed attribution", [prompt, load], "", "principle-fix-root-causes traced the defect.")
+    paired("none changed a choice", [prompt, load], "", "None of the principles changed a choice.")
+    other_load = cx("CommandExecution", exit_code=0, command="cat /r/principle-laziness-protocol/SKILL.md") if CODEX_TEST else line(
+        "tool", "Skill", {"skill": "principle-laziness-protocol"})
+    paired("loaded attribution", [prompt, other_load], "", "principle-laziness-protocol kept the fix small.")
+    paired("previous turn load is not eligible", [other_load, prompt], '\"decision\": \"block\"',
+           "principle-laziness-protocol kept the fix small.")
+    paired("unrelated principle", [prompt, load], '"decision": "block"', "principle-example helped.")
+    paired("unrelated prefix", [prompt, load], '"decision": "block"', "principle-fix-root-causes-extra helped.")
+    verify = cx("CommandExecution", exit_code=0, command="cat /r/principle-prove-it-works/SKILL.md") if CODEX_TEST else line(
+        "tool", "Skill", {"skill": "principle-prove-it-works"})
+    paired("verification_skill_loaded_unverified_edit", [prompt, load, verify, edit], "verify against the real artifact",
+        "principle-fix-root-causes traced the defect.")
+    for command in ("git status", "cat /r/importer.py", "ls", "echo done", "python3 unrelated.py"):
+        paired("read or unrelated command is not verification: " + command, [prompt, load, edit] + shell(command),
+               "verify against the real artifact", "principle-fix-root-causes traced the defect.")
+    paired("successful check", [prompt, load, edit] + shell("python3 importer.py"), "",
+           "principle-fix-root-causes traced the defect.")
+    paired("failed check", [prompt, load, edit] + shell("python3 importer.py", False),
+           "verify against the real artifact", "principle-fix-root-causes traced the defect.")
+    paired("later edit resets verification", [prompt, load, edit] + shell("python3 importer.py") + [edit] + shell("git status"),
+           "verify against the real artifact", "principle-fix-root-causes traced the defect.")
+    for command in ("head -1", "tail -1", "sed -n '1,20p'", "cat"):
+        transcript = [prompt] + shell(command + " /r/principle-fix-root-causes/SKILL.md")
+        paired("partial_read_unnamed: " + command, transcript, '"decision": "block"')
+        check(harness + " load detection: " + command, "prompt", {"prompt": BUG}, transcript,
+              "This task hits" if command != "cat" or not CODEX_TEST else "No cue matched")
+    if CODEX_TEST:
+        for command in ("cat /r/principle-fix-root-causes/SKILL.md | head -1",
+                        "cat > /r/principle-fix-root-causes/SKILL.md",
+                        "python3 -c \"print(open('/r/principle-fix-root-causes/SKILL.md').read()[:20])\""):
+            check(harness + " partial output stays unloaded: " + command, "prompt", {"prompt": BUG},
+                  [prompt] + shell(command), "This task hits")
+        check("codex whole-file Python read", "prompt", {"prompt": BUG}, [prompt] + shell(
+            "python3 -c \"print(open('/r/principle-fix-root-causes/SKILL.md').read())\""), "No cue matched")
+    for path in ("/r/AGENTS.md", "/r/CLAUDE.md", "/r/example/SKILL.md"):
+        check(harness + " agent_doc_shell " + path, "pretool", sh("cat > " + path + " <<'EOF'\nnew rule\nEOF"),
+              [prompt], "writing-for-agents")
+    for label, event, transcript in (
+        ("malformed json", "not json", []),
+        ("malformed event", "[]", []),
+        ("malformed tool input", {"tool_name": "Bash", "tool_input": "wrong"}, [prompt]),
+        ("unreadable transcript", pre("Edit", {"file_path": "a.py"}), "dir"),
+        ("missing transcript", pre("Edit", {"file_path": "a.py"}), None),
+        ("unexpected transcript error", pre("Edit", {"file_path": "a.py"}), [prompt,
+            cx("CommandExecution", exit_code=0, command=123) if CODEX_TEST else line("tool", "Bash", {"command": 123})]),
+    ):
+        code, out, err = run("pretool", event, transcript)
+        if code != 0 or out or len(err.splitlines()) != 1 or "[mode] diagnostic:" not in err:
+            failures += 1
+            print("FAIL %s %s: exit %s stdout=%r stderr=%r" % (harness, label, code, out, err))
+    noise = {"padding": "x" * (8 * 1024 * 1024)}
+    code, out, err = run("stop", STOP, [prompt, noise, edit])
+    if code != 0 or out or "prompt" not in err or "tail" not in err:
+        failures += 1
+        print("FAIL %s lost prompt: exit %s stdout=%r stderr=%r" % (harness, code, out, err))
 
 print("%d failures" % failures)
 sys.exit(1 if failures else 0)
