@@ -41,6 +41,7 @@ A claim a person, a worker, a doc, or a ticket made and you have not checked is 
 - **Name the unit**, and how far off earlier estimates were. Wall-clock time and billed time are different numbers.
 - **Find a control case** that shows the answer is not an accident of the one case examined: a record the bug spared, a run from before the change.
 - **Code is not evidence of its own intent.** What code does is observed by reading it; why it exists is observed only in what someone wrote: a commit, a PR, a ticket, a comment. Without that, the why is inferred.
+- **A mechanism expected to close a gap is inferred until you read its last run.** A scheduled job, sync, or guard counts as working only once you have read its latest output. A doc that describes the job states its intent, not what it did.
 - **The asker's hypothesis is a prompt, not a conclusion.** "I assume it's for performance" is one candidate among others; check it like the rest, and answer against what the asker believes.
 
 ## Acting on a grade
