@@ -56,6 +56,7 @@ Every ticket carries the **core**: Title, Outcome, Decided, Steps, Done, Relatio
 - **After merge,** when a check holds only once the change is merged and deployed: each check, the exact read or command, the result that shows it holds, and who runs it.
 - **Out of scope,** when a reader would assume something is included that isn't: what a reader would assume is included and is not.
 - **Relationships:** as SKILL.md's Relationships says.
+  - A ticket that adds a migration lever (a codemod, one-off script, or generator) names the ticket that deletes it once the migration ends, in Relationships or Decided; a lever with no deleting ticket outlives its migration.
 - **Revert,** when backing the change out takes more than reverting its PR: how to back the change out, and what data or deploy state it leaves behind.
 - **Estimate:** as SKILL.md's Estimate says, with its one-sentence reason.
 - **Shapes and surface,** when the ticket produces or changes a shape, words the product's users read, or paths it shares:
