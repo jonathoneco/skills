@@ -8,7 +8,7 @@ Reads every .md under <repo>/skills and reports, as file:line, each pointer that
 nothing: a skill named in backticks or bold that no installed skill carries, a file named
 as "the `x` skill's `file.md`" that is not in that skill's folder, a relative link that does
 not resolve, and a SKILL.md whose frontmatter lacks a name matching its folder or a
-description. It also reports a skill Claude Code keeps from firing on its own (a
+description, or whose field holds an unquoted value with `: ` in it, which YAML rejects. It also reports a skill Claude Code keeps from firing on its own (a
 `disable-model-invocation: true` in its frontmatter, or `name-only` in the user's
 `~/.claude/settings.json` `skillOverrides`) whose `agents/openai.yaml` lacks Codex's
 `allow_implicit_invocation: false`, and the reverse. Exits 1 when it finds any.
@@ -41,6 +41,9 @@ PRINCIPLE = re.compile(r"`(principle-[a-z0-9-]+)`")
 BOLD = re.compile(r"(?:\*\*([a-z0-9][a-z0-9-]*)\*\* principle skill|(?:[Tt]he|[Rr]un|via|per) \*\*([a-z0-9][a-z0-9-]*)\*\* skill)")
 LINK = re.compile(r"\]\(<?([^)\s#>]+)>?(?:#[^)]*)?\)")
 FENCE = re.compile(r"^\s*```")
+# A top-level field whose value is a plain (unquoted) scalar. YAML ends a plain scalar's key at
+# the first `: `, so a second one makes the frontmatter invalid and stricter loaders drop the skill.
+PLAIN = re.compile(r"^[A-Za-z0-9_-]+:\s+([^\s\"'|>\[{].*)$")
 
 
 def skill_dirs():
@@ -55,17 +58,21 @@ def skill_dirs():
 
 
 def frontmatter(path):
+    """The top-level fields, and the line numbers of plain values YAML can't parse."""
     with open(path) as f:
         lines = f.read().split("\n")
     if not lines or lines[0] != "---":
-        return None
-    fields = {}
-    for line in lines[1:]:
+        return None, []
+    fields, invalid = {}, []
+    for n, line in enumerate(lines[1:], 2):
         if line == "---":
-            return fields
+            return fields, invalid
+        plain = PLAIN.match(line)
+        if plain and ": " in plain.group(1):
+            invalid.append(n)
         key, _, value = line.partition(":")
         fields[key.strip()] = value.strip()
-    return None
+    return None, []
 
 
 def name_only():
@@ -100,8 +107,10 @@ def main():
             path = os.path.join(dirpath, name)
             rel = os.path.relpath(path, ROOT)
             if name == "SKILL.md":
-                fields = frontmatter(path)
+                fields, invalid = frontmatter(path)
                 folder = os.path.basename(dirpath)
+                for n in invalid:
+                    errors.append(f"{rel}:{n}: unquoted value holds `: `, which is not valid YAML; quote the value")
                 if fields is None:
                     errors.append(f"{rel}:1: no frontmatter")
                 else:

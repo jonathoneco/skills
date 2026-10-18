@@ -7,7 +7,6 @@ All three sources are MIT licensed. Their licence texts are kept word for word i
 | Skill | Here | Source | Upstream path | Last synced |
 | --- | --- | --- | --- | --- |
 | architect | `skills/engineering/architect` | cursor/plugins | `pstack/skills/architect` | `9f451cf` |
-| ask-matt | `skills/engineering/ask-matt` | mattpocock/skills | `skills/engineering/ask-matt` | `8b36d4f` |
 | automate-me | `skills/knowledge/automate-me` | cursor/plugins | `pstack/skills/automate-me` | `9f451cf` |
 | benchmark-checklist | `skills/engineering/benchmark-checklist` | cursor/plugins | `pstack/skills/benchmark-checklist` | `9f451cf` |
 | blast-radius | `skills/engineering/blast-radius` | cursor/plugins | `pstack/skills/blast-radius` | `9f451cf` |
@@ -58,7 +57,6 @@ All three sources are MIT licensed. Their licence texts are kept word for word i
 | principle-test-behavior-not-implementation | `skills/reasoning/principle-test-behavior-not-implementation` | cursor/plugins | `pstack/skills/principle-test-behavior-not-implementation` | `9f451cf` |
 | principle-type-system-discipline | `skills/reasoning/principle-type-system-discipline` | cursor/plugins | `pstack/skills/principle-type-system-discipline` | `9f451cf` |
 | research | `skills/reasoning/research` | mattpocock/skills | `skills/engineering/research` | `8b36d4f` |
-| resolving-merge-conflicts | `skills/engineering/resolving-merge-conflicts` | mattpocock/skills | `skills/engineering/resolving-merge-conflicts` | `8b36d4f` |
 | setup-matt-pocock-skills | `skills/engineering/setup-matt-pocock-skills` | mattpocock/skills | `skills/engineering/setup-matt-pocock-skills` | `8b36d4f` |
 | show-me-your-work | `skills/reasoning/show-me-your-work` | cursor/plugins | `pstack/skills/show-me-your-work` | `9f451cf` |
 | tdd | `skills/engineering/tdd` | mattpocock/skills | `skills/engineering/tdd` | `8b36d4f` |

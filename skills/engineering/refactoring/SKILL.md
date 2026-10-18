@@ -1,6 +1,6 @@
 ---
 name: refactoring
-description: Refactor code: change its structure without changing its behavior, pinned by a test and proven unchanged. Use when the user says refactor or clean up the structure, or a ticket's kind is Refactor or migration.
+description: "Refactor code: change its structure without changing its behavior, pinned by a test and proven unchanged. Use when the user says refactor or clean up the structure, or a ticket's kind is Refactor or migration."
 ---
 
 # Refactoring
