@@ -5,7 +5,7 @@ description: Use when placing work in the tracker (a new project, work for an ex
 
 # Tracker hygiene
 
-This skill holds the rules for where work goes in the tracker and what each ticket carries; each workspace's **tracker doc** (usually named in the repo's `AGENTS.md` or `docs/`) holds the values: its states, labels, estimate scale, and whether triage is on. The `linear` skill holds how to write to Linear. A grooming pass of a project or a workspace runs as [grooming.md](grooming.md) says.
+This skill holds the rules for where work goes in the tracker and what each ticket carries; each workspace's **tracker doc** (usually named in the repo's `AGENTS.md` or `docs/`) holds the values: its states, labels, estimate scale, and whether triage is on. When the repo names no tracker doc, ask the user for these values before the first write, and propose saving them as the repo's tracker doc, linked from its `AGENTS.md`. The `linear` skill holds how to write to Linear. A grooming pass of a project or a workspace runs as [grooming.md](grooming.md) says.
 
 ## The clean state
 
