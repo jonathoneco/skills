@@ -20,7 +20,7 @@ Done when the ticket's base SHA matches `main` in its paths, the ticket has no R
 
 The lane takes its model from the ticket's estimate (the `ticket` skill's Estimate) through the lane engine.
 
-Put the lane's start constraints in the lane engine's start field at launch, so the first build has them. A redirect is for news that arrives mid-lane, since it cancels the running build. When the ticket has a `Merges after` line and the lane engine can hold a lane's ready PR until a named PR lands and then catch the lane up, name that PR at launch; orchestrators otherwise relay each landing by hand. Beside the ticket's own constraints, the start field carries the **worker brief** every lane gets:
+Put the lane's start constraints in the lane engine's start field at launch, so the first build has them. News that arrives mid-lane goes to the lane as an ordinary message through the lane engine. It reaches the same agent session without stopping the work; the agent reads it when its runtime next takes input. Cancel a lane only to stop it. When the ticket has a `Merges after` line and the lane engine can hold a lane's ready PR until a named PR lands and then catch the lane up, name that PR at launch; orchestrators otherwise relay each landing by hand. Beside the ticket's own constraints, the start field carries the **worker brief** every lane gets:
 
 - build against the stand-in the ticket names until the ticket it merges after is on `main`;
 - stop a process only by a PID you started yourself;

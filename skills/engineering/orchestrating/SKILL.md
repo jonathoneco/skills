@@ -36,7 +36,7 @@ Each wake that finds an event opens a todo list: one todo per event, expanded in
 
    | Event | File |
    |---|---|
-   | A lane asks a question, or any call would wait on the user | [calls.md](calls.md) |
+   | A lane sends a message (a question, news, or a call that would wait on the user) | [calls.md](calls.md) |
    | A lane's PR is ready | [merges.md](merges.md) |
    | Without a merge queue, the lane engine reports an overlap with a ready PR's base | [merges.md](merges.md) step 2 |
    | The lane engine reports a PR merged, or a merge commit's production deploy reads succeeded or failed | [merges.md](merges.md) step 5 |
