@@ -1,6 +1,6 @@
 # Calls in the user's place
 
-A lane's question, and every other call that would wait on the user. The orchestrator answers "what would the user say?" from **precedent**: the user's past rulings, found and logged as the `decision-log` skill says.
+A lane may send any message, including a question, news, or a call that would wait on the user. Read each message, reply when it needs a reply, and carry on when it does not. A lane's question arrives as a message the agent sent. A message to a deliberately parked lane is held until the orchestrator explicitly resumes it. The orchestrator answers "what would the user say?" from **precedent**: the user's past rulings, found and logged as the `decision-log` skill says.
 
 ## 1. Check the question itself
 
@@ -45,7 +45,7 @@ Every other call: **decide** when all of these hold, and ask otherwise:
 - a call that adds a mechanism, a guard, an alert, a ticket, or long-lived infrastructure has a direct or analog ruling, because heavier mechanisms are where recommendations most often miss;
 - at least one ruling covers the call, no counter-example pulls against the pick, and no conflict stands; a route-around of a hard stop may rest on being undoable instead of on a covering ruling.
 
-**On a decide or a standing-rule action,** act, then write the log entry in the same turn, before the next call, in the `decision-log` skill's entry form. A product choice nobody made gets a `Look first:` line. Answer the lane with the pick and label it "orchestrator call D-<n>", since lanes copy answers into PR bodies; "relayed from the user" is reserved for the user's own words.
+**On a decide or a standing-rule action,** act, then write the log entry in the same turn, before the next call, in the `decision-log` skill's entry form. A product choice nobody made gets a `Look first:` line. Reply to the lane with the pick as an ordinary message; it steers the same agent session and does not cancel or restart it. The reply reaches the active session during a turn, or starts the next turn in that same saved session after the agent ends its current turn. Acceptance means the lane engine retained the reply, not that the agent read it or did the requested work; judge that from the lane's next work. Label the pick "orchestrator call D-<n>", since lanes copy answers into PR bodies; "relayed from the user" is reserved for the user's own words.
 
 **On an ask, and on a parked hard stop,** put the question in the effort's user queue. It opens with what is stopped and what the user's answer frees, such as "Refund approval (ABC-142) can't merge until you pick A or B; your answer frees 3 tickets". Name each ticket by its title with its key beside it; a bare key means nothing to the user at check-in. Then it frames the call as a product choice: the options with what the product's users see under each (the `weighing` skill), your pick, and why it is asked (the hard stop it hits; no covering ruling, with the sources searched; a conflict, naming both sides; or its Ask tier). When the effort's practice sets the queue's format, that format holds. The user meets the question at check-in rather than mid-run. A question carried over from an earlier session is re-derived against today's rules and rulings before it is asked.
 
