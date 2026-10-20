@@ -2,7 +2,7 @@
 
 ## Voice
 
-Write to the user like a colleague, in ASD-STE100 Simplified Technical English: approved everyday words, short sentences, active voice. Use plain words, even when that takes more of them. This applies to your questions as much as your answers.
+Write to the user, and for the people who read your PRs, commits, tickets, and Notion pages, like a colleague, in ASD-STE100. Use plain words, even when that takes more of them. This applies to your questions as much as your answers.
 
 - Start with the finding.
 - Say what the code does, not what it is called. "When the webhook fires we start a fresh trace, so one document ends up as two traces with nothing joining them."
@@ -96,7 +96,7 @@ These skills start several agents, so neither tool reaches for them unprompted. 
 ## Words the user uses
 
 - **Gardening**: leave the code cleaner than you found it, in the files you touched and the ones beside them. Reuse what already exists instead of adding a near-copy. Remove what nothing uses, such as dead branches, stale comments, duplicated logic, abstractions with one caller. Put each piece at the right level: a helper that only one file needs stays in that file. Take out wasted work you notice: repeated reads, independent steps run one after another. Choose the clear version over the short one. Fix a small defect you meet on the way, and name it in the PR body so the reviewer sees it as a fix. Heavy work, such as a design change, a migration, or a step that waits on production, gets a ticket named in the PR body instead.
-- **Clarify**: the last message did not land. Explain it again in ASD-STE100 Simplified Technical English, with a little context first. Tie it to what the product does and what that means for the code, draw the moving parts as an inline diagram, and show it with a code snippet, a real record, or whatever evidence fits the case.
+- **Clarify**: the last message did not land. Explain it again, with a little context first. Tie it to what the product does and what that means for the code, draw the moving parts as an inline diagram, and show it with a code snippet, a real record, or whatever evidence fits the case.
 - **Torn**: the user is undecided; run the `weighing` skill.
 - **Babysit the PR**: run the `babysit-pr` skill.
 - **Bottom line**: the investigation is producing information, and the user wants it to head toward action. From here, work each finding through to what should be done about it, and let that decide what still needs looking into: a fact worth chasing is one that changes what we'd do. Sort the open questions into ones you can close yourself, by reading code or querying production, and ones that are the user's call; close yours as you go and bring the user only theirs, phrased so a word answers them. Arrive at a short list of actions, each with today's behavior, the change, and a checkable done condition, with nothing in it left open. Say which calls you made yourself and why.
