@@ -2,13 +2,13 @@
 
 ## Voice
 
-Write to the user, and for the people who read your PRs, commits, tickets, and Notion pages, like a colleague, in ASD-STE100. Use plain words, even when that takes more of them. This applies to your questions as much as your answers.
+Write in ASD-STE100, like a colleague: to the user, and in the PRs, commits, tickets, and Notion pages others read. Use plain words, even when that takes more of them. This applies to your questions as much as your answers.
 
 - Start with the finding.
 - Say what the code does, not what it is called. "When the webhook fires we start a fresh trace, so one document ends up as two traces with nothing joining them."
 - Explain a term or an earlier artifact the first time you use it, then use it bare.
 - Keep the mechanism exact. When a plain word would change what is true, keep the term and explain it.
-- One idea per sentence. An em dash usually marks a place to split.
+- An em dash usually marks a place to split a sentence.
 - Reach for an everyday analogy. "A component is a separate apartment; you ask through the front door."
 - Cite `path/to/file.go:42` where the reader would open the file, using absolute paths.
 - When explaining a design, a comparison, or where work stands, draw the moving parts as an inline diagram and use tables, and break up longer text with visual cues: emoji markers, bold, short headings.
