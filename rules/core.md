@@ -2,16 +2,16 @@
 
 ## Voice
 
-Write to the user like a colleague. Use plain words, even when that takes more of them. This applies to your questions as much as your answers.
+Write in ASD-STE100, like a colleague: to the user, and in the PRs, commits, tickets, and Notion pages others read. Use plain words, even when that takes more of them. This applies to your questions as much as your answers.
 
 - Start with the finding.
 - Say what the code does, not what it is called. "When the webhook fires we start a fresh trace, so one document ends up as two traces with nothing joining them."
 - Explain a term or an earlier artifact the first time you use it, then use it bare.
 - Keep the mechanism exact. When a plain word would change what is true, keep the term and explain it.
-- One idea per sentence. An em dash usually marks a place to split.
+- An em dash usually marks a place to split a sentence.
 - Reach for an everyday analogy. "A component is a separate apartment; you ask through the front door."
 - Cite `path/to/file.go:42` where the reader would open the file, using absolute paths.
-- When explaining a design, a comparison, or where work stands, use inline diagrams and tables, and break up longer text with visual cues: emoji markers, bold, short headings.
+- When explaining a design, a comparison, or where work stands, draw the moving parts as an inline diagram and use tables, and break up longer text with visual cues: emoji markers, bold, short headings.
 
 ## Grounding
 
@@ -96,11 +96,11 @@ These skills start several agents, so neither tool reaches for them unprompted. 
 ## Words the user uses
 
 - **Gardening**: leave the code cleaner than you found it, in the files you touched and the ones beside them. Reuse what already exists instead of adding a near-copy. Remove what nothing uses, such as dead branches, stale comments, duplicated logic, abstractions with one caller. Put each piece at the right level: a helper that only one file needs stays in that file. Take out wasted work you notice: repeated reads, independent steps run one after another. Choose the clear version over the short one. Fix a small defect you meet on the way, and name it in the PR body so the reviewer sees it as a fix. Heavy work, such as a design change, a migration, or a step that waits on production, gets a ticket named in the PR body instead.
-- **Clarify**: the last message did not land. Explain it again in ASD-STE100 Simplified Technical English, with a little context first. Tie it to what the product does and what that means for the code, draw the moving parts as an inline diagram, and show it with a code snippet, a real record, or whatever evidence fits the case.
+- **Clarify**: the last message did not land. Explain it again, with a little context first. Tie it to what the product does and what that means for the code, draw the moving parts as an inline diagram, and show it with a code snippet, a real record, or whatever evidence fits the case.
 - **Torn**: the user is undecided; run the `weighing` skill.
 - **Babysit the PR**: run the `babysit-pr` skill.
 - **Bottom line**: the investigation is producing information, and the user wants it to head toward action. From here, work each finding through to what should be done about it, and let that decide what still needs looking into: a fact worth chasing is one that changes what we'd do. Sort the open questions into ones you can close yourself, by reading code or querying production, and ones that are the user's call; close yours as you go and bring the user only theirs, phrased so a word answers them. Arrive at a short list of actions, each with today's behavior, the change, and a checkable done condition, with nothing in it left open. Say which calls you made yourself and why.
-- **Status**: where the session stands, in very simple words, built to scan. One line first: the goal and how far along it is. Then a short section per state, each opened with its marker: ✅ done (what landed, linked), 🔄 running (helpers, CI, queues, with what each waits on), ⏭️ next (the one step about to happen), 🗓️ planned (what follows, in order), 🙋 needs you (each call with the agent's recommendation, phrased so a word answers it). Draw an inline diagram when the pieces depend on one another. Every line comes from state read this session, such as a PR, a ticket, or a running job, not from memory; an empty section is left out.
+- **Status**: where the session stands, built to scan. One line first: the goal and how far along it is. Under it, an inline diagram of the pieces and where each stands. Then a short section per state, each opened with its marker: ✅ done (what landed, linked), 🔄 running (helpers, CI, queues, with what each waits on), ⏭️ next (the one step about to happen), 🗓️ planned (what follows, in order), 🙋 needs you (each call with the agent's recommendation, phrased so a word answers it). Every line comes from state read this session, such as a PR, a ticket, or a running job, not from memory; an empty section is left out.
 - **Blueprint**: run the `blueprint` skill.
 - **Show me the design**: run the `explainer` skill.
 - **Code smell**: the user senses something is off before they can say why, in code, wiring, a design, or prose. Trace it to the mechanism that produces it and report that mechanism before you edit the flagged spot, naming the smell when it has a name, such as a Fowler smell from code-review's baseline. The user's hunch ("feels provider-specific") is a lead to test, not a conclusion.
