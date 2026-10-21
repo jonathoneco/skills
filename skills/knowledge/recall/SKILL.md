@@ -17,17 +17,19 @@ State in one line what the answer will decide, then fix the scope:
 - **Terms:** the subject's names and their near-synonyms, such as a ticket key, a branch, a page title, the product word and the code word.
 - **Window:** a fact has none; a catch-up defaults to the last 7 days. Say the window back; a request for "all" stays all.
 - **Project:** the one this session runs in. Another project's transcripts are read only when the user names that project.
-- **Machine:** this one. Notes are per machine. When the work may have run elsewhere, name the machines that might hold it, from the hosts the user's setup names, or by asking the user, and search them over SSH only after the user says yes.
+- **Machine:** this one. Notes are the same on every machine. Only run output in `~/.local/state/agent-runs/` stays on the machine that made it. When the work may have run elsewhere, name the machines that might hold its run output, from a note's `RUNS-<host>.md` or `<host>:` pointer, the hosts the user's setup names, or by asking the user, and search them over SSH only after the user says yes.
 
 When the user has already given the state (paths, branch, the change), work from it and go to step 5. Done when the question, terms, window, project, and machines are stated.
 
 ## 2. Agent notes
 
-Search `~/.local/state/agent-notes/` (the `agent-notes` skill's layout):
+Search `~/.local/state/agent-notes/` on this machine (the `agent-notes` skill's layout; it needs no SSH):
 
 1. Read `INDEX.md` and list the root beside it.
 2. Read the headers of the notes in matching folders; read a note without a header by its first lines.
 3. Grep the terms across the tree, and by header, such as `grep -rl '^Status: live'`.
+
+Run output a note points at as `<host>:~/.local/state/agent-runs/<path>` lives on that host; read it over SSH only after the user says yes.
 
 To resume an effort, read its handoff first. The trail the earlier sessions left (these notes, the durable record, the transcripts) is authoritative: what it says landed and what it decided stand, and the later steps build on them. Done when a note answers, or every term has been grepped and you can say what came back.
 

@@ -8,7 +8,7 @@ Between Reason and Write, send the user one short message: the reader, the takea
 
 ## Build folder
 
-Make it under the effort's notes folder before the first background run, which starts there. It holds the artifact's source:
+Make it under the effort's notes folder before the first background run, which starts there; page builds stay beside the notes, and screenshots and renders of 1 MB or more go to `~/.local/state/agent-runs/<effort>/`. It holds the artifact's source:
 
 - `<page>.md` per page, in Notion's markdown (the `notion-pages` skill's Markdown), the hub as `index.md`.
 - `<page>.context.md` per page: its agent context, which becomes the page's child (presentation.md's Human side and agent context).

@@ -66,7 +66,7 @@ The `principle-*` skills each cover a moment in the work, such as a plan turning
 ## Knowledge placement
 
 - Put a lesson in the repo that owns it. A general practice goes in these rules, through the repo that holds them. Project knowledge goes in that project's agent docs.
-- Put notes one session leaves for the next, such as a handoff, rulings, or a machine quirk, where the `agent-notes` skill says. Keep secrets in a real secret store.
+- Put notes one session leaves for the next, such as a handoff, rulings, or a machine quirk (which goes in `machine/<host>/`), where the `agent-notes` skill says. Keep secrets in a real secret store.
 - Write docs and code comments as present-tense facts about the system: what holds, or how it fails. Put passing state (ticket numbers, QA dates, review status, counts at a point in time) in PR bodies, commit messages, and the tracker. When a doc needs to point at a decision, cite an ADR.
 - Update the docs a change affects in the same PR as the change.
 

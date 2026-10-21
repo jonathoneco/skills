@@ -24,7 +24,7 @@ Take the shape from the ask; ask the user only when two shapes fit equally well.
 
 Then set the path from the shape's usual split and the ask:
 
-- **One page:** the author reasons, writes, and builds it in this session. Its files sit beside the effort's notes (the `agent-notes` skill): `<page>.md`, `<page>.context.md`, each diagram as `diagrams/<name>.html` with its `diagrams/<name>.caption`, and the cold read's `COLD-<n>` files. The only background run is the cold read.
+- **One page:** the author reasons, writes, and builds it in this session. Its files sit beside the effort's notes (the `agent-notes` skill): `<page>.md`, `<page>.context.md`, each diagram as `diagrams/<name>.html` with its `diagrams/<name>.caption`, and the cold read's `COLD-<n>` files. Screenshots and renders of 1 MB or more go to `~/.local/state/agent-runs/<effort>/`. The only background run is the cold read.
 - **Several pages:** the full path in [full-path.md](full-path.md): the user checks the takeaway before any page is written, a build folder holds the source, and scratch agents do the evidence reading, the diagrams, and the cold read.
 
 Done when the effort's notes name the shape and the path.
