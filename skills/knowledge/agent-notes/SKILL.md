@@ -1,11 +1,11 @@
 ---
 name: agent-notes
-description: Agent notes, the machine-local notes one session leaves for the next. Use when writing a handoff, rulings, or lessons for a later session, and to harvest an effort's notes at wrap-up.
+description: Agent notes, the notes one session leaves for the next, synced across the user's machines. Use when writing a handoff, rulings, or lessons for a later session, and to harvest an effort's notes at wrap-up.
 ---
 
 # Agent notes
 
-They live in `~/.local/state/agent-notes/` on the machine where the work ran. The bar: a later session finds the note it needs from `INDEX.md` and the note headers, without mining transcripts.
+They live in `~/.local/state/agent-notes/`, one folder that sync keeps the same on every machine, so a note saved on one machine is readable on the others within a minute. The bar: a later session finds the note it needs from `INDEX.md` and the note headers, without mining transcripts.
 
 Every note shares the language below, so notes can be found and gathered. A note is done when it has the header, every finding in it carries an evidence tag, and it sits in its effort's folder with that effort's `INDEX.md` line current.
 
@@ -13,9 +13,10 @@ Every note shares the language below, so notes can be found and gathered. A note
 
 - **One folder per effort**, named for its subject in kebab-case with no date, such as `money-picture-wireframe`. Related efforts may sit one level down in a group folder, such as `workstreams/<name>/`, with the group's rules note beside them; each effort still gets its own `INDEX.md` line.
 - **`INDEX.md`** at the root has one line per effort folder: `- <folder>/ — <what the effort is> — <status>`, followed by the ids of the sessions that worked the effort, so their transcripts can be mined later. Create it, and the root with mode 0700, when missing.
-- **`machine/`** holds stable facts about this machine that outlast any effort: paths, tool quirks, where something is installed.
+- **`machine/<host>/`** holds stable facts about that machine that outlast any effort: paths, tool quirks, where something is installed. Any machine can read the others' folders.
 - **`archive/`** holds the folders of done efforts.
-- **Files that aren't notes**, such as scripts, data pulls, page builds, and markdown that is data, such as a cached ticket body, live in their effort's folder and carry no header. Database dumps and raw production rows that hold personal data go only where the user names.
+- **Files that aren't notes**, such as scripts, small data, page builds, and markdown that is data, such as a cached ticket body, live in their effort's folder and carry no header.
+- **`~/.local/state/agent-runs/<effort>/`** is the local home for bulk or machine-bound run output. It never syncs. These go there, not into the notes: test-run trees and fixtures, logs and event dumps, any file of 1 MB or more, cloned repos (`.git`), `node_modules`, archives, database dumps, `private/` data, and copies of agent config. Database dumps, raw production rows that hold personal data, and `private/` data go only there. A note points at such output as `<host>:~/.local/state/agent-runs/<path>`.
 
 ## Shared language
 
@@ -50,8 +51,12 @@ Bump `Touched:` whenever you change a note.
 - Keep one copy of each draft; an older version worth keeping goes in a `vN/` folder beside it.
 - A note points at durable places: the effort's folder, a repo path, a tracker key, or a URL, never `/tmp`.
 - A note another replaces is marked superseded, naming the note that replaces it.
-- The session that moves a file updates every path that pointed at it: grep the notes tree and the repos for the old path, and change each hit. The move is done when that grep finds the old path nowhere.
+- The session that moves a file updates every path that pointed at it: grep the notes tree and the repos for the old path, and change each hit. The move is done when that grep finds the old path nowhere. When the file moves into `agent-runs`, the note's pointer names the host.
 - A folder whose notes have no header predates this skill; the first session that works in it follows [legacy.md](legacy.md).
+
+## Sync
+
+Two machines that save one file within seconds leave a `*.sync-conflict-*` copy beside it. Merge the copy into the original, then delete the copy. Find them with `find ~/.local/state/agent-notes -name '*.sync-conflict-*'`. `INDEX.md` stays one file.
 
 ## Searching
 
