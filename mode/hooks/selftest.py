@@ -275,6 +275,15 @@ for CODEX_TEST in (False, True):
                "verify against the real artifact", "principle-fix-root-causes traced the defect.")
     paired("successful check", [prompt, load, edit] + shell("python3 importer.py"), "",
            "principle-fix-root-causes traced the defect.")
+    for command, counts in (("flock /l/check.lock pnpm run check", True),
+                            ("flock -w 60 /l/check.lock pnpm exec vitest run x", True),
+                            ("ssh host 'cd /r && flock /l/check.lock pnpm run check > /l/log 2>&1; tail -3 /l/log'", True),
+                            ("flock /l/check.lock flock /l/docker.lock pnpm run check:host", True),
+                            ("timeout -k 5 300 pnpm run check", True),
+                            ("timeout 300 git status", False),
+                            ("flock /l/check.lock git status", False)):
+        paired("lock wrapper: " + command, [prompt, load, edit] + shell(command),
+               "" if counts else "verify against the real artifact", "principle-fix-root-causes traced the defect.")
     paired("failed check", [prompt, load, edit] + shell("python3 importer.py", False),
            "verify against the real artifact", "principle-fix-root-causes traced the defect.")
     paired("later edit resets verification", [prompt, load, edit] + shell("python3 importer.py") + [edit] + shell("git status"),
