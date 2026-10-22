@@ -10,6 +10,6 @@ Done when every fallen-due reading is closed, or listed for the digest's Waiting
 
 ## 2. Build the digest and apply the answers
 
-Build the digest and apply the user's answers as the `decision-log` skill says for a digest. Each item that waits on the user opens with what is stopped and what their answer frees. When a cross-project session exists, hand it the digest instead; it merges every orchestrator's digest into the one the user reads.
+*Principles: `principle-explain-the-number`.* A number in the digest comes from the run that measured it, after you read the constant or default that bounds it. Build the digest and apply the user's answers as the `decision-log` skill says for a digest. Each item that waits on the user opens with what is stopped and what their answer frees. When a cross-project session exists, hand it the digest instead; it merges every orchestrator's digest into the one the user reads.
 
 Done when the `decision-log` skill's digest is built and applied, or the cross-project session holds the digest.

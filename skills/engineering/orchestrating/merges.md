@@ -17,7 +17,8 @@ Done when you know which checks run at this head.
 - (engine) Every ticket named on the ticket's `Merges after` lines is on `origin/main`. Until then the PR waits at ready; once they are, the lane catches up, replaces the stand-in with the real code, and CI is green on the new exact head.
 - (you) Every Done box is met, judged by behavior, not by shape (the `ticket` skill's Done). The lane proves each box, naming each test that ran; a test that skipped, such as one whose gitignored fixtures or credentials are missing from the lane's worktree, proves nothing. The orchestrator reads that proof and spot-checks one against the real artifact, as the `principle-prove-it-works` skill says. A box whose prover is merge-time CI is ticked when the merge lands (step 5).
 - (you) The cross-ticket check is clean (step 3).
-- (you) The PR body is read against the ticket's Decided section, not only against the diff. A body that states a target nobody ruled, or cites a question as the ruling, is corrected before the merge.
+- (you) Each new exemption or allowlist label in the diff is read for what it stops checking, and the merge waits on a label that stops a check the change needs.
+- (you) The PR body is read against the ticket's Decided section, not only against the diff. A body that states a target nobody ruled, or cites a question as the ruling, is corrected before the merge. The orchestrator edits a lane's PR body after the lane's last evidence publish and before the merge gate. The evidence publish rewrites the PR body, so an edit made before it is lost. The edit lives in a script that can run again, and the gate waits for any check the edit reruns.
 - (you) No question to the user about this PR is open.
 
 When the lane engine verifies an (engine) check at ready, record its verdict from the engine's ready event instead of checking again. Run the (you) checks and the effort's own checks yourself.
@@ -29,6 +30,8 @@ Done when every check, the skill's and the effort's, has a ledger row that step 
 ## 3. The cross-ticket check
 
 This is the check only the orchestrator can do. It runs before the merge, since a PR merged before its check can break the premise of the tickets after it. For each ticket linked directly (blocks, blocked by, merges after): list each Decided premise that names a path, shape, or behavior the diff touches. For each premise, say whether the diff keeps it true, breaks it, does its work early, or leaves out work the premise expects from this PR. A break or a leave-out goes back to the lane; work done early is noted on the linked ticket. When the diff adds a name to a shared file, such as a message catalog, a registry, or a shared type, and a lane that merged first added the same thing under another name, the lane adopts the name already on `main` before the merge.
+
+When another orchestrator's lane also edits a shared file, ask that file's owner first. Agree once, by message, that the second PR to land merges `main`, keeps both changes, and runs the file on the merged tree. A draft handed from one session to another has one named writer.
 
 Done when every listed premise has one of those verdicts with a `file:line` from the diff.
 
