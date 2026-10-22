@@ -228,6 +228,10 @@ def read_codex_session(path):
     return s
 
 
+# Wrappers that take one argument before the command they run, with the options that take a value.
+ARG_WRAPPERS = {"flock": ("-w", "--timeout", "-E", "--conflict-exit-code"), "timeout": ("-s", "--signal", "-k", "--kill-after")}
+
+
 def commands(command):
     """Each simple command in a shell line as its words, heredoc bodies dropped, leading
     variable assignments and wrappers stripped."""
@@ -239,6 +243,13 @@ def commands(command):
         except ValueError:
             words = seg.split()
         while words and (re.match(r"^\w+=", words[0]) or words[0] in ("sudo", "command", "time", "exec", "env")):
+            words = words[1:]
+        while words and words[0] in ARG_WRAPPERS:
+            # flock [options] <lock> <command>, timeout [options] <duration> <command>: the command after the argument runs.
+            valued = ARG_WRAPPERS[words[0]]
+            words = words[1:]
+            while words and words[0].startswith("-"):
+                words = words[2:] if words[0] in valued else words[1:]
             words = words[1:]
         if words:
             out.append(words)
