@@ -28,7 +28,7 @@ Filing is done when steps 1–6 each meet their done condition.
 
 Linear stores a description with its markdown rewritten and its words unchanged. Normalize these on both sides before comparing:
 
-- `- ` bullets become `* `. Bold splits around a code span: `` **In `a.ts`,** `` reads back as `` **In** `a.ts`**,** ``. An ordered list is indented a space, along with any code block inside it. A table divider `|---|` becomes `| -- |`. Square brackets are escaped, so `[obs]` reads back `\[obs\]`, and a `#` in a table cell reads back `\#`. A double-backtick span gains a space on each side. A bare URL becomes a link. A relative link `[x](path)` reads back as `[x](<path>)`. A `~` outside code reads back `\~`, and a `\"` outside code loses its backslash. Italic `_(…)_` reads back as `*…*`, split around a code span inside it the way bold is. A `> - ` bullet in a blockquote reads back as `> * `.
+- `- ` bullets become `* `. Bold splits around a code span: `` **In `a.ts`,** `` reads back as `` **In** `a.ts`**,** ``. An ordered list is indented a space, along with any code block inside it. A table divider `|---|` becomes `| -- |`. Square brackets are escaped, so `[obs]` reads back `\[obs\]`, and a `#` in a table cell reads back `\#`. A double-backtick span gains a space on each side. A bare URL becomes a link. A relative link `[x](path)` reads back as `[x](<path>)`. A `~` outside code reads back `\~`, and a `\"` outside code loses its backslash. Italic `_(…)_` reads back as `*…*`, split around a code span inside it the way bold is. A `> - ` bullet in a blockquote reads back as `> * `. A checked task box `- [x]` reads back as `- [X]`.
 
 Fix these in the draft before writing:
 
@@ -47,7 +47,7 @@ Fix these in the draft before writing:
 Write around these:
 
 - A string-replacement edit anchored on the draft's text matches nothing in the stored body, so it writes nothing. Send the whole body.
-- A ticket's state can't be set to Duplicate until the duplicate relation exists. Add the relation first.
+- A ticket's state can't be set to Duplicate until the duplicate relation exists. Add the relation first. Setting Duplicate then moves every other relation of the closed ticket onto the canonical ticket: read the canonical ticket's relations back, and keep or remove each one that moved.
 - An estimate of 0 is refused with "invalid issue estimate" on a team whose estimates aren't configured (`issueEstimationType: notUsed`), while 1, 2 and 4 are accepted. File an estimate-0 ticket, such as a design ticket, with no estimate.
 - A project description holds at most 255 characters, and a longer one fails the create. Put the rest in the project's content.
 - The API's `projects` filter needs `accessibleTeams: { some: { key: { eq: "<KEY>" } } }`; a bare team filter errors.
