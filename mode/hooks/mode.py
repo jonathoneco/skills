@@ -65,8 +65,14 @@ def route(prompt):
     return [row for _, _, row in sorted(scored, key=lambda t: t[:2])[:MAX_ROUTED]]
 
 
+HEREDOC_BODY = re.compile(r"<<-?\s*['\"]?(\w+)['\"]?[^\n]*\n.*?^\s*\1\s*$", re.S | re.M)
+# A quoted string that is not a redirect target is text; a `>` inside it writes nothing.
+QUOTED_TEXT = re.compile(r"(?<!>)(?<!> )('[^']*'|\"(?:\\.|[^\"\\])*\")", re.S)
+
+
 def shell_writes(command):
-    return SHELL_WRITE.findall(command or "")
+    text = QUOTED_TEXT.sub(" ", HEREDOC_BODY.sub(" ", command or ""))
+    return SHELL_WRITE.findall(text)
 
 
 def edit_lines(name, inp):
@@ -235,7 +241,7 @@ ARG_WRAPPERS = {"flock": ("-w", "--timeout", "-E", "--conflict-exit-code"), "tim
 def commands(command):
     """Each simple command in a shell line as its words, heredoc bodies dropped, leading
     variable assignments and wrappers stripped."""
-    text = re.sub(r"<<-?\s*['\"]?(\w+)['\"]?[^\n]*\n.*?^\s*\1\s*$", " ", command or "", flags=re.S | re.M)
+    text = HEREDOC_BODY.sub(" ", command or "")
     out = []
     for seg in re.split(r"[;&|\n]+", text):
         try:

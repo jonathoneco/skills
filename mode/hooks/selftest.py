@@ -117,6 +117,14 @@ check("stop: write then run in one command", "stop", STOP,
 check("stop: write alone is reminded", "stop", STOP, [line("prompt", BUG), line("tool", "Bash", {"command": WRITE})], "ran nothing")
 check("stop: write then git add is not a run", "stop", STOP,
       [line("prompt", BUG), line("tool", "Bash", {"command": WRITE + "\ngit add /tmp/count.py"})], "ran nothing")
+# A `>` inside a heredoc body or a quoted string is text, not a redirect: no write, no reminder.
+BODY = "".join("line %d names wiring/<key>.ts\n" % i for i in range(30))
+check("stop: heredoc body text is not a write", "stop", STOP,
+      [line("prompt", "Show the queue."), line("tool", "Bash", {"command": "cat > /tmp/brief.txt <<'EOF'\n" + BODY + "EOF"})], "")
+check("stop: quoted text is not a write", "stop", STOP,
+      [line("prompt", "Show the queue."), line("tool", "Bash", {"command": "python3 -c 'print(\"" + "a<b>.ts\n" * 30 + "\")' > /tmp/out.txt"})], "")
+check("stop: quoted redirect target is still a write", "stop", STOP,
+      [line("prompt", BUG), line("tool", "Bash", {"command": WRITE.replace("> /tmp/count.py", "> \"/tmp/count.py\"")})], "ran nothing")
 NAMED = dict(STOP, last_assistant_message="principle-fix-root-causes: traced it")
 check("stop: reply names a principle, edit unverified", "stop", NAMED, edited, "principle-prove-it-works", "This task called for")
 check("stop: reply names a principle, edit verified", "stop", NAMED,
