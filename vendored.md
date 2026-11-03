@@ -2,7 +2,7 @@
 
 These skills were copied in from upstream repos and are edited here; this repo owns them now. Each row says where a skill came from and the upstream commit it was last brought up to. The `updating-vendored` skill in `.agents/skills/` walks through bringing in upstream changes, and bumps the commit here when they are in.
 
-All three sources are MIT licensed. Their licence texts are kept word for word in [`licenses/`](./licenses/): [mattpocock/skills](./licenses/mattpocock.txt), [cursor/plugins pstack](./licenses/pstack.txt), and [DietrichGebert/ponytail](./licenses/ponytail.txt).
+The three repo sources are MIT licensed. `dataviz` and `simplify` are copied from skills Claude Code bundles, which ship with no licence file; they stay under Anthropic's terms, not this repo's MIT licence. Its palette checker carries Color.js's MIT notice in `scripts/validate_palette.py`. Their licence texts are kept word for word in [`licenses/`](./licenses/): [mattpocock/skills](./licenses/mattpocock.txt), [cursor/plugins pstack](./licenses/pstack.txt), and [DietrichGebert/ponytail](./licenses/ponytail.txt).
 
 | Skill | Here | Source | Upstream path | Last synced |
 | --- | --- | --- | --- | --- |
@@ -15,6 +15,7 @@ All three sources are MIT licensed. Their licence texts are kept word for word i
 | codebase-design | `skills/engineering/codebase-design` | mattpocock/skills | `skills/engineering/codebase-design` | `49dd158` |
 | correct | `skills/engineering/correct` | cursor/plugins | `pstack/skills/correct` | `9f451cf` |
 | create-verification-skill | `skills/engineering/create-verification-skill` | cursor/plugins | `pstack/skills/create-verification-skill` | `9f451cf` |
+| dataviz | `skills/engineering/dataviz` | Claude Code (bundled skill) | `dataviz` | `2.1.312` |
 | domain-modeling | `skills/engineering/domain-modeling` | mattpocock/skills | `skills/engineering/domain-modeling` | `49dd158` |
 | figure-it-out | `skills/reasoning/figure-it-out` | cursor/plugins | `pstack/skills/figure-it-out` | `9f451cf` |
 | grill-me | `skills/reasoning/grill-me` | mattpocock/skills | `skills/productivity/grill-me` | `49dd158` |
@@ -58,6 +59,7 @@ All three sources are MIT licensed. Their licence texts are kept word for word i
 | principle-type-system-discipline | `skills/reasoning/principle-type-system-discipline` | cursor/plugins | `pstack/skills/principle-type-system-discipline` | `9f451cf` |
 | research | `skills/reasoning/research` | mattpocock/skills | `skills/engineering/research` | `49dd158` |
 | show-me-your-work | `skills/reasoning/show-me-your-work` | cursor/plugins | `pstack/skills/show-me-your-work` | `9f451cf` |
+| simplify | `skills/engineering/simplify` | Claude Code (built-in command) | `simplify` | `2.1.317` |
 | tdd | `skills/engineering/tdd` | mattpocock/skills | `skills/engineering/tdd` | `49dd158` |
 | teach | `skills/reasoning/teach` | mattpocock/skills | `skills/productivity/teach` | `49dd158` |
 | technical-writing | `skills/knowledge/technical-writing` | cursor/plugins | `pstack/skills/technical-writing` | `9f451cf` |
