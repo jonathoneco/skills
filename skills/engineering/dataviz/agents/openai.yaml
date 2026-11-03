@@ -1,0 +1,3 @@
+interface:
+  display_name: "Dataviz"
+  short_description: "Charts and dashboards that read as one system, with a palette validator"

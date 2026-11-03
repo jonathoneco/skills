@@ -2,7 +2,7 @@
 
 These skills were copied in from upstream repos and are edited here; this repo owns them now. Each row says where a skill came from and the upstream commit it was last brought up to. The `updating-vendored` skill in `.agents/skills/` walks through bringing in upstream changes, and bumps the commit here when they are in.
 
-All three sources are MIT licensed. Their licence texts are kept word for word in [`licenses/`](./licenses/): [mattpocock/skills](./licenses/mattpocock.txt), [cursor/plugins pstack](./licenses/pstack.txt), and [DietrichGebert/ponytail](./licenses/ponytail.txt).
+The three repo sources are MIT licensed. `dataviz` is copied from the skill Claude Code bundles, which ships with no licence file; it stays under Anthropic's terms, not this repo's MIT licence. Its palette checker carries Color.js's MIT notice in `scripts/validate_palette.py`. Their licence texts are kept word for word in [`licenses/`](./licenses/): [mattpocock/skills](./licenses/mattpocock.txt), [cursor/plugins pstack](./licenses/pstack.txt), and [DietrichGebert/ponytail](./licenses/ponytail.txt).
 
 | Skill | Here | Source | Upstream path | Last synced |
 | --- | --- | --- | --- | --- |
@@ -15,6 +15,7 @@ All three sources are MIT licensed. Their licence texts are kept word for word i
 | codebase-design | `skills/engineering/codebase-design` | mattpocock/skills | `skills/engineering/codebase-design` | `49dd158` |
 | correct | `skills/engineering/correct` | cursor/plugins | `pstack/skills/correct` | `9f451cf` |
 | create-verification-skill | `skills/engineering/create-verification-skill` | cursor/plugins | `pstack/skills/create-verification-skill` | `9f451cf` |
+| dataviz | `skills/engineering/dataviz` | Claude Code (bundled skill) | `dataviz` | `2.1.312` |
 | domain-modeling | `skills/engineering/domain-modeling` | mattpocock/skills | `skills/engineering/domain-modeling` | `49dd158` |
 | figure-it-out | `skills/reasoning/figure-it-out` | cursor/plugins | `pstack/skills/figure-it-out` | `9f451cf` |
 | grill-me | `skills/reasoning/grill-me` | mattpocock/skills | `skills/productivity/grill-me` | `49dd158` |
