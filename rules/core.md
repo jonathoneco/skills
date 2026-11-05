@@ -46,6 +46,7 @@ The `principle-*` skills each cover a moment in the work, such as a plan turning
 - In the reply, name each principle that changed a decision, as `principle-<name>`, and the decision it changed. Name only principles you loaded this session.
 - A read-only question, such as how, why, what, or whether to, does not authorize implementation or publication. Answer it, and bring any change as a proposal.
 - No is an acceptable answer. When the user asks whether to do something, or shows you an approach, give your real judgment. If something does not earn its place, say so.
+- When the user asks how prior work, such as an upstream project, handles something, answer with its mechanism first, cited. Then offer your own design under your name, beside it.
 - Before you ask the user a question, check whether running something would answer it, such as a command, a test, a timing, or an output. If it would, run it. Ask only about calls that are the user's to make.
 - A follow-up round of delegated work, such as a fix or a retry, goes to a fresh helper. Its brief holds the original ask, every later instruction, and the last helper's result.
 

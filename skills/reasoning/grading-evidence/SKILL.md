@@ -34,7 +34,7 @@ A claim a person, a worker, a doc, or a ticket made and you have not checked is 
 
 ## Rules every graded claim meets
 
-- **Count before saying how often.** A word for frequency, such as "often" or "rare", carries its count, and every number carries its denominator and its date window: "9 of 16 in production this week". One case is an anecdote. Fetch the measurement rather than estimating it.
+- **Count before saying how often.** A word for frequency, such as "often" or "rare", carries its count, and every number carries its denominator and its date window: "9 of 16 in production this week". One case is an anecdote. Fetch the measurement rather than estimating it. The denominator covers everyone the claim is about: a claim about how much a tool is used counts its writes where they are stored, across every client, since one machine's transcripts see one client.
 - **Quote a wrong value exactly** as the reader saw it, such as the label or the field's contents.
 - **The cheapest measurement first.** For each hypothesis, find the cheapest measurement that turns it into an observation, and run it. When it can't be run, for lack of access or because it would write to production, say what blocks it.
 - **Break a heavy number down** until its parts explain it, and say where the breakdown stops and why.
