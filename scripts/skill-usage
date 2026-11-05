@@ -1,0 +1,793 @@
+#!/usr/bin/env python3
+"""Count skill loads in Claude Code and Codex session logs.
+
+Usage: scripts/skill-usage [--format summary|events|both] [--since DATE|DATETIME]
+       [--until DATE|DATETIME] [--machine-label LABEL] [--home PATH]
+       scripts/skill-usage contexts [same window options]   one row per load, with prompt text
+       scripts/skill-usage prompts  [same window options]   one row per real prompt, interactive sessions
+       scripts/skill-usage excerpt FILE LINE [--after 40]   readable view of one spot in a log
+
+A date means that whole day in UTC. A datetime takes its own offset, so
+--until 2026-11-04T16:45:00-05:00 stops at that moment.
+
+What counts as a load
+  Claude Code: a Skill tool call, or a user slash command
+  (<command-name>/skill</command-name>). Subagent logs are read too
+  (<project>/<session>/subagents/agent-*.jsonl).
+  Codex has no Skill tool. A load is (a) a tool call that reads a path ending
+  in <skill>/SKILL.md with cat, sed, head, tail, nl, rg, grep, bat, less, more
+  or awk, or (b) the <skill> message Codex injects when the user types $skill.
+  Skill lists in the session preamble are not loads.
+  One command that names three or more SKILL.md files, or that loops
+  (for, while, find, xargs) over them, is a sweep: it is recorded with mode
+  "sweep" and kept out of loads.
+
+How a load is classified (first rule that matches wins)
+  user   The last real user prompt names the skill as /name or $name, or says
+         use, load, run, invoke, read or follow <name>; or the load is a slash
+         command or a Codex <skill> injection. A real prompt is a user record
+         that is not a tool result, not a meta record, not a compaction
+         summary, and not Codex preamble (AGENTS.md, environment context).
+  hook   Hook output since the last real user prompt names the skill. Hyphenated
+         names match as bare words. Names without a hyphen must sit in backticks
+         or quotes, so a word such as "how" in prose does not match.
+         Claude hook shapes: attachment records whose type starts with hook_
+         (hook_additional_context.content, hook_success.stdout/content,
+         hook_blocking_error.blockingError), system stop_hook_summary
+         .hookAdditionalContext, and isMeta user records that begin
+         "Stop hook feedback". Codex hook shapes: developer messages that begin
+         "[mode]" and item_completed events whose item type is HookPrompt.
+  model  Anything else.
+
+Dedup: one load per (file, skill, turn) where a turn starts at a real user
+prompt, classified by its first call; raw_reads counts the tool calls inside that load. Sweeps dedupe the
+same way and are reported apart.
+
+Origin (where a person could have corrected the agent)
+  interactive      a person typed the prompts
+  claude-subagent  Agent-tool sidechain (isSidechain, subagents/ folder)
+  claude-exec      Claude Code entrypoint sdk-cli (non-interactive)
+  codex-subagent   Codex thread_spawn subagent
+  codex-exec       Codex originator codex_exec or plannotator, or source exec
+
+skill_work is yes when the session's cwd is under ~/src/skills or
+~/src/skills-personal, or when the session loaded ten or more distinct skills.
+Those sessions read SKILL.md files to edit or audit them.
+
+Text views (contexts, prompts, excerpt) print personal transcript text, flattened
+to one line and with credentials replaced by [redacted]. Keep their output out of
+the repo. The counting formats above never print transcript text.
+  contexts  prompt_before is the last real prompt at or before the load (in a
+            subagent or exec log that is the parent's prompt). next_prompts holds
+            the next 3 real prompts in the same log file, tools_after the next 25
+            tool calls. A Codex session resumed into a new file starts with
+            empty next_prompts at the end of the earlier file.
+  excerpt   works over ssh: ssh HOST python3 - excerpt FILE LINE < scripts/skill-usage
+"""
+import argparse
+import bisect
+import collections
+import datetime
+import glob
+import json
+import os
+import re
+import sys
+
+
+THIRD_PARTY = {
+    "find-skills", "herdr", "hyperframes", "media-use", "notion-cli",
+    "playwright-cli", "plannotator-annotate", "plannotator-last",
+    "plannotator-review",
+}
+SWEEP_NAMES = 3
+BREADTH = 10
+KEEP_CHARS = 1200
+SKILLS_CWD = re.compile(r"/src/skills(?:-personal)?(?:/|$)")
+READ_CMD = re.compile(r"(?:^|[;&|{(\s\"':])(?:cat|sed|head|tail|nl|rg|grep|bat|less|more|awk)\s+")
+LOOP_CMD = re.compile(r"\bfor\s+\w+\s+in\b|\bwhile\b[^\n]*\bdo\b|\bxargs\b|\bfind\s")
+GLOB_PATH = re.compile(r"[*?{][^\s\"']*SKILL\.md")
+NOT_PROMPT = ("This session is being continued", "[Request interrupted")
+CODEX_PREAMBLE = ("# AGENTS.md", "<environment_context>", "<skill>", "<user_instructions>",
+                  "<turn_aborted>", "<subagent_notification>", "<user_shell_command>")
+ORIGINS = {"claude": ("interactive", "claude-subagent", "claude-exec"),
+           "codex": ("interactive", "codex-subagent", "codex-exec")}
+
+
+def names(home):
+    found = set()
+    roots = [os.path.join(home, "src/skills/skills"),
+             os.path.join(home, "src/skills-personal/skills")]
+    for root in roots:
+        for path in glob.glob(os.path.join(root, "**/SKILL.md"), recursive=True):
+            try:
+                with open(path, encoding="utf-8") as f:
+                    lines = f.read().splitlines()
+                if lines and lines[0] == "---":
+                    for line in lines[1:]:
+                        if line == "---":
+                            break
+                        match = re.match(r"^name:\s*([A-Za-z0-9_.-]+)\s*$", line)
+                        if match:
+                            found.add(match.group(1))
+                            break
+            except OSError:
+                continue
+    # The copied third-party skills include the hyperframes-* family.
+    for store in (".agents/skills", ".claude/skills"):
+        root = os.path.join(home, store)
+        for name in THIRD_PARTY:
+            if os.path.isfile(os.path.join(root, name, "SKILL.md")):
+                found.add(name)
+        for path in glob.glob(os.path.join(root, "hyperframes-*", "SKILL.md")):
+            found.add(os.path.basename(os.path.dirname(path)))
+    return sorted(found)
+
+
+def parse_bound(text, end):
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", text):
+        day = datetime.date.fromisoformat(text)
+        if end:
+            day += datetime.timedelta(days=1)
+        return datetime.datetime.combine(day, datetime.time(), datetime.timezone.utc), end
+    dt = datetime.datetime.fromisoformat(text.replace("Z", "+00:00"))
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=datetime.timezone.utc)
+    return dt, False
+
+
+def stamp(value):
+    if not value:
+        return None
+    try:
+        dt = datetime.datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+    except (ValueError, TypeError):
+        return None
+    return dt if dt.tzinfo else dt.replace(tzinfo=datetime.timezone.utc)
+
+
+class Window:
+    def __init__(self, since, until, until_exclusive):
+        self.since, self.until, self.until_exclusive = since, until, until_exclusive
+
+    def has(self, value):
+        dt = stamp(value)
+        if dt is None or dt < self.since:
+            return False
+        return dt < self.until if self.until_exclusive else dt <= self.until
+
+
+def text_of(content):
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        return "\n".join(str(x.get("text", "")) for x in content
+                         if isinstance(x, dict) and x.get("type") in ("text", "input_text"))
+    return ""
+
+
+def user_re(skill):
+    name = re.escape(skill)
+    return re.compile(rf"[/$]{name}(?![\w-])|\b(?:use|load|run|invoke|read|follow)\s+(?:the\s+)?{name}(?![\w-])", re.I)
+
+
+def hook_re(skill):
+    name = re.escape(skill)
+    if "-" in skill:
+        return re.compile(rf"(?<![\w-]){name}(?![\w-])")
+    return re.compile(rf"[`'\"]{name}[`'\"]")
+
+
+def mode_for(skill, prompt_text, hook_text):
+    if user_re(skill).search(prompt_text):
+        return "user"
+    if hook_text and hook_re(skill).search(hook_text):
+        return "hook"
+    return "model"
+
+
+def walk_text(value):
+    """Yield every string inside a JSON value."""
+    if isinstance(value, str):
+        yield value
+    elif isinstance(value, list):
+        for item in value:
+            yield from walk_text(item)
+    elif isinstance(value, dict):
+        for item in value.values():
+            yield from walk_text(item)
+
+
+class Parsed:
+    """What one log file yielded."""
+
+    def __init__(self, path, keep=""):
+        self.path = path
+        self.keep = keep      # "" (counting only), "short" (prompts and tools), "full" (everything)
+        self.recs = []        # (kind, ts, line, turn, text, name), see rec()
+        self.events = []      # (skill, mode, ts, line, turn, raw)
+        self.recognized = False
+        self.malformed = 0
+        self.session_id = os.path.basename(path)[:-6]
+        self.parent_session_id = ""
+        self.origin = "interactive"
+        self.cwd = ""
+
+    def rec(self, kind, ts, line, turn, text="", name=""):
+        """Keep one readable record: prompt, tool, and (full only) hook, assistant, result."""
+        if self.keep == "full" or (self.keep == "prompts" and kind == "prompt") or (self.keep == "short" and kind in ("prompt", "tool")):
+            self.recs.append((kind, ts, line, turn, text if kind == "hook" else text[:KEEP_CHARS], name))
+
+
+def claude_files(home, since):
+    # A log not changed since before the window cannot hold a load in the window.
+    earliest = (since - datetime.timedelta(days=1)).timestamp()
+    pattern = ("*/*.jsonl", "*/*/subagents/*.jsonl")
+    for pat in pattern:
+        for path in glob.glob(os.path.join(home, ".claude/projects", pat)):
+            try:
+                if os.path.getmtime(path) >= earliest:
+                    yield path
+            except OSError:
+                continue
+
+
+def codex_files(home, since, until):
+    lo = since.date() - datetime.timedelta(days=1)
+    hi = until.date() + datetime.timedelta(days=1)
+    for pattern in (".codex/sessions/**/*.jsonl", ".codex/archived_sessions/*.jsonl"):
+        for path in glob.glob(os.path.join(home, pattern), recursive=True):
+            match = re.search(r"/sessions/(\d{4})/(\d{2})/(\d{2})/", path)
+            if match:
+                day = datetime.date(*(int(x) for x in match.groups()))
+                if day < lo or day > hi:
+                    continue
+            yield path
+
+
+def claude_prompt(row):
+    """Return the text of a real user prompt, else None."""
+    if row.get("isMeta"):
+        return None
+    content = (row.get("message") or {}).get("content")
+    if isinstance(content, list) and any(isinstance(b, dict) and b.get("type") == "tool_result" for b in content):
+        return None
+    text = text_of(content)
+    if not text.strip() or text.startswith(NOT_PROMPT):
+        return None
+    return text
+
+
+def claude_hook_text(row):
+    """Return hook output carried by a record, else ''."""
+    kind = row.get("type")
+    if kind == "attachment":
+        att = row.get("attachment") or {}
+        if str(att.get("type", "")).startswith("hook_"):
+            return "\n".join(walk_text([att.get(k) for k in ("content", "stdout", "blockingError")]))
+    elif kind == "system" and row.get("subtype") == "stop_hook_summary":
+        return "\n".join(walk_text(row.get("hookAdditionalContext")))
+    elif kind == "user" and row.get("isMeta"):
+        text = text_of((row.get("message") or {}).get("content"))
+        if text.startswith("Stop hook feedback"):
+            return text
+    return ""
+
+
+def claude_keep(out, row, block, line_no, turn):
+    """Keep the readable records of one content block."""
+    ts, kind = row.get("timestamp", ""), block.get("type")
+    if kind == "tool_use":
+        inp = block.get("input")
+        arg = ""
+        if isinstance(inp, dict):
+            for key in ("command", "file_path", "path", "pattern", "skill", "url", "query", "description", "prompt", "reason"):
+                if isinstance(inp.get(key), str):
+                    arg = inp[key]
+                    break
+            else:
+                arg = next(walk_text(list(inp.values())), "")
+        out.rec("tool", ts, line_no, turn, arg, str(block.get("name", "")))
+    elif kind == "tool_result":
+        out.rec("result", ts, line_no, turn, "\n".join(walk_text(block.get("content"))))
+    elif kind == "text" and row.get("type") == "assistant":
+        out.rec("assistant", ts, line_no, turn, str(block.get("text", "")))
+
+
+def parse_claude(path, skill_set, win, keep=""):
+    out = Parsed(path, keep)
+    if "/subagents/" in path:
+        out.parent_session_id = os.path.basename(os.path.dirname(os.path.dirname(path)))
+    prompt = hook = ""
+    turn = 0
+    sidechain = "/subagents/" in path
+    sdk = seen_sid = False
+    try:
+        f = open(path, encoding="utf-8")
+    except OSError:
+        return out
+    with f:
+        for line_no, line in enumerate(f, 1):
+            try:
+                row = json.loads(line)
+            except (ValueError, TypeError):
+                out.malformed += 1
+                continue
+            if not isinstance(row, dict):
+                continue
+            kind = row.get("type")
+            out.recognized = out.recognized or kind in ("user", "assistant")
+            sidechain = sidechain or bool(row.get("isSidechain"))
+            sdk = sdk or row.get("entrypoint") == "sdk-cli"
+            if not out.cwd and row.get("cwd"):
+                out.cwd = row["cwd"]
+            if not seen_sid and row.get("sessionId"):
+                out.session_id, seen_sid = row["sessionId"], True
+            if kind == "user":
+                text = claude_prompt(row)
+                if text is not None:
+                    prompt, hook = text, ""
+                    turn += 1
+                    out.rec("prompt", row.get("timestamp", ""), line_no, turn, text)
+                    for skill in skill_set:
+                        if ("<command-name>" in text and
+                                re.search(r"<command-name>\s*/" + re.escape(skill) + r"\s*</command-name>", text, re.I)
+                                and win.has(row.get("timestamp"))):
+                            out.events.append((skill, "user", row.get("timestamp", ""), line_no, turn, 1))
+            added = claude_hook_text(row)
+            if added:
+                hook += "\n" + added
+                out.rec("hook", row.get("timestamp", ""), line_no, turn, added)
+            msg = row.get("message")
+            content = msg.get("content") if isinstance(msg, dict) else None
+            for block in content if isinstance(content, list) else []:
+                if not isinstance(block, dict):
+                    continue
+                if out.keep:
+                    claude_keep(out, row, block, line_no, turn)
+                if block.get("type") != "tool_use" or block.get("name") != "Skill":
+                    continue
+                skill = (block.get("input") or {}).get("skill")
+                if not isinstance(skill, str):
+                    continue
+                if skill not in skill_set:
+                    skill = skill.split(":", 1)[-1]
+                    if skill not in skill_set:
+                        continue
+                if win.has(row.get("timestamp")):
+                    out.events.append((skill, mode_for(skill, prompt, hook), row.get("timestamp", ""), line_no, turn, 1))
+    out.origin = "claude-subagent" if sidechain else ("claude-exec" if sdk else "interactive")
+    return out
+
+
+def command_text(payload):
+    args = payload.get("arguments", payload.get("input", ""))
+    if isinstance(args, str):
+        try:
+            args = json.loads(args)
+        except ValueError:
+            return args
+    if isinstance(args, dict):
+        for key in ("cmd", "command", "script"):
+            if key in args:
+                return "\n".join(walk_text(args[key]))
+    return "\n".join(walk_text(args))
+
+
+def codex_origin(meta):
+    source = meta.get("source")
+    if isinstance(source, dict) and "subagent" in source:
+        return "codex-subagent"
+    if meta.get("thread_source") == "subagent":
+        return "codex-subagent"
+    if source == "exec" or meta.get("originator") in ("codex_exec", "plannotator"):
+        return "codex-exec"
+    return "interactive"
+
+
+def parse_codex(path, skill_set, win, keep=""):
+    out = Parsed(path, keep)
+    prompt = hook = ""
+    turn = 0
+    try:
+        f = open(path, encoding="utf-8")
+    except OSError:
+        return out
+    with f:
+        for line_no, line in enumerate(f, 1):
+            try:
+                row = json.loads(line)
+            except (ValueError, TypeError):
+                out.malformed += 1
+                continue
+            if not isinstance(row, dict):
+                continue
+            typ, payload = row.get("type"), row.get("payload")
+            if not isinstance(payload, dict):
+                continue
+            out.recognized = out.recognized or typ in ("session_meta", "event_msg", "response_item", "turn_context")
+            ts = row.get("timestamp", "")
+            if typ == "session_meta":
+                out.session_id = payload.get("id") or payload.get("session_id") or out.session_id
+                out.origin = codex_origin(payload)
+                out.cwd = payload.get("cwd") or out.cwd
+                out.parent_session_id = payload.get("parent_thread_id") or ""
+                continue
+            if typ == "turn_context" and not out.cwd:
+                out.cwd = payload.get("cwd") or ""
+            if typ == "event_msg" and payload.get("type") == "item_completed":
+                item = payload.get("item") or {}
+                if item.get("type") == "HookPrompt":
+                    added = "\n".join(walk_text(item.get("fragments")))
+                    hook += "\n" + added
+                    out.rec("hook", ts, line_no, turn, added)
+                continue
+            if typ != "response_item":
+                continue
+            ptype = payload.get("type")
+            if ptype == "message":
+                role = payload.get("role")
+                text = text_of(payload.get("content"))
+                if role == "developer" and text.startswith("[mode]"):
+                    hook += "\n" + text
+                    out.rec("hook", ts, line_no, turn, text)
+                elif role == "assistant":
+                    out.rec("assistant", ts, line_no, turn, text)
+                elif role == "user":
+                    if text.startswith("<skill>"):
+                        match = re.match(r"<skill>\s*<name>\s*([A-Za-z0-9_.-]+)\s*</name>", text)
+                        if match and match.group(1) in skill_set and win.has(ts):
+                            out.events.append((match.group(1), "user", ts, line_no, turn, 1))
+                    elif text.strip() and not text.startswith(CODEX_PREAMBLE):
+                        prompt, hook = text, ""
+                        turn += 1
+                        out.rec("prompt", ts, line_no, turn, text)
+            elif ptype in ("function_call_output", "custom_tool_call_output"):
+                out.rec("result", ts, line_no, turn, "\n".join(walk_text(payload.get("output"))))
+            elif ptype in ("function_call", "custom_tool_call"):
+                cmd = command_text(payload) if (out.keep or win.has(ts)) else ""
+                out.rec("tool", ts, line_no, turn, cmd, str(payload.get("name", "")))
+                if "apply_patch" in str(payload.get("name", "")).lower() or not win.has(ts):
+                    continue
+                touched = []
+                for match in re.finditer(r"(?:^|[/\\\s\"'=])([A-Za-z0-9_.-]+)[/\\]SKILL\.md\b", cmd):
+                    if match.group(1) in skill_set and match.group(1) not in touched:
+                        touched.append(match.group(1))
+                if not touched:
+                    continue
+                sweepish = len(touched) >= SWEEP_NAMES or LOOP_CMD.search(cmd) or GLOB_PATH.search(cmd)
+                if sweepish:
+                    for skill in touched:
+                        out.events.append((skill, "sweep", ts, line_no, turn, 1))
+                elif READ_CMD.search(cmd):
+                    for skill in touched:
+                        out.events.append((skill, mode_for(skill, prompt, hook), ts, line_no, turn, 1))
+    return out
+
+
+def collapse(parsed):
+    """One event per (file, skill, turn, sweep-or-load); the first call sets the mode."""
+    groups = collections.OrderedDict()
+    for skill, mode, ts, line, turn, raw in parsed.events:
+        key = (skill, turn, mode == "sweep")
+        if key in groups:
+            groups[key][5] += raw
+        else:
+            groups[key] = [skill, mode, ts, line, turn, raw]
+    return list(groups.values())
+
+
+CRED = re.compile(
+    r"\b(?:bearer\s+[A-Za-z0-9._~+/=-]{8,}|sk-[A-Za-z0-9_-]{8,}|gh[pousr]_[A-Za-z0-9]{16,}|github_pat_\w{16,}"
+    r"|xox[abp]-[A-Za-z0-9-]{8,}|AKIA[0-9A-Z]{16}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_.-]+)", re.I)
+KEYVAL = re.compile(r"\b((?:api[_-]?key|secret|token|passw(?:or)?d|authorization|auth)[\w-]*\s*[=:]\s*)[^\s\"',;]{6,}", re.I)
+BLOB64 = re.compile(r"[A-Za-z0-9+/]{41,}={0,2}")
+BLOBURL = re.compile(r"[A-Za-z0-9_-]{41,}")
+
+
+def _blob(match):
+    return "[redacted]"
+
+
+def _urlblob(match):
+    return "[redacted]"
+
+
+def flat(text, limit):
+    """One line, credentials redacted, at most `limit` characters."""
+    text = " ".join(str(text)[:limit + 300].split())
+    text = CRED.sub("[redacted]", text)
+    text = KEYVAL.sub(r"\1[redacted]", text)
+    text = BLOB64.sub(_blob, text)
+    text = BLOBURL.sub(_urlblob, text)
+    return text[:limit]
+
+
+def tool_label(name, arg):
+    return f"{name}:{flat(arg, 60)}"
+
+
+def setup(args, parser):
+    """Window, skill list and file jobs shared by every subcommand."""
+    try:
+        since, _ = parse_bound(args.since, False)
+        until, until_exclusive = parse_bound(args.until, True)
+    except ValueError as err:
+        parser.error(str(err))
+    if since >= until:
+        parser.error("--since must be before --until")
+    win = Window(since, until, until_exclusive)
+    home = os.path.abspath(os.path.expanduser(args.home))
+    skill_list = sorted(set(args.skills_list.split(","))) if args.skills_list else names(home)
+    if args.skills_list and any(not re.fullmatch(r"[A-Za-z0-9_.-]+", name) for name in skill_list):
+        parser.error("--skills-list contains an invalid skill name")
+    if not skill_list:
+        parser.error("no skill names found under the configured skill roots")
+    return win, home, skill_list
+
+
+def harness_of(path):
+    return "codex" if "/.codex/" in path or os.path.basename(path).startswith("rollout-") else "claude"
+
+
+def jobs_for(args, home, win):
+    if getattr(args, "only_file", None):
+        return [(harness_of(args.only_file), args.only_file)]
+    jobs = [("claude", p) for p in claude_files(home, win.since)]
+    jobs.extend(("codex", p) for p in codex_files(home, win.since, win.until))
+    return jobs
+
+
+def text_main(command, argv):
+    parser = argparse.ArgumentParser(prog=f"skill-usage {command}")
+    parser.add_argument("--since", default="2026-08-06")
+    parser.add_argument("--until", default="2026-11-04")
+    parser.add_argument("--machine-label", default="macbook")
+    parser.add_argument("--home", default=os.path.expanduser("~"))
+    parser.add_argument("--skills-list", help="comma-separated skill names shared across machines")
+    parser.add_argument("--only-file", help="read only this log")
+    parser.add_argument("--output", help="write the TSV here instead of stdout")
+    args = parser.parse_args(argv)
+    win, home, skill_list = setup(args, parser)
+    skill_set = set(skill_list)
+    label = args.machine_label
+    keyed = []
+    loaded = collections.defaultdict(set)
+    cwd_flag = set()
+    jobs = jobs_for(args, home, win)
+    path_by_session = collections.defaultdict(list)
+    for harness, path in jobs:
+        filename = os.path.basename(path)
+        match = re.search(r"([0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})\.jsonl$", filename, re.I)
+        if match:
+            path_by_session[(harness, match.group(1))].append(path)
+    parent_prompts = {}
+    for harness, path in jobs:
+        try:
+            parsed = (parse_claude if harness == "claude" else parse_codex)(path, skill_set, win, "short")
+        except (OSError, UnicodeError, ValueError, TypeError):
+            continue
+        events = [e for e in collapse(parsed) if e[1] != "sweep"]
+        for e in events:
+            loaded[(harness, parsed.session_id)].add(e[0])
+        if SKILLS_CWD.search(parsed.cwd):
+            cwd_flag.add((harness, parsed.session_id))
+        prompts = [r for r in parsed.recs if r[0] == "prompt"]
+        if command == "prompts":
+            if parsed.origin != "interactive":
+                continue
+            by_turn = collections.defaultdict(set)
+            for e in events:
+                by_turn[e[4]].add(e[0])
+            for _, ts, _, turn, text, _ in prompts:
+                if win.has(ts):
+                    keyed.append(((harness, ts), "\t".join([label, harness, parsed.session_id, ts, flat(parsed.cwd, 200),
+                                                           ",".join(sorted(by_turn[turn])), flat(text, 400)])))
+            continue
+        tools = [r for r in parsed.recs if r[0] == "tool"]
+        plines = [r[2] for r in prompts]
+        tlines = [r[2] for r in tools]
+        for skill, mode, ts, line, turn, raw in events:
+            i = bisect.bisect_right(plines, line)
+            if i:
+                before = flat(prompts[i - 1][4], 400)
+            else:
+                before = ""
+                parent_key = (harness, parsed.parent_session_id)
+                if parsed.parent_session_id:
+                    if parent_key not in parent_prompts:
+                        collected = []
+                        for parent_path in path_by_session.get(parent_key, []):
+                            try:
+                                parent = (parse_claude if harness == "claude" else parse_codex)(
+                                    parent_path, skill_set, win, "prompts")
+                            except (OSError, UnicodeError, ValueError, TypeError):
+                                continue
+                            collected.extend((r[1], r[4]) for r in parent.recs if r[0] == "prompt")
+                        parent_prompts[parent_key] = sorted(collected)
+                    eligible = [text for prompt_ts, text in parent_prompts[parent_key] if prompt_ts <= ts]
+                    if eligible:
+                        before = flat(eligible[-1], 400)
+            nxt = " ⏎ ".join(flat(r[4], 250) for r in prompts[i:i + 3])
+            j = bisect.bisect_right(tlines, line)
+            after = " | ".join(tool_label(r[5], r[4]) for r in tools[j:j + 25])
+            keyed.append(((harness, ts, skill), (skill, harness, parsed.origin, mode, parsed.session_id, ts,
+                                                 path, str(line), before, nxt, after)))
+    keyed.sort(key=lambda k: k[0])
+    if command == "prompts":
+        lines = ["machine\tharness\tsession_id\ttimestamp\tcwd\tskills_loaded_this_turn\tprompt"]
+        lines.extend(row for _, row in keyed)
+    else:
+        work = {k for k, v in loaded.items() if len(v) >= BREADTH} | cwd_flag
+        lines = ["skill\tmachine\tharness\torigin\tmode\tskill_work\tsession_id\ttimestamp\tfile\tline\tprompt_before\tnext_prompts\ttools_after"]
+        for _, (skill, harness, origin, mode, sid, ts, path, line, before, nxt, after) in keyed:
+            yes = "yes" if (harness, sid) in work else "no"
+            lines.append("\t".join([skill, label, harness, origin, mode, yes, sid, ts, path, line, before, nxt, after]))
+    body = "\n".join(lines) + "\n"
+    if args.output:
+        with open(args.output, "w", encoding="utf-8") as f:
+            f.write(body)
+    else:
+        sys.stdout.write(body)
+    print(f"# rows={len(lines) - 1}", file=sys.stderr)
+    return 0
+
+
+def excerpt_main(argv):
+    parser = argparse.ArgumentParser(prog="skill-usage excerpt")
+    parser.add_argument("file")
+    parser.add_argument("line", type=int)
+    parser.add_argument("--after", type=int, default=40)
+    parser.add_argument("--home", default=os.path.expanduser("~"))
+    parser.add_argument("--skills-list")
+    args = parser.parse_args(argv)
+    home = os.path.abspath(os.path.expanduser(args.home))
+    skill_list = sorted(set(args.skills_list.split(","))) if args.skills_list else names(home)
+    everything = Window(datetime.datetime.min.replace(tzinfo=datetime.timezone.utc),
+                        datetime.datetime.max.replace(tzinfo=datetime.timezone.utc), False)
+    harness = harness_of(args.file)
+    parsed = (parse_claude if harness == "claude" else parse_codex)(args.file, set(skill_list), everything, "full")
+    prompts = [r for r in parsed.recs if r[0] == "prompt" and r[2] <= args.line]
+    last = prompts[-1] if prompts else None
+    parent_last = None
+    if not last and parsed.parent_session_id:
+        if harness == "claude":
+            parent_paths = [os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(args.file))),
+                                         parsed.parent_session_id + ".jsonl")]
+        else:
+            parent_paths = [path for path in glob.glob(os.path.join(home, ".codex/sessions/**/*.jsonl"), recursive=True)
+                            + glob.glob(os.path.join(home, ".codex/archived_sessions/*.jsonl"))
+                            if os.path.basename(path).endswith(parsed.parent_session_id + ".jsonl")]
+        target_times = [ts for _, _, ts, line, _, _ in parsed.events if line >= args.line]
+        target_times.extend(ts for _, ts, line, _, _, _ in parsed.recs if line >= args.line)
+        target_time = min((ts for ts in target_times if stamp(ts)), default="")
+        candidates = []
+        for parent_path in parent_paths:
+            try:
+                parent = (parse_claude if harness == "claude" else parse_codex)(
+                    parent_path, set(skill_list), everything, "prompts")
+            except (OSError, UnicodeError, ValueError, TypeError):
+                continue
+            candidates.extend((r[1], r[2], parent_path, r[4]) for r in parent.recs
+                               if r[0] == "prompt" and (not target_time or r[1] <= target_time))
+        if candidates:
+            parent_last = max(candidates)
+    hook_text = "\n".join(r[4] for r in parsed.recs if r[0] == "hook" and r[2] <= args.line and (not last or r[2] > last[2]))
+    named = [s for s in skill_list if hook_text and hook_re(s).search(hook_text)]
+    print(f"# file={args.file} line={args.line} harness={harness} origin={parsed.origin} session={parsed.session_id}")
+    if last:
+        print(f"[prompt-before] L{last[2]} {flat(last[4], 400)}")
+    elif parent_last:
+        print(f"[prompt-before] parent={parsed.parent_session_id} {parent_last[2]}:L{parent_last[1]} {flat(parent_last[3], 400)}")
+    else:
+        print("[prompt-before] (none before this line)")
+    print(f"[hook-named] {', '.join(named) if named else '(none)'}")
+    caps = {"prompt": ("user", 300), "assistant": ("assistant", 200), "result": ("result", 120)}
+    items = []
+    for n, (kind, ts, line, turn, text, name) in enumerate(parsed.recs):
+        if line < args.line or kind == "hook":
+            continue
+        if kind == "tool":
+            items.append((line, 0, n, f"[tool] {name} {flat(text, 100)}"))
+        else:
+            label, cap = caps[kind]
+            items.append((line, 0, n, f"[{label}] {flat(text, cap)}"))
+    for skill, mode, ts, line, turn, raw in parsed.events:
+        if line >= args.line:
+            items.append((line, 1, 0, f"[skill] {skill} ({mode})"))
+    items.sort()
+    records = 0
+    for line, order, _, text in items:
+        if order == 0:
+            if records >= args.after:
+                break
+            records += 1
+        print(f"L{line} {text}")
+    return 0
+
+
+def main():
+    if len(sys.argv) > 1 and sys.argv[1] in ("contexts", "prompts"):
+        return text_main(sys.argv[1], sys.argv[2:])
+    if len(sys.argv) > 1 and sys.argv[1] == "excerpt":
+        return excerpt_main(sys.argv[2:])
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--format", choices=("summary", "events", "both"), default="summary")
+    parser.add_argument("--since", default="2026-08-06")
+    parser.add_argument("--until", default="2026-11-04")
+    parser.add_argument("--machine-label", default="macbook")
+    parser.add_argument("--home", default=os.path.expanduser("~"))
+    parser.add_argument("--skills-list", help="comma-separated skill names shared across machines")
+    parser.add_argument("--summary-output", help="write the summary TSV to this path")
+    parser.add_argument("--events-output", help="write the events TSV to this path")
+    parser.add_argument("--only-file", help="parse only this log (any harness; the path decides)")
+    args = parser.parse_args()
+    win, home, skill_list = setup(args, parser)
+    skill_set = set(skill_list)
+    jobs = jobs_for(args, home, win)
+
+    rows = []   # (skill, harness, origin, mode, sid, ts, path, line, raw, cwd)
+    files = unrecognized = malformed = errors = 0
+    for harness, path in jobs:
+        files += 1
+        try:
+            parsed = parse_claude(path, skill_set, win) if harness == "claude" else parse_codex(path, skill_set, win)
+        except (OSError, UnicodeError, ValueError, TypeError):
+            errors += 1
+            continue
+        unrecognized += not parsed.recognized
+        malformed += parsed.malformed
+        for skill, mode, ts, line, turn, raw in collapse(parsed):
+            rows.append((skill, harness, parsed.origin, mode, parsed.session_id, ts, path, line, raw,
+                         bool(SKILLS_CWD.search(parsed.cwd))))
+
+    # A session that loaded many different skills was reading them to edit or audit them.
+    breadth = collections.defaultdict(set)
+    cwd_flag = set()
+    for skill, harness, origin, mode, sid, ts, path, line, raw, in_repo in rows:
+        if mode != "sweep":
+            breadth[(harness, sid)].add(skill)
+        if in_repo:
+            cwd_flag.add((harness, sid))
+    work = {key for key, skills in breadth.items() if len(skills) >= BREADTH} | cwd_flag
+
+    label = args.machine_label
+    rows.sort(key=lambda r: (r[1], r[2], r[0], r[5], r[7]))
+    event_lines = ["skill\tmachine\tharness\torigin\tmode\tsession_id\ttimestamp\tfile\tline\traw_reads\tskill_work"]
+    for skill, harness, origin, mode, sid, ts, path, line, raw, _ in rows:
+        yes = "yes" if (harness, sid) in work else "no"
+        event_lines.append(f"{skill}\t{label}\t{harness}\t{origin}\t{mode}\t{sid}\t{ts}\t{path}\t{line}\t{raw}\t{yes}")
+
+    by_cell = collections.defaultdict(list)
+    for r in rows:
+        by_cell[(r[0], r[1], r[2])].append(r)
+    summary_lines = ["skill\tmachine\tharness\torigin\tloads\tuser\thook\tmodel\tsweeps\tskill_work_loads\tsessions(n)\tsession_ids(comma, capped at 20)\traw_reads"]
+    for skill in skill_list:
+        for harness in ("claude", "codex"):
+            for origin in ORIGINS[harness]:
+                cell = by_cell.get((skill, harness, origin), [])
+                loads = [r for r in cell if r[3] != "sweep"]
+                counts = collections.Counter(r[3] for r in cell)
+                sessions = sorted({r[4] for r in loads})
+                in_work = sum((harness, r[4]) in work for r in loads)
+                summary_lines.append(
+                    f"{skill}\t{label}\t{harness}\t{origin}\t{len(loads)}\t{counts['user']}\t{counts['hook']}\t{counts['model']}"
+                    f"\t{counts['sweep']}\t{in_work}\t{len(sessions)}\t{','.join(sessions[:20])}\t{sum(r[8] for r in loads)}")
+
+    if args.format == "both":
+        if not args.summary_output or not args.events_output:
+            parser.error("--format both requires --summary-output and --events-output")
+        with open(args.summary_output, "w", encoding="utf-8") as f:
+            f.write("\n".join(summary_lines) + "\n")
+        with open(args.events_output, "w", encoding="utf-8") as f:
+            f.write("\n".join(event_lines) + "\n")
+    elif args.format == "events":
+        print("\n".join(event_lines))
+    else:
+        print("\n".join(summary_lines))
+    print(f"# files={files} parse_errors={errors} unrecognized_files={unrecognized} malformed_lines={malformed} skills={len(skill_list)}", file=sys.stderr)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
