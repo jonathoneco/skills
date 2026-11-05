@@ -114,6 +114,7 @@ Treat every error as information. When code hits one, surface it where someone w
 
 - Run `shellcheck` on every script.
 - Quote every variable.
+- Pass captured output on with `printf '%s' "$var"` or a direct pipe, not `echo`: zsh's `echo` turns `\n` inside a JSON string into a real newline, and the parser then refuses it.
 
 ## When the user overrides a rule
 
