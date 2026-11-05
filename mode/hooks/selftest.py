@@ -289,6 +289,11 @@ for CODEX_TEST in (False, True):
                             ("flock /l/check.lock flock /l/docker.lock pnpm run check:host", True),
                             ("timeout -k 5 300 pnpm run check", True),
                             ("timeout 300 git status", False),
+                            ("doppler run -p app -c prd -- python3 importer.py", True),
+                            ("doppler run -p app -c prd -- pnpm exec convex run --inline-query \"$(cat importer.py)\"", True),
+                            ("flock /l/check.lock doppler run -c prd -- pnpm run check", True),
+                            ("doppler run -c prd -- git status", False),
+                            ("doppler secrets --only-names -p app -c prd", False),
                             ("flock /l/check.lock git status", False)):
         paired("lock wrapper: " + command, [prompt, load, edit] + shell(command),
                "" if counts else "verify against the real artifact", "principle-fix-root-causes traced the defect.")

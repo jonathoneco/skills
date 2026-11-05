@@ -250,7 +250,11 @@ def commands(command):
             words = seg.split()
         while words and (re.match(r"^\w+=", words[0]) or words[0] in ("sudo", "command", "time", "exec", "env")):
             words = words[1:]
-        while words and words[0] in ARG_WRAPPERS:
+        while words and (words[0] in ARG_WRAPPERS or (words[:2] == ["doppler", "run"] and "--" in words)):
+            if words[0] == "doppler":
+                # doppler run [options] -- <command>: the command after `--` runs with the config's secrets.
+                words = words[words.index("--") + 1:]
+                continue
             # flock [options] <lock> <command>, timeout [options] <duration> <command>: the command after the argument runs.
             valued = ARG_WRAPPERS[words[0]]
             words = words[1:]
