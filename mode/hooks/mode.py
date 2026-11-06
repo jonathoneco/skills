@@ -47,7 +47,10 @@ THRESHOLD = 2
 
 CODE_EXT = re.compile(r"\.(py|ts|tsx|js|jsx|mjs|cjs|go|rs|rb|java|kt|swift|c|cc|cpp|h|hpp|cs|php|sh|bash|zsh|lua|sql|scala|ex|exs|clj|vue|svelte)$", re.I)
 TEST_PATH = re.compile(r"(^|/)(tests?|__tests__|spec)/|(^|/)test_[^/]*$|_test\.\w+$|\.(test|spec)\.\w+$", re.I)
-BENCH_CMD = re.compile(r"\b(bench\w*|hyperfine|timeit|perf stat|wrk|k6|ab -n|locust|time\s+\S)|--bench", re.I)
+# Tools named like ordinary words count only at command position: start, or after ; & | ( or a newline.
+BENCH_CMD = re.compile(r"\b(bench\w*|hyperfine|timeit|perf stat)|-bench|(?:^|[;&|(\n])\s*(?:time|wrk|k6|ab|locust)\s+\S", re.I)
+# A lone & ends a command in the background; &&, >&, &> and |& do not.
+DETACHED = re.compile(r"(?<![&>|<])&(?![&>])|(?:^|[;&|(\n])\s*disown\b")
 READ_ONLY_CMD = re.compile(r"^\s*(cat|head|tail|less|sed|grep|rg|ls|wc|git|find)\b")
 SHELL_WRITE = re.compile(r"(?:>>?|\btee(?:\s+-a)?)\s*['\"]?([^\s'\";|&<>]+)")
 BIG_OUTPUT = 30000
@@ -70,9 +73,13 @@ HEREDOC_BODY = re.compile(r"<<-?\s*['\"]?(\w+)['\"]?[^\n]*\n.*?^\s*\1\s*$", re.S
 QUOTED_TEXT = re.compile(r"(?<!>)(?<!> )('[^']*'|\"(?:\\.|[^\"\\])*\")", re.S)
 
 
+def shell_text(command):
+    """The command with heredoc bodies and quoted strings blanked: what the shell runs, not prose."""
+    return QUOTED_TEXT.sub(" ", HEREDOC_BODY.sub(" ", command or ""))
+
+
 def shell_writes(command):
-    text = QUOTED_TEXT.sub(" ", HEREDOC_BODY.sub(" ", command or ""))
-    return SHELL_WRITE.findall(text)
+    return SHELL_WRITE.findall(shell_text(command))
 
 
 def edit_lines(name, inp):
@@ -404,6 +411,8 @@ def ops(tool, inp, cwd=""):
             found.append(("outside-write", OPS["outside-write"]["text"]))
     if tool == "Bash":
         paths = shell_writes(inp.get("command"))
+        if not inp.get("run_in_background") and DETACHED.search(shell_text(inp.get("command"))):
+            found.append(("detached-process", OPS["detached-process"]["text"]))
     if any(re.search(r"\.(sh|bash|zsh)$", p) for p in paths):
         found.append(("shell-script", OPS["shell-script"]["text"]))
     if any(agent_doc(p) for p in paths):
@@ -524,7 +533,7 @@ def on_posttool(ev, path):
     tool, inp = ev.get("tool_name"), ev.get("tool_input") or {}
     command = str(inp.get("command") or "")
     due = []
-    if tool == "Bash" and BENCH_CMD.search(command) and not READ_ONLY_CMD.match(command):
+    if tool == "Bash" and BENCH_CMD.search(shell_text(command)) and not READ_ONLY_CMD.match(command):
         due.append(BY_TOOL["bench-run"])
     if len(json.dumps(ev.get("tool_response"), default=str)) > BIG_OUTPUT:
         due.append(BY_TOOL["big-output"])
@@ -557,9 +566,11 @@ def on_stop(ev, path):
                     "this turn and the choice it changed, or say plainly that none changed a choice. "
                     "Load any missing principles with the Skill tool and check your work against them." % skills(routed))
     substantial = routed or s["edit_lines"] > SMALL_EDIT_LINES
-    if s["edits"] and substantial and not s["ran_after_edit"]:
+    # A file deleted since its edit has nothing left to verify.
+    present = [p for p in s["edits"] if os.path.exists(os.path.join(ev.get("cwd") or "", os.path.expanduser(p)))]
+    if present and substantial and not s["ran_after_edit"]:
         asks.append("You changed %s and ran nothing that successfully verified the last edit. Before you call it done, load the "
-                    "`principle-prove-it-works` skill and verify against the real artifact." % s["edits"][-1])
+                    "`principle-prove-it-works` skill and verify against the real artifact." % present[-1])
     if asks:
         emit({"decision": "block", "reason": "%s %s" % (MARK, " ".join(asks))})
 
