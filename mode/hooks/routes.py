@@ -173,6 +173,9 @@ OPS = {
     "shell-script": {"every": False,
                      "text": "Quote every variable and run `shellcheck` on this script before calling it done (global "
                              "agent rules, Shell scripts)."},
+    "detached-process": {"every": False,
+                         "text": "this command backgrounds a process with & or disown, which runs untracked. Start a "
+                                 "long-running process with the Bash tool's run_in_background instead."},
     "agent-doc": {"every": False,
                   "text": "This edits a document agents read. Before the first edit, load the `writing-for-agents` "
                           "skill and every `principle-*` skill this change could reach, and follow them in the edit "

@@ -11,6 +11,10 @@ HOOK = os.path.join(os.path.dirname(os.path.abspath(__file__)), "mode.py")
 failures = 0
 CODEX_TEST = False
 IN_HERDR = False
+# Stop ignores edited paths that are gone, so fixture edits name real files.
+R = tempfile.mkdtemp()
+for name in ("importer.py", "a.py", "count.py", "x.py"):
+    open(os.path.join(R, name), "w").close()
 
 
 def line(kind, *content):
@@ -38,7 +42,7 @@ def run(sub, event, transcript):
     if IN_HERDR:
         env["HERDR_ENV"] = "1"
     out = subprocess.run([sys.executable, "-I", HOOK] + (["--codex"] if CODEX_TEST else []) + [sub], input=raw, capture_output=True,
-                         text=True, timeout=10, env=env)
+                         text=True, timeout=10, env=env, cwd=R)
     if transcript == "dir":
         os.rmdir(path)
     elif transcript is not None:
@@ -58,7 +62,7 @@ def check(label, sub, event, transcript, expect, absent=None):
 
 
 BUG = "count_rows in importer.py reports 4 rows for sample.csv. Fix it."
-EDIT = ("Edit", {"file_path": "/r/importer.py", "old_string": "a", "new_string": "b"})
+EDIT = ("Edit", {"file_path": R + "/importer.py", "old_string": "a", "new_string": "b"})
 edited = [line("prompt", BUG), line("tool", *EDIT)]
 
 
@@ -94,15 +98,15 @@ for plain in ["Print the current git branch.", "Add a docstring to count_rows.",
 check("prompt: unreadable transcript is silent", "prompt", {"prompt": BUG}, "dir", "")
 
 # Edit reminders: context only, once per task, silent without evidence.
-check("first edit reminded", "pretool", {"tool_name": "Edit", "tool_input": {"file_path": "/r/importer.py"}}, edited, "first-edit:")
-check("first-edit reminder fires once", "pretool", {"tool_name": "Edit", "tool_input": {"file_path": "/r/importer.py"}},
+check("first edit reminded", "pretool", {"tool_name": "Edit", "tool_input": {"file_path": R + "/importer.py"}}, edited, "first-edit:")
+check("first-edit reminder fires once", "pretool", {"tool_name": "Edit", "tool_input": {"file_path": R + "/importer.py"}},
       edited + [line("context", "[mode] first-edit: x")], "")
-check("pretool: missing transcript is silent", "pretool", {"tool_name": "Edit", "tool_input": {"file_path": "/r/importer.py"}}, None, "")
-check("pretool: unreadable transcript is silent", "pretool", {"tool_name": "Edit", "tool_input": {"file_path": "/r/importer.py"}}, "dir", "")
-check("doc edit quiet", "pretool", {"tool_name": "Write", "tool_input": {"file_path": "/r/ticket.md"}}, edited, "")
-check("test edit reminded", "pretool", {"tool_name": "Write", "tool_input": {"file_path": "/r/tests/test_a.py"}}, loaded,
+check("pretool: missing transcript is silent", "pretool", {"tool_name": "Edit", "tool_input": {"file_path": R + "/importer.py"}}, None, "")
+check("pretool: unreadable transcript is silent", "pretool", {"tool_name": "Edit", "tool_input": {"file_path": R + "/importer.py"}}, "dir", "")
+check("doc edit quiet", "pretool", {"tool_name": "Write", "tool_input": {"file_path": R + "/ticket.md"}}, edited, "")
+check("test edit reminded", "pretool", {"tool_name": "Write", "tool_input": {"file_path": R + "/tests/test_a.py"}}, loaded,
       "principle-test-behavior-not-implementation")
-check("test reminder fires once", "pretool", {"tool_name": "Write", "tool_input": {"file_path": "/r/tests/test_a.py"}},
+check("test reminder fires once", "pretool", {"tool_name": "Write", "tool_input": {"file_path": R + "/tests/test_a.py"}},
       loaded + [line("context", "[mode] test-edit: x")], "")
 check("heredoc test write reminded", "pretool", {"tool_name": "Bash", "tool_input": {"command": "cat > tests/test_a.py <<EOF"}},
       loaded, "principle-test-behavior-not-implementation")
@@ -111,12 +115,12 @@ check("plain bash quiet", "pretool", {"tool_name": "Bash", "tool_input": {"comma
 # Stop: bounded and conditional.
 check("stop: routed, unloaded, unverified", "stop", STOP, edited, "principle-prove-it-works")
 # A file written and run in the same shell line counts as run; a write alone or a git add doesn't.
-WRITE = "cat > /tmp/count.py <<EOF\nx = 0\nx = 1\nx = 2\nx = 3\nx = 4\nx = 5\nx = 6\nx = 7\nx = 8\nx = 9\nx = 10\nx = 11\nx = 12\nx = 13\nx = 14\nx = 15\nx = 16\nx = 17\nx = 18\nx = 19\nx = 20\nx = 21\nx = 22\nx = 23\nx = 24\nx = 25\nx = 26\nx = 27\nx = 28\nx = 29\nEOF"
+WRITE = "cat > " + R + "/count.py <<EOF\nx = 0\nx = 1\nx = 2\nx = 3\nx = 4\nx = 5\nx = 6\nx = 7\nx = 8\nx = 9\nx = 10\nx = 11\nx = 12\nx = 13\nx = 14\nx = 15\nx = 16\nx = 17\nx = 18\nx = 19\nx = 20\nx = 21\nx = 22\nx = 23\nx = 24\nx = 25\nx = 26\nx = 27\nx = 28\nx = 29\nEOF"
 check("stop: write then run in one command", "stop", STOP,
-      [line("prompt", BUG), line("tool", "Bash", {"command": WRITE + "\npython3 /tmp/count.py"}), result()], "principle-fix-root-causes", "ran nothing")
+      [line("prompt", BUG), line("tool", "Bash", {"command": WRITE + "\npython3 " + R + "/count.py"}), result()], "principle-fix-root-causes", "ran nothing")
 check("stop: write alone is reminded", "stop", STOP, [line("prompt", BUG), line("tool", "Bash", {"command": WRITE})], "ran nothing")
 check("stop: write then git add is not a run", "stop", STOP,
-      [line("prompt", BUG), line("tool", "Bash", {"command": WRITE + "\ngit add /tmp/count.py"})], "ran nothing")
+      [line("prompt", BUG), line("tool", "Bash", {"command": WRITE + "\ngit add " + R + "/count.py"})], "ran nothing")
 # A `>` inside a heredoc body or a quoted string is text, not a redirect: no write, no reminder.
 BODY = "".join("line %d names wiring/<key>.ts\n" % i for i in range(30))
 check("stop: heredoc body text is not a write", "stop", STOP,
@@ -124,7 +128,7 @@ check("stop: heredoc body text is not a write", "stop", STOP,
 check("stop: quoted text is not a write", "stop", STOP,
       [line("prompt", "Show the queue."), line("tool", "Bash", {"command": "python3 -c 'print(\"" + "a<b>.ts\n" * 30 + "\")' > /tmp/out.txt"})], "")
 check("stop: quoted redirect target is still a write", "stop", STOP,
-      [line("prompt", BUG), line("tool", "Bash", {"command": WRITE.replace("> /tmp/count.py", "> \"/tmp/count.py\"")})], "ran nothing")
+      [line("prompt", BUG), line("tool", "Bash", {"command": WRITE.replace("> " + R + "/count.py", "> \"" + R + "/count.py\"")})], "ran nothing")
 NAMED = dict(STOP, last_assistant_message="principle-fix-root-causes: traced it")
 check("stop: reply names a principle, edit unverified", "stop", NAMED, edited, "principle-prove-it-works", "This task called for")
 check("stop: reply names a principle, edit verified", "stop", NAMED,
@@ -138,10 +142,14 @@ check("stop: small unrouted edit stays quiet", "stop", STOP,
       [line("prompt", "Add a docstring to count_rows."), line("tool", *EDIT)], "")
 check("stop: large unrouted edit unverified", "stop", STOP,
       [line("prompt", "Add a docstring to count_rows."),
-       line("tool", "Write", {"file_path": "/r/a.py", "content": "x\n" * 40})], "principle-prove-it-works")
+       line("tool", "Write", {"file_path": R + "/a.py", "content": "x\n" * 40})], "principle-prove-it-works")
 check("stop: compaction forgets loads", "stop", STOP,
       loaded[:3] + [{"type": "system", "subtype": "compact_boundary"}] + loaded[3:], "principle-fix-root-causes")
 check("stop: reply read from transcript", "stop", {"stop_hook_active": False}, edited + [line("text", "Fixed.")], "principle-fix-root-causes")
+
+check("stop: deleted edited file is ignored", "stop", STOP,
+      [line("prompt", BUG), line("tool", "Edit", {"file_path": R + "/gone.py", "old_string": "a", "new_string": "b"})], "principle-fix-root-causes", "ran nothing")
+check("stop: existing edited file still checked", "stop", STOP, edited, "ran nothing")
 
 # Operational rules: one line before the action. Merges, deletes and outside writes remind every time.
 def pre(tool, inp):
@@ -183,28 +191,42 @@ check("stash", "pretool", sh("git stash"), FIX, "stash:")
 check("stash list quiet", "pretool", sh("git stash list"), FIX, "")
 check("commit", "pretool", sh("git commit -m 'fix: x' -- a.md"), FIX, "commit:")
 check("commit once per task", "pretool", sh("git commit -m 'fix: x' -- a.md"), FIX + [line("context", "[mode] commit: x")], "")
-check("shell script edit", "pretool", pre("Write", {"file_path": "/r/build.sh", "content": "echo hi"}), FIX, "shellcheck")
-check("python edit has no shell reminder", "pretool", pre("Write", {"file_path": "/r/a.py", "content": "x"}), FIX, "", "shellcheck")
-check("skill edit", "pretool", pre("Edit", {"file_path": "/r/skills/blueprint/SKILL.md", "old_string": "a", "new_string": "b"}), FIX, "writing-for-agents")
-check("agents file edit", "pretool", pre("Write", {"file_path": "/r/AGENTS.md", "content": "x"}), FIX, "writing-for-agents")
+check("shell script edit", "pretool", pre("Write", {"file_path": R + "/build.sh", "content": "echo hi"}), FIX, "shellcheck")
+check("python edit has no shell reminder", "pretool", pre("Write", {"file_path": R + "/a.py", "content": "x"}), FIX, "", "shellcheck")
+check("skill edit", "pretool", pre("Edit", {"file_path": R + "/skills/blueprint/SKILL.md", "old_string": "a", "new_string": "b"}), FIX, "writing-for-agents")
+check("agents file edit", "pretool", pre("Write", {"file_path": R + "/AGENTS.md", "content": "x"}), FIX, "writing-for-agents")
 check("skill sibling edit", "pretool", pre("Edit", {"file_path": os.path.join(SKILL_DIR, "kinds.md"), "old_string": "a", "new_string": "b"}), FIX, "writing-for-agents")
-check("plain doc edit is quiet", "pretool", pre("Write", {"file_path": "/r/docs/notes.md", "content": "x"}), FIX, "", "writing-for-agents")
-check("skill edit once per task", "pretool", pre("Edit", {"file_path": "/r/SKILL.md", "old_string": "a", "new_string": "b"}),
+check("plain doc edit is quiet", "pretool", pre("Write", {"file_path": R + "/docs/notes.md", "content": "x"}), FIX, "", "writing-for-agents")
+check("skill edit once per task", "pretool", pre("Edit", {"file_path": R + "/SKILL.md", "old_string": "a", "new_string": "b"}),
       FIX + [line("context", "[mode] agent-doc: x")], "", "writing-for-agents")
+
+for command in ("sleep 5 &", "x & disown", "nohup ./watch.sh > log &", "a & b"):
+    check("detached: " + command, "pretool", sh(command), FIX, "detached-process:")
+for command in ("a && b", "cmd 2>&1", "cmd &> log", "a |& b", "echo 'a & b'"):
+    check("not detached: " + command, "pretool", sh(command), FIX, "")
+check("detached: run_in_background is quiet", "pretool", pre("Bash", {"command": "sleep 5", "run_in_background": True}), FIX, "")
+check("detached: once per task", "pretool", sh("sleep 5 &"), FIX + [line("context", "[mode] detached-process: x")], "")
 
 # Tool output reminders.
 check("bench output", "posttool", {"tool_name": "Bash", "tool_input": {"command": "hyperfine ./a"}, "tool_response": "1s"},
       edited, "principle-explain-the-number")
 check("bench reminder fires once", "posttool", {"tool_name": "Bash", "tool_input": {"command": "hyperfine ./a"}, "tool_response": "1s"},
       edited + [line("context", "[mode] bench-run: x")], "")
+for command in ("time pnpm test", "cd a && time make", "hyperfine x", "cargo bench", "go test -bench=."):
+    check("bench run: " + command, "posttool", {"tool_name": "Bash", "tool_input": {"command": command}, "tool_response": "1s"},
+          edited, "principle-explain-the-number")
+for command in ("cat > notes.md <<'EOF'\nthe transaction time and never retried\nEOF", "git commit -m 'cut the time it takes'",
+                "echo the wrk queue"):
+    check("prose is not a bench run: " + command, "posttool", {"tool_name": "Bash", "tool_input": {"command": command},
+          "tool_response": "ok"}, edited, "")
 check("reading bench notes is not a run", "posttool", {"tool_name": "Bash", "tool_input": {"command": "cat BENCH.txt"}, "tool_response": "2.3x"},
       edited, "")
-check("big output", "posttool", {"tool_name": "Read", "tool_input": {"file_path": "/r/a.log"}, "tool_response": "x" * 40000},
+check("big output", "posttool", {"tool_name": "Read", "tool_input": {"file_path": R + "/a.log"}, "tool_response": "x" * 40000},
       edited, "principle-guard-the-context-window")
 check("posttool: missing transcript", "posttool", {"tool_name": "Read", "tool_input": {}, "tool_response": "x" * 40000}, None, "")
 
 # Bad input and subagents.
-check("subagent untouched", "pretool", {"agent_id": "a1", "tool_name": "Edit", "tool_input": {"file_path": "/r/importer.py"}}, edited, "")
+check("subagent untouched", "pretool", {"agent_id": "a1", "tool_name": "Edit", "tool_input": {"file_path": R + "/importer.py"}}, edited, "")
 for sub in ("prompt", "pretool", "posttool", "stop"):
     check("bad json: " + sub, sub, "not json", [], "")
     check("non-object json: " + sub, sub, "[1, 2]", [], "")
@@ -216,19 +238,19 @@ def cx(kind, **values):
     return {"type": "event_msg", "payload": {"type": "item_completed", "item": dict(type=kind, **values)}}
 
 cx_prompt = cx("UserMessage", content=[{"type": "text", "text": BUG}])
-cx_edit = cx("FileChange", status="completed", changes={"/r/a.py": {"unified_diff": "+b\n-a"}})
+cx_edit = cx("FileChange", status="completed", changes={R + "/a.py": {"unified_diff": "+b\n-a"}})
 cx_load = cx("CommandExecution", exit_code=0, command=["/bin/zsh", "-lc", "cat /r/principle-fix-root-causes/SKILL.md"])
 cx_run = cx("CommandExecution", exit_code=0, command=["/bin/zsh", "-lc", "python3 a.py"])
 cx_edited = [cx_prompt, cx_edit]
 cx_loaded = cx_edited + [cx_load, cx_run]
-patch = "*** Begin Patch\n*** Update File: /r/a.py\n@@\n-a\n+b\n*** End Patch"
+patch = "*** Begin Patch\n*** Update File: " + R + "/a.py\n@@\n-a\n+b\n*** End Patch"
 check("codex prompt wording", "prompt", {"prompt": BUG}, None, "read the SKILL.md file in full")
 check("codex prompt names the file", "prompt", {"prompt": BUG}, None, os.path.expanduser("~/.agents/skills") + "/principle-<name>/SKILL.md")
 check("codex no route, menu only", "prompt", {"prompt": "Print the current branch."}, [], "No cue matched", "This task hits")
 check("codex plan mode is heavy work", "prompt", {"prompt": "Print the current branch.", "permission_mode": "plan"}, [], "start of heavy work")
 check("codex loaded principle not repeated", "prompt", {"prompt": BUG}, cx_loaded, "read its SKILL.md file in full", "`principle-fix-root-causes`")
 check("codex patch first edit", "pretool", {"tool_name": "apply_patch", "tool_input": {"command": patch}}, cx_edited, "first-edit:")
-check("codex patch test edit", "pretool", {"tool_name": "apply_patch", "tool_input": {"command": patch.replace("/r/a.py", "/r/tests/test_a.py")}}, cx_loaded, "principle-test-behavior-not-implementation")
+check("codex patch test edit", "pretool", {"tool_name": "apply_patch", "tool_input": {"command": patch.replace(R + "/a.py", R + "/tests/test_a.py")}}, cx_loaded, "principle-test-behavior-not-implementation")
 check("codex doc patch quiet", "pretool", {"tool_name": "apply_patch", "tool_input": {"command": patch.replace("a.py", "a.md")}}, cx_edited, "")
 check("codex missing transcript", "pretool", {"tool_name": "apply_patch", "tool_input": {"command": patch}}, None, "")
 check("codex stop unverified", "stop", STOP, cx_edited, "principle-prove-it-works")
@@ -242,8 +264,8 @@ check("codex marker suppresses repeat", "pretool", {"tool_name": "apply_patch", 
 IN_HERDR = True
 check("codex spawn_agent in Herdr", "pretool", pre("spawn_agent", {"message": "x"}), [cx_prompt], "scratch-agents")
 IN_HERDR = False
-check("codex skill patch", "pretool", pre("apply_patch", {"command": patch.replace("/r/a.py", "/r/CLAUDE.md")}), cx_edited, "writing-for-agents")
-check("codex shell script patch", "pretool", pre("apply_patch", {"command": patch.replace("/r/a.py", "/r/run.sh")}), cx_edited, "shellcheck")
+check("codex skill patch", "pretool", pre("apply_patch", {"command": patch.replace(R + "/a.py", R + "/CLAUDE.md")}), cx_edited, "writing-for-agents")
+check("codex shell script patch", "pretool", pre("apply_patch", {"command": patch.replace(R + "/a.py", R + "/run.sh")}), cx_edited, "shellcheck")
 check("codex outside write", "pretool", pre("mcp__linear__create_issue", {"title": "x"}), [cx_prompt], "outside-write:")
 check("codex benchmark", "posttool", {"tool_name": "Bash", "tool_input": {"command": "hyperfine ./a"}, "tool_response": "1s"}, cx_edited, "principle-explain-the-number")
 check("codex oversized output", "posttool", {"tool_name": "Bash", "tool_input": {"command": "cat a.log"}, "tool_response": "x" * 40000}, cx_edited, "principle-guard-the-context-window")
@@ -253,8 +275,8 @@ for CODEX_TEST in (False, True):
     harness = "codex" if CODEX_TEST else "claude"
     prompt = cx_prompt if CODEX_TEST else line("prompt", BUG)
     load = cx_load if CODEX_TEST else line("tool", "Skill", {"skill": "principle-fix-root-causes"})
-    edit = cx("FileChange", status="completed", changes={"/r/importer.py": {"unified_diff": "+x\n" * 20}}) if CODEX_TEST else line(
-        "tool", "Write", {"file_path": "/r/importer.py", "content": "x\n" * 20})
+    edit = cx("FileChange", status="completed", changes={R + "/importer.py": {"unified_diff": "+x\n" * 20}}) if CODEX_TEST else line(
+        "tool", "Write", {"file_path": R + "/importer.py", "content": "x\n" * 20})
 
     def shell(command, success=True):
         if CODEX_TEST:
@@ -278,7 +300,7 @@ for CODEX_TEST in (False, True):
         "tool", "Skill", {"skill": "principle-prove-it-works"})
     paired("verification_skill_loaded_unverified_edit", [prompt, load, verify, edit], "verify against the real artifact",
         "principle-fix-root-causes traced the defect.")
-    for command in ("git status", "cat /r/importer.py", "ls", "echo done", "python3 unrelated.py"):
+    for command in ("git status", "cat " + R + "/importer.py", "ls", "echo done", "python3 unrelated.py"):
         paired("read or unrelated command is not verification: " + command, [prompt, load, edit] + shell(command),
                "verify against the real artifact", "principle-fix-root-causes traced the defect.")
     paired("successful check", [prompt, load, edit] + shell("python3 importer.py"), "",
@@ -302,8 +324,8 @@ for CODEX_TEST in (False, True):
     paired("later edit resets verification", [prompt, load, edit] + shell("python3 importer.py") + [edit] + shell("git status"),
            "verify against the real artifact", "principle-fix-root-causes traced the defect.")
     for path, command, success, counts in (
-        ("/tmp/x.py", "ssh host 'python3 -I -' < /tmp/x.py", True, True),
-        ("/tmp/x.py", "ssh host 'python3 -I -' < /tmp/x.py 2>&1 | tail -3", True, True),
+        (R + "/x.py", "ssh host 'python3 -I -' < " + R + "/x.py", True, True),
+        (R + "/x.py", "ssh host 'python3 -I -' < " + R + "/x.py 2>&1 | tail -3", True, True),
         ("x.sh", "bash -s < x.sh", True, True),
         ("x.py", "cat x.py | python3 -", True, True),
         ("x.py", "python3 - < x.py", True, True),
@@ -311,7 +333,7 @@ for CODEX_TEST in (False, True):
         ("x.py", "node - < x.py", True, True),
         ("x.py", "docker exec -i app python3 - < x.py", True, True),
         ("x.py", "cat x.py | ssh host 'python3 -'", True, True),
-        ("/tmp/x.py", "ssh host 'python3 -I -' < /tmp/x.py", False, False),
+        (R + "/x.py", "ssh host 'python3 -I -' < " + R + "/x.py", False, False),
         ("x.py", "python3 - < x.py", False, False),
         ("x.py", "cat x.py", True, False),
         ("x.py", "wc -l < x.py", True, False),
@@ -340,7 +362,7 @@ for CODEX_TEST in (False, True):
                   [prompt] + shell(command), "This task hits")
         check("codex whole-file Python read", "prompt", {"prompt": BUG}, [prompt] + shell(
             "python3 -c \"print(open('/r/principle-fix-root-causes/SKILL.md').read())\""), "No cue matched")
-    for path in ("/r/AGENTS.md", "/r/CLAUDE.md", "/r/example/SKILL.md"):
+    for path in (R + "/AGENTS.md", R + "/CLAUDE.md", R + "/example/SKILL.md"):
         check(harness + " agent_doc_shell " + path, "pretool", sh("cat > " + path + " <<'EOF'\nnew rule\nEOF"),
               [prompt], "writing-for-agents")
     for label, event, transcript in (
@@ -362,5 +384,8 @@ for CODEX_TEST in (False, True):
         failures += 1
         print("FAIL %s lost prompt: exit %s stdout=%r stderr=%r" % (harness, code, out, err))
 
+for name in os.listdir(R):
+    os.unlink(os.path.join(R, name))
+os.rmdir(R)
 print("%d failures" % failures)
 sys.exit(1 if failures else 0)
