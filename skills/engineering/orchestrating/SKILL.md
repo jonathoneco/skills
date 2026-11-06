@@ -41,6 +41,6 @@ Each wake that finds an event opens a todo list: one todo per event, expanded in
    | Without a merge queue, the lane engine reports an overlap with a ready PR's base | [merges.md](merges.md) step 2 |
    | The lane engine reports a PR merged, or a merge commit's production deploy reads succeeded or failed | [merges.md](merges.md) step 5 |
    | A slot frees, or a lane stopped or failed | [starting.md](starting.md) |
-   | The user checks in | [check-in.md](check-in.md) |
+   | The user checks in, including any status request ("Status?", "where are we") while the effort runs, so the reply carries the decision log's open calls | [check-in.md](check-in.md) |
 
    A quiet check ends silently. Done when every lane is running, at a ready PR, waiting on an answered or queued question, or stopped with its next action recorded, and every event has run its file's done condition.
