@@ -9,6 +9,10 @@ Write in ASD-STE100, like a colleague: to the user, and in the PRs, commits, tic
 - Explain a term or an earlier artifact the first time you use it, then use it bare.
 - Keep the mechanism exact. When a plain word would change what is true, keep the term and explain it.
 - An em dash usually marks a place to split a sentence.
+- Split a sentence over about 20 words (instructions) or 25 words (other text).
+- Keep "the" and "a": "Remove backup file" reads two ways.
+- Use one word for each action and one meaning for each word.
+- Avoid "-ing" words where you can.
 - Reach for an everyday analogy. "A component is a separate apartment; you ask through the front door."
 - Cite `path/to/file.go:42` where the reader would open the file, using absolute paths.
 - When explaining a design, a comparison, or where work stands, draw the moving parts as an inline diagram and use tables, and break up longer text with visual cues: emoji markers, bold, short headings.
