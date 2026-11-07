@@ -79,11 +79,16 @@ STOP = {"stop_hook_active": False, "last_assistant_message": "Fixed it."}
 for plain in ["Print the current git branch.", "Add a docstring to count_rows.", "Rename count_rows to row_count.",
               "What does csv.reader return for an empty file?", "Bump the version to 1.2 and add a changelog line.",
               "Write a short README for the users folder."]:
-    check("no route, menu only: " + plain, "prompt", {"prompt": plain}, None, "No cue matched", "This task hits")
+    check("no route is silent: " + plain, "prompt", {"prompt": plain}, None, "")
 check("routes at first prompt (no transcript yet)", "prompt", {"prompt": BUG}, None, "`principle-fix-root-causes`")
+check("path words do not route", "prompt", {"prompt": "Read /Users/jonco/.local/state/agent-notes/validation-landing/x/brief.md and do it."}, None, "", "principle-boundary-discipline")
+check("prose validation still routes", "prompt", {"prompt": "validate the config at parse time"}, None, "principle-boundary-discipline")
+check("generic spec path does not route experience", "prompt", {"prompt": "Read /Users/jonco/x/spec-brief.md and do it"}, None, "", "principle-experience-first")
+check("user experience prose still routes", "prompt", {"prompt": "the users hate this onboarding flow, the UX feels clunky"}, None, "principle-experience-first")
+check("failed second fix still routes", "prompt", {"prompt": "second fix still fails the same check"}, None, "principle-attack-the-premise")
 check("routes a ticket", "prompt", {"prompt": "Write a ticket for adding a --dry-run flag."}, [], "principle-prove-it-works")
-check("loaded principle not repeated", "prompt", {"prompt": BUG}, loaded, "Check the principle skills", "`principle-fix-root-causes`")
-check("routed prompt also lists the rest", "prompt", {"prompt": BUG}, None, "Also check the principle skills")
+check("loaded principle not repeated", "prompt", {"prompt": BUG}, loaded, "")
+check("routed prompt names only matching moments", "prompt", {"prompt": BUG}, None, "This task hits")
 
 # Heavy work: plan mode or a kickoff of planning, investigation, or writing for someone else.
 HEAVY = "start of heavy work"
@@ -94,7 +99,7 @@ for kickoff in ["Investigate why the nightly import drops rows.", "Let's plan ho
     check("heavy kickoff: " + kickoff, "prompt", {"prompt": kickoff}, None, HEAVY)
 for plain in ["Print the current git branch.", "Add a docstring to count_rows.", "Write a short README for the users folder.",
               "Merge it", "go", "Is this plan saved?", "Check ABC-1 as directed by /notes/design-bakeoff/brief.md"]:
-    check("not heavy: " + plain, "prompt", {"prompt": plain, "permission_mode": "default"}, None, "Check the principle skills", HEAVY)
+    check("not heavy: " + plain, "prompt", {"prompt": plain, "permission_mode": "default"}, None, "", HEAVY)
 check("prompt: unreadable transcript is silent", "prompt", {"prompt": BUG}, "dir", "")
 
 # Edit reminders: context only, once per task, silent without evidence.
@@ -208,19 +213,9 @@ check("detached: run_in_background is quiet", "pretool", pre("Bash", {"command":
 check("detached: once per task", "pretool", sh("sleep 5 &"), FIX + [line("context", "[mode] detached-process: x")], "")
 
 # Tool output reminders.
-check("bench output", "posttool", {"tool_name": "Bash", "tool_input": {"command": "hyperfine ./a"}, "tool_response": "1s"},
-      edited, "principle-explain-the-number")
-check("bench reminder fires once", "posttool", {"tool_name": "Bash", "tool_input": {"command": "hyperfine ./a"}, "tool_response": "1s"},
-      edited + [line("context", "[mode] bench-run: x")], "")
-for command in ("time pnpm test", "cd a && time make", "hyperfine x", "cargo bench", "go test -bench=."):
-    check("bench run: " + command, "posttool", {"tool_name": "Bash", "tool_input": {"command": command}, "tool_response": "1s"},
-          edited, "principle-explain-the-number")
-for command in ("cat > notes.md <<'EOF'\nthe transaction time and never retried\nEOF", "git commit -m 'cut the time it takes'",
-                "echo the wrk queue"):
-    check("prose is not a bench run: " + command, "posttool", {"tool_name": "Bash", "tool_input": {"command": command},
-          "tool_response": "ok"}, edited, "")
-check("reading bench notes is not a run", "posttool", {"tool_name": "Bash", "tool_input": {"command": "cat BENCH.txt"}, "tool_response": "2.3x"},
-      edited, "")
+for command in ("hyperfine ./a", "grep BENCH mode.py"):
+    check("benchmark command is quiet: " + command, "posttool", {"tool_name": "Bash", "tool_input": {"command": command}, "tool_response": "1s"},
+          edited, "")
 check("big output", "posttool", {"tool_name": "Read", "tool_input": {"file_path": R + "/a.log"}, "tool_response": "x" * 40000},
       edited, "principle-guard-the-context-window")
 check("posttool: missing transcript", "posttool", {"tool_name": "Read", "tool_input": {}, "tool_response": "x" * 40000}, None, "")
@@ -246,9 +241,9 @@ cx_loaded = cx_edited + [cx_load, cx_run]
 patch = "*** Begin Patch\n*** Update File: " + R + "/a.py\n@@\n-a\n+b\n*** End Patch"
 check("codex prompt wording", "prompt", {"prompt": BUG}, None, "read the SKILL.md file in full")
 check("codex prompt names the file", "prompt", {"prompt": BUG}, None, os.path.expanduser("~/.agents/skills") + "/principle-<name>/SKILL.md")
-check("codex no route, menu only", "prompt", {"prompt": "Print the current branch."}, [], "No cue matched", "This task hits")
+check("codex no route is silent", "prompt", {"prompt": "Print the current branch."}, [], "")
 check("codex plan mode is heavy work", "prompt", {"prompt": "Print the current branch.", "permission_mode": "plan"}, [], "start of heavy work")
-check("codex loaded principle not repeated", "prompt", {"prompt": BUG}, cx_loaded, "read its SKILL.md file in full", "`principle-fix-root-causes`")
+check("codex loaded principle not repeated", "prompt", {"prompt": BUG}, cx_loaded, "")
 check("codex patch first edit", "pretool", {"tool_name": "apply_patch", "tool_input": {"command": patch}}, cx_edited, "first-edit:")
 check("codex patch test edit", "pretool", {"tool_name": "apply_patch", "tool_input": {"command": patch.replace(R + "/a.py", R + "/tests/test_a.py")}}, cx_loaded, "principle-test-behavior-not-implementation")
 check("codex doc patch quiet", "pretool", {"tool_name": "apply_patch", "tool_input": {"command": patch.replace("a.py", "a.md")}}, cx_edited, "")
@@ -267,7 +262,7 @@ IN_HERDR = False
 check("codex skill patch", "pretool", pre("apply_patch", {"command": patch.replace(R + "/a.py", R + "/CLAUDE.md")}), cx_edited, "writing-for-agents")
 check("codex shell script patch", "pretool", pre("apply_patch", {"command": patch.replace(R + "/a.py", R + "/run.sh")}), cx_edited, "shellcheck")
 check("codex outside write", "pretool", pre("mcp__linear__create_issue", {"title": "x"}), [cx_prompt], "outside-write:")
-check("codex benchmark", "posttool", {"tool_name": "Bash", "tool_input": {"command": "hyperfine ./a"}, "tool_response": "1s"}, cx_edited, "principle-explain-the-number")
+check("codex benchmark command is quiet", "posttool", {"tool_name": "Bash", "tool_input": {"command": "hyperfine ./a"}, "tool_response": "1s"}, cx_edited, "")
 check("codex oversized output", "posttool", {"tool_name": "Bash", "tool_input": {"command": "cat a.log"}, "tool_response": "x" * 40000}, cx_edited, "principle-guard-the-context-window")
 
 # Paired regressions use parity/replay.py's completed-runtime and Claude tool shapes.
@@ -353,7 +348,7 @@ for CODEX_TEST in (False, True):
         transcript = [prompt] + shell(command + " /r/principle-fix-root-causes/SKILL.md")
         paired("partial_read_unnamed: " + command, transcript, '"decision": "block"')
         check(harness + " load detection: " + command, "prompt", {"prompt": BUG}, transcript,
-              "This task hits" if command != "cat" or not CODEX_TEST else "No cue matched")
+              "This task hits" if command != "cat" or not CODEX_TEST else "")
     if CODEX_TEST:
         for command in ("cat /r/principle-fix-root-causes/SKILL.md | head -1",
                         "cat > /r/principle-fix-root-causes/SKILL.md",
@@ -361,7 +356,7 @@ for CODEX_TEST in (False, True):
             check(harness + " partial output stays unloaded: " + command, "prompt", {"prompt": BUG},
                   [prompt] + shell(command), "This task hits")
         check("codex whole-file Python read", "prompt", {"prompt": BUG}, [prompt] + shell(
-            "python3 -c \"print(open('/r/principle-fix-root-causes/SKILL.md').read())\""), "No cue matched")
+            "python3 -c \"print(open('/r/principle-fix-root-causes/SKILL.md').read())\""), "")
     for path in (R + "/AGENTS.md", R + "/CLAUDE.md", R + "/example/SKILL.md"):
         check(harness + " agent_doc_shell " + path, "pretool", sh("cat > " + path + " <<'EOF'\nnew rule\nEOF"),
               [prompt], "writing-for-agents")

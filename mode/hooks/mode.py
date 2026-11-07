@@ -13,7 +13,7 @@ One script, one subcommand per hook event:
                               are unloaded; one line of the operational rule (OPS) before starting
                               a helper, writing to an outside system, merging, deleting, stashing,
                               committing, or editing a shell script
-  posttool  PostToolUse       output of a benchmark run, and oversized tool output
+  posttool  PostToolUse       oversized tool output
   stop      Stop              one follow-up when a routed task's reply attributes no principle,
                               or when a substantial edit was never verified
 
@@ -48,7 +48,6 @@ THRESHOLD = 2
 CODE_EXT = re.compile(r"\.(py|ts|tsx|js|jsx|mjs|cjs|go|rs|rb|java|kt|swift|c|cc|cpp|h|hpp|cs|php|sh|bash|zsh|lua|sql|scala|ex|exs|clj|vue|svelte)$", re.I)
 TEST_PATH = re.compile(r"(^|/)(tests?|__tests__|spec)/|(^|/)test_[^/]*$|_test\.\w+$|\.(test|spec)\.\w+$", re.I)
 # Tools named like ordinary words count only at command position: start, or after ; & | ( or a newline.
-BENCH_CMD = re.compile(r"\b(bench\w*|hyperfine|timeit|perf stat)|-bench|(?:^|[;&|(\n])\s*(?:time|wrk|k6|ab|locust)\s+\S", re.I)
 # A lone & ends a command in the background; &&, >&, &> and |& do not.
 DETACHED = re.compile(r"(?<![&>|<])&(?![&>])|(?:^|[;&|(\n])\s*disown\b")
 READ_ONLY_CMD = re.compile(r"^\s*(cat|head|tail|less|sed|grep|rg|ls|wc|git|find)\b")
@@ -477,24 +476,21 @@ def remind(row):
 
 
 def on_prompt(ev, path):
+    prompt = re.sub(r"\S*\w[/\\]\S*", " ", ev.get("prompt") or "")
     # At a session's first prompt the transcript does not exist yet: nothing is loaded.
     s = read_session(path) if path and os.path.exists(path) else {"loaded": set()}
-    rows = unloaded(route(ev.get("prompt") or ""), s)
+    rows = unloaded(route(prompt), s)
+    heavy = ev.get("permission_mode") == "plan" or any(rx.search(prompt) for rx in HEAVY_RX)
+    if not rows and not heavy:
+        return
     text = MARK
     if rows:
         text += (" This task hits these moments: %s.\nBefore your first tool call or reply, "
                  "call the Skill tool for each of %s and follow it." % ("; ".join(r["moment"] for r in rows), skills(rows)))
-    listed = [r for r in unloaded(ROUTES, s) if r not in rows]
-    words = re.sub(r"\S*\w[/\\]\S*", " ", ev.get("prompt") or "")
-    if ev.get("permission_mode") == "plan" or any(rx.search(words) for rx in HEAVY_RX):
+    if heavy:
         text += ("\nThis is the start of heavy work: a plan, an investigation, or writing for someone else. Before "
                  "the first step, go through the whole list below and load every principle this work could reach, "
                  "not only the next step's.")
-    text += ("\n%s the principle skills by the moment each covers:\n%s\nBefore your first tool call or reply, "
-             "pick each one whose moment this task could hit and call the Skill tool for it. When unsure, load it: "
-             "an unneeded load costs a turn, a missed one costs the reasoning. A lookup or a one-line edit hits "
-             "none; then load none." % ("Also check" if rows else "No cue matched. Check",
-             "\n".join("- `principle-%s`: %s" % (r["p"], r["moment"]) for r in listed)))
     context("UserPromptSubmit", text + "\nIn the reply, name each principle that changed a choice and the choice "
             "it changed; if one turns out not to fit, say so in a line.")
 
@@ -530,11 +526,7 @@ def on_pretool(ev, path):
 
 
 def on_posttool(ev, path):
-    tool, inp = ev.get("tool_name"), ev.get("tool_input") or {}
-    command = str(inp.get("command") or "")
     due = []
-    if tool == "Bash" and BENCH_CMD.search(shell_text(command)) and not READ_ONLY_CMD.match(command):
-        due.append(BY_TOOL["bench-run"])
     if len(json.dumps(ev.get("tool_response"), default=str)) > BIG_OUTPUT:
         due.append(BY_TOOL["big-output"])
     if not due:
