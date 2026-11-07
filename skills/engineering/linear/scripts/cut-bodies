@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+"""Cut each ticket body out of a draft file, offline.
+
+Usage: cut-bodies DRAFT.md
+
+A ticket starts at a top-level `# ` heading. Its body runs from its first `## ` line to the
+next top-level heading outside a fenced code block; a `# ` line inside a fence is body text.
+Prints a JSON list of {"heading", "body"}, one per top-level heading that has a `## ` section.
+A heading with no `## ` section, such as closing notes, gets no entry.
+"""
+import json
+import re
+import sys
+
+FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})")
+
+
+def cut(text):
+    tickets, heading, body, fence = [], None, None, None
+    for line in text.splitlines():
+        m = FENCE.match(line)
+        if fence is None and line.startswith("# "):
+            if heading is not None and body:
+                tickets.append({"heading": heading, "body": "\n".join(body).strip("\n") + "\n"})
+            heading, body = line[2:].strip(), None
+            continue
+        if m:
+            if fence is None:
+                fence = m.group(1)
+            elif m.group(1)[0] == fence[0] and len(m.group(1)) >= len(fence) and not line.strip().strip(fence[0]):
+                fence = None
+        if body is None and fence is None and line.startswith("## "):
+            body = []
+        if body is not None:
+            body.append(line)
+    if heading is not None and body:
+        tickets.append({"heading": heading, "body": "\n".join(body).strip("\n") + "\n"})
+    return tickets
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        sys.exit(__doc__)
+    with open(sys.argv[1]) as f:
+        print(json.dumps(cut(f.read()), indent=2))

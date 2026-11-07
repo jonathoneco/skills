@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+"""Compare a ticket's draft body with the description Linear stored, offline.
+
+Usage: compare-readback DRAFT_BODY.md STORED.md
+
+Linear keeps a description's words and rewrites its markdown. Both sides go through one
+normalizer that undoes every rewrite in REWRITES, then the script compares the `## ` section
+lists, the normalized lengths, and the normalized text. Prints "match" and exits 0, or names
+the first difference and exits 1.
+"""
+import re
+import sys
+
+# Each rewrite Linear makes on a stored description, and how normalize() undoes it on both sides:
+#   `- ` bullet -> `* ` (also `> - ` in a blockquote)        bullets become one marker
+#   `- [x]` -> `- [X]`                                      task boxes lower-cased
+#   ordered list (and code inside it) indented a space       leading whitespace dropped
+#   `|---|` -> `| -- |`                                     divider rows collapsed
+#   `[obs]` -> `\[obs\]`, `#` -> `\#`, `~` -> `\~`          markdown escapes dropped
+#   `\"` outside code -> `"`                                markdown escapes dropped
+#   bold or italic split around a code span                 emphasis markers dropped
+#   `_(...)_` -> `*...*`                                    parentheses inside it dropped
+#   `` ``x`` `` -> `` `` x `` ``                            space inside double backticks dropped
+#   bare URL -> link; `[x](path)` -> `[x](<path>)`          links reduced to their text
+ESCAPED = re.compile(r"\\([\[\]#~\"_*<>`\\-])")
+LINK = re.compile(r"\[([^\]]*)\]\(<?([^)>]*)>?\)")
+
+
+def normalize(text):
+    text = re.sub(r"_\(([^\n]*?)\)_", r"\1", text)
+    text = ESCAPED.sub(r"\1", text)
+    text = LINK.sub(r"\1", text)
+    text = re.sub(r"<(https?://[^>\s]+)>", r"\1", text)
+    text = text.replace("`` ", "``").replace(" ``", "``")
+    lines = []
+    for line in text.splitlines():
+        line = line.strip()
+        line = re.sub(r"^((?:> ?)*)[-*+] ", r"\1• ", line)
+        line = re.sub(r"\[[xX]\]", "[x]", line)
+        if re.fullmatch(r"\|[\s:|-]*-[\s:|-]*\|?", line):
+            line = re.sub(r"[\s-]+", "-", line)
+        line = line.replace("**", "").replace("*", "").replace("__", "")
+        if line:
+            lines.append(re.sub(r"\s+", " ", line))
+    return "\n".join(lines)
+
+
+def sections(text):
+    return [normalize(s) for s in re.findall(r"^## .*", text, re.M)]
+
+
+def compare(draft, stored):
+    if sections(draft) != sections(stored):
+        return "sections differ: draft %s, stored %s" % (sections(draft), sections(stored))
+    a, b = normalize(draft), normalize(stored)
+    if a == b:
+        return None
+    k = next((i for i in range(min(len(a), len(b))) if a[i] != b[i]), min(len(a), len(b)))
+    return "length draft %d, stored %d; first difference at %d\n draft:  %r\n stored: %r" % (
+        len(a), len(b), k, a[max(0, k - 40):k + 60], b[max(0, k - 40):k + 60])
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        sys.exit(__doc__)
+    with open(sys.argv[1]) as f, open(sys.argv[2]) as g:
+        diff = compare(f.read(), g.read())
+    print(diff or "match")
+    sys.exit(1 if diff else 0)

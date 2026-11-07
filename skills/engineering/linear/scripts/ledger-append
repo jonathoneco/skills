@@ -1,0 +1,20 @@
+#!/usr/bin/env python3
+"""Append one write to the effort's ledger, offline.
+
+Usage: ledger-append LEDGER.jsonl KEY OP RESULT [DRAFT_ID]
+
+Writes one JSON line: {"draft", "key", "op", "result", "at"}. DRAFT_ID is left out for a
+ticket that was already filed. A rerun reads the ledger first and skips what is done.
+"""
+import datetime
+import json
+import sys
+
+if __name__ == "__main__":
+    if len(sys.argv) not in (5, 6):
+        sys.exit(__doc__)
+    ledger, key, op, result = sys.argv[1:5]
+    row = {"draft": sys.argv[5] if len(sys.argv) == 6 else None, "key": key, "op": op, "result": result,
+           "at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")}
+    with open(ledger, "a") as f:
+        f.write(json.dumps(row) + "\n")
