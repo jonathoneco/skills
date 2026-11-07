@@ -1,6 +1,6 @@
 ---
 name: weighing
-description: "Use when a decision has options with costs: a decision brief's card, a grilling recommendation, a call made in the user's place, or when the user says torn. Weighs each option toward a pick and the measure that would reverse it."
+description: "Use when you put a question or a call to the user, when a decision has options with costs, or when the user says torn. Weighs each option toward a pick and the measure that would reverse it."
 ---
 
 # Weighing
