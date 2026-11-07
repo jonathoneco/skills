@@ -21,7 +21,6 @@ The three repo sources are MIT licensed. `dataviz` and `simplify` are copied fro
 | grill-me | `skills/reasoning/grill-me` | mattpocock/skills | `skills/productivity/grill-me` | `49dd158` |
 | grill-with-docs | `skills/reasoning/grill-with-docs` | mattpocock/skills | `skills/engineering/grill-with-docs` | `49dd158` |
 | grilling | `skills/reasoning/grilling` | mattpocock/skills | `skills/productivity/grilling` | `49dd158` |
-| implement | `skills/engineering/implement` | mattpocock/skills | `skills/engineering/implement` | `49dd158` |
 | improve-codebase-architecture | `skills/engineering/improve-codebase-architecture` | mattpocock/skills | `skills/engineering/improve-codebase-architecture` | `49dd158` |
 | interrogate | `skills/reasoning/interrogate` | cursor/plugins | `pstack/skills/interrogate` | `9f451cf` |
 | loop-me | `skills/reasoning/loop-me` | mattpocock/skills | `skills/in-progress/loop-me` | `49dd158` |
@@ -60,7 +59,6 @@ The three repo sources are MIT licensed. `dataviz` and `simplify` are copied fro
 | research | `skills/reasoning/research` | mattpocock/skills | `skills/engineering/research` | `49dd158` |
 | show-me-your-work | `skills/reasoning/show-me-your-work` | cursor/plugins | `pstack/skills/show-me-your-work` | `9f451cf` |
 | simplify | `skills/engineering/simplify` | Claude Code (built-in command) | `simplify` | `2.1.317` |
-| tdd | `skills/engineering/tdd` | mattpocock/skills | `skills/engineering/tdd` | `49dd158` |
 | teach | `skills/reasoning/teach` | mattpocock/skills | `skills/productivity/teach` | `49dd158` |
 | technical-writing | `skills/knowledge/technical-writing` | cursor/plugins | `pstack/skills/technical-writing` | `9f451cf` |
 | typescript-best-practices | `skills/engineering/typescript-best-practices` | cursor/plugins | `pstack/skills/typescript-best-practices` | `9f451cf` |
