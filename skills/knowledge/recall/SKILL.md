@@ -1,6 +1,6 @@
 ---
 name: recall
-description: Recall earlier sessions' work, searching agent notes and the durable record before transcripts. Use when resuming an effort, when the user asks where they left off or to catch them up, and when a question turns on what an earlier session found, decided, or measured.
+description: Recall earlier sessions' work, searching agent notes and the durable record before transcripts. Use when the user says reground yourself or resumes an effort, when the user asks where they left off or to catch them up, and when a question turns on what an earlier session found, decided, or measured.
 ---
 
 # Recall
