@@ -119,6 +119,8 @@ Treat every error as information. When code hits one, surface it where someone w
 - Run `shellcheck` on every script.
 - Quote every variable.
 - Pass captured output on with `printf '%s' "$var"` or a direct pipe, not `echo`: zsh's `echo` turns `\n` inside a JSON string into a real newline, and the parser then refuses it.
+- A check that could not have gone red proves nothing. A pipeline exits with its last stage's status, so set `pipefail` and print a success marker only inside the success branch. Wait on the PID you launched (`$!`) or on an output file that grows, never on a `pgrep -f` that matches its own command line. macOS has no `timeout`; confirm a wrapper resolves (`command -v`) before trusting its silence.
+- A test run on a loaded host is evidence of nothing, in either direction: one commit with no code change failed 44 files, then 1, because several vitest processes shared the machine. Check `uptime` and the test-runner process count, and let CI settle it.
 
 ## When the user overrides a rule
 
