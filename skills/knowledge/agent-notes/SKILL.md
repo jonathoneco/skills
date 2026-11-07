@@ -1,6 +1,6 @@
 ---
 name: agent-notes
-description: Agent notes, the notes one session leaves for the next, synced across the user's machines. Use when writing a handoff, rulings, or lessons for a later session, and to harvest an effort's notes at wrap-up.
+description: Agent notes, the notes one session leaves for the next, synced across the user's machines. Use when writing a handoff, rulings, or lessons for a later session, including a handoff to reground yourself after /compact, and to harvest an effort's notes at wrap-up.
 ---
 
 # Agent notes
