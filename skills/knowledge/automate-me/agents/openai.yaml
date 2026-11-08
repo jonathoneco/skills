@@ -1,3 +1,5 @@
 interface:
   display_name: "Automate Me"
   short_description: "Draft a personal -mode skill from how you work"
+policy:
+  allow_implicit_invocation: false

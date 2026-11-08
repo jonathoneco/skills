@@ -1,3 +1,5 @@
 interface:
   display_name: "Ponytail Review"
   short_description: "Plain-English review of a change"
+policy:
+  allow_implicit_invocation: false
