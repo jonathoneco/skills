@@ -1,6 +1,6 @@
 ---
 name: explainer
-description: "Explainer: a Notion page that explains a design, incident, investigation, decision, workflow onboarding, or talk. Use when the user says show me the design, or asks for an explainer or a Notion page explaining one of those."
+description: "Explainer: a Notion page that explains a design, incident, investigation, decision, workflow onboarding, or talk. Use when the user asks for an explainer, a report or findings write-up, or a Notion page explaining one of those."
 ---
 
 # Explainer
