@@ -76,6 +76,7 @@ class Watcher:
         self.seen = set()
         self.empty_polls = 0
         self.queue_state = None
+        self.seen_in_queue = False
 
     def view(self):
         fields = "number,url,state,isDraft,headRefOid,mergeable,mergeStateStatus,reviewDecision,comments,reviews"
@@ -126,11 +127,13 @@ class Watcher:
                   "-F", "repo=" + repo, "-F", "pr=%d" % number]).stdout
         return json.loads(out)["data"]["repository"]["pullRequest"]
 
-    def failed_queue_run(self, owner, repo):
+    def failed_queue_run(self, owner, repo, number):
+        """URL of the newest failed merge_group run for this PR; queue branches end in /pr-<number>-<sha>."""
         out = gh(["run", "list", "-R", "%s/%s" % (owner, repo), "--event", "merge_group", "--status", "failure",
-                  "--limit", "1", "--json", "url,headBranch,createdAt"]).stdout
-        runs = json.loads(out)
-        return runs[0]["url"] if runs else "no failed queue run found"
+                  "--limit", "50", "--json", "url,headBranch,createdAt"]).stdout
+        marker = "/pr-%d-" % number
+        runs = [r for r in json.loads(out) if marker in (r.get("headBranch") or "")]
+        return runs[0]["url"] if runs else "no failed queue run found for this PR"
 
     def new_comments(self, pr, owner, repo):
         """Comments, reviews, and inline review comments created after --since."""
@@ -178,13 +181,20 @@ class Watcher:
                 setattr(self, attr, value)
 
         in_queue = False
+        joining = False
         if self.opts.until_merged:
             q = self.queue(owner, repo, number)
             if pr["state"] == "MERGED":
                 return GREEN, "merged as " + ((q.get("mergeCommit") or {}).get("oid") or "?")
-            if pr["state"] == "OPEN" and not q.get("isInMergeQueue"):
-                return DEQUEUED, "PR is not in the merge queue; " + self.failed_queue_run(owner, repo)
-            in_queue = pr["state"] == "OPEN"
+            in_queue = pr["state"] == "OPEN" and bool(q.get("isInMergeQueue"))
+            if in_queue:
+                self.seen_in_queue = True
+            elif pr["state"] == "OPEN":
+                # Auto-merge adds the PR to the queue only after its checks pass, so absence is removal
+                # only once this watch has seen the PR in the queue.
+                if self.seen_in_queue:
+                    return DEQUEUED, "PR left the merge queue; " + self.failed_queue_run(owner, repo, number)
+                joining = True
             state = (q.get("mergeQueueEntry") or {}).get("state")
             if in_queue and state != self.queue_state:
                 print("%s merge queue: %s -> %s" % (stamp(), self.queue_state or "-", state or "-"))
@@ -224,6 +234,8 @@ class Watcher:
             return None, "%d of %d checks pending" % (buckets.count("pending"), len(buckets))
         if skipped:
             return RED, "required checks skipped, so they never ran: " + ", ".join(skipped)
+        if joining:
+            return None, "waiting to join the merge queue"
         if in_queue:
             return None, "in merge queue: %s" % (self.queue_state or "?")
         scope = "required" if self.required_only else "all (no required checks)"
