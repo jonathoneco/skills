@@ -1,3 +1,5 @@
 interface:
   display_name: "Maintain Verification Skill"
   short_description: "Fix drift in a project's verify skill"
+policy:
+  allow_implicit_invocation: false

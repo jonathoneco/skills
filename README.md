@@ -40,6 +40,7 @@ Every skill here is installed at all times, so a skill's `description` decides w
   These are the skills that would misfire if the agent loaded them on its own: `grill-me`, `wait-what`, `bro`.
 - **Name-only**: other skills load these by name, and the model sees no description that would tempt it to load one by itself. In Claude Code, the user settings in dotfiles must set each one to `name-only` under `skillOverrides`.
   - Skills that launch several model runs, so a description must not start one by accident: `arena`, `swarm`, `hillclimb`, `interrogate`. Their `agents/openai.yaml` sets `allow_implicit_invocation: false`, which keeps them out of Codex's list.
+  - Skills that load too rarely to earn a description in every prompt, loaded by name from another skill or typed by the user: `writing-beats`, `writing-fragments`, `writing-shape`, `grill-with-docs`, `loop-me`, `teach`, `automate-me`, `ponytail`, `ponytail-help`, `ponytail-gain`, `ponytail-debt`, `ponytail-review`, `ponytail-audit`, `improve-codebase-architecture`, `eval`, `perf-issue`, `create-verification-skill`, `maintain-verification-skill`, `trace-forensics`. Their `agents/openai.yaml` sets `allow_implicit_invocation: false`.
 
 The 24 `principle-*` skills in `skills/reasoning/` auto-load by their descriptions, and the [working mode](./mode/README.md) names them at the moments they apply.
 

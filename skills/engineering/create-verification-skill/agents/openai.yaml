@@ -1,3 +1,5 @@
 interface:
   display_name: "Create Verification Skill"
   short_description: "Make a skill that proves app behavior"
+policy:
+  allow_implicit_invocation: false

@@ -1,3 +1,5 @@
 interface:
   display_name: "Ponytail"
   short_description: "Lazy senior dev mode: the smallest complete change"
+policy:
+  allow_implicit_invocation: false

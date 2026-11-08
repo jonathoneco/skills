@@ -1,3 +1,5 @@
 interface:
   display_name: "Ponytail Debt"
   short_description: "List shortcut: comments as a debt ledger"
+policy:
+  allow_implicit_invocation: false

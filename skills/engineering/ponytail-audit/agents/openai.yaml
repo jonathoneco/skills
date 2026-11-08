@@ -1,3 +1,5 @@
 interface:
   display_name: "Ponytail Audit"
   short_description: "Whole-repo audit, ranked in plain English"
+policy:
+  allow_implicit_invocation: false

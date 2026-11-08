@@ -1,3 +1,5 @@
 interface:
   display_name: "Eval"
   short_description: "Compare two variants blind, from transcripts"
+policy:
+  allow_implicit_invocation: false
