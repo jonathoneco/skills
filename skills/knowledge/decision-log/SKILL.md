@@ -1,6 +1,6 @@
 ---
 name: decision-log
-description: Decision log, the record of calls an agent makes in the user's place, where the user already decided something, and the digest they review. Use before deciding anything in the user's place, to find the precedent; when logging such a call; and when the user checks in, to build the digest and apply their answers.
+description: Decision log, the record of calls an agent makes in the user's place, where the user already decided something, and the digest they review. Use when you are about to settle a question the user would otherwise answer (a scope, product, or ordering call), to find the standing ruling first; after making such a call, to log it; and when the user checks in.
 ---
 
 # Decision log
