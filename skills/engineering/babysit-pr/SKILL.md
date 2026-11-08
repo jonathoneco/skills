@@ -11,15 +11,16 @@ The bar: every required check has run and passed on the PR's current head, and e
 
 | Exit | Verdict | Go to |
 |---|---|---|
-| 0 | GREEN: every required check passed | step 6 |
+| 0 | GREEN: every required check passed; with `--until-merged`, merged | step 6 |
 | 1 | RED: a check failed, or a required check was skipped and so never ran | step 3 |
 | 3 | COMMENT: a comment, review, or inline comment after `--since` | step 4 |
 | 4 | CONFLICT with the base branch | step 5 |
 | 5 | CLOSED or merged by someone else | report |
+| 9 | REMOVED from the merge queue (`--until-merged`) | step 3, with the printed run |
 | 6, 7, 8 | timed out, no checks reported, or `gh` failing | report with the last lines |
 
 ```sh
-<this skill's folder>/scripts/watch-pr [<pr>] [-R owner/repo] [--since <time>] [--timeout <minutes>] [--once]
+<this skill's folder>/scripts/watch-pr [<pr>] [-R owner/repo] [--since <time>] [--timeout <minutes>] [--once] [--until-merged]
 ```
 
 watch-pr watches one PR; in a stack, point it at the base PR. `--once` prints the state and exits, with 10 while checks are still pending. The last line carries `seen-through=<time>`; pass it as `--since` on the next run so no comment slips between runs.
@@ -50,7 +51,7 @@ Merge only when the user says to. Use the merge method the repo uses, through `g
 
 After a squash merge, the child PR still carries the parent's commits. Its review diff shows the parent's files again, and it conflicts once the trunk edits those lines. So before the child merges, move only its own commits onto the new trunk: `git rebase --onto origin/main <parent's old head> <child branch>`, with the old head from `gh pr view <parent> --json headRefOid`, then `git push --force-with-lease`. This rebase is part of the merge the user asked for. `git log origin/main..<child branch>` then lists only the child's own commits.
 
-When the trunk has a merge queue, `gh pr merge` enqueues the PR, and the queue sets the method (gh says so when it enqueues). The queue tests each PR against everything ahead of it, so enqueue each PR whose base is the trunk the moment it passes, without waiting for other PRs' merges or deploys; a stacked child joins once GitHub retargets it to the trunk. A queue may refuse `--delete-branch`; leave it off and delete the branch once its merge commit is on the trunk. Watch the entry with `gh pr view <pr> --json mergeStateStatus,mergeCommit`. A PR the queue removes has failed a check the queue ran: read that run, fix it, and enqueue again.
+When the trunk has a merge queue, `gh pr merge` enqueues the PR, and the queue sets the method (gh says so when it enqueues). The queue tests each PR against everything ahead of it, so enqueue each PR whose base is the trunk the moment it passes, without waiting for other PRs' merges or deploys; a stacked child joins once GitHub retargets it to the trunk. A queue may refuse `--delete-branch`; leave it off and delete the branch once its merge commit is on the trunk. Wait for the result with `watch-pr <pr> --until-merged`: exit 0 means merged, exit 9 means the queue removed the PR, so read the printed run, fix it, and enqueue again.
 
 Done when each merged PR passes the check, and the next PR in the stack targets the trunk before it merges.
 

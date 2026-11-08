@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # watch-pr: poll one GitHub pull request's checks and comments through `gh`, print
 # each change as it happens, and exit when the PR needs an agent: checks green, a
-# check red, a new comment, a merge conflict, or the PR closed.
+# check red, a new comment, a merge conflict, or the PR closed. With --until-merged,
+# it waits past green checks until the merge queue merges or removes the PR.
 # Standard library only; runs on the macOS /usr/bin/python3 (3.9).
 # Adapted from pstack's watch-pr (MIT, Lauren Tan).
 import argparse
@@ -12,11 +13,12 @@ import sys
 import time
 
 GREEN, RED, USAGE, COMMENT, CONFLICT, CLOSED, TIMEOUT, NO_CHECKS, GH_ERROR = range(9)
+DEQUEUED = 9  # --until-merged only: the merge queue removed the PR
 PENDING = 10  # --once only: nothing has settled yet
 VERDICTS = {
     GREEN: "GREEN", RED: "RED", COMMENT: "COMMENT", CONFLICT: "CONFLICT",
     CLOSED: "CLOSED", TIMEOUT: "TIMEOUT", NO_CHECKS: "NO-CHECKS",
-    GH_ERROR: "GH-ERROR", PENDING: "PENDING",
+    GH_ERROR: "GH-ERROR", DEQUEUED: "REMOVED FROM QUEUE", PENDING: "PENDING",
 }
 GH_RETRIES = 3       # consecutive failed polls before giving up
 NO_CHECK_POLLS = 3   # polls with no checks at all before saying so
@@ -24,6 +26,12 @@ THREADS_QUERY = """
 query($owner: String!, $repo: String!, $pr: Int!) {
   repository(owner: $owner, name: $repo) {
     pullRequest(number: $pr) { reviewThreads(first: 100) { nodes { isResolved } } }
+  }
+}"""
+QUEUE_QUERY = """
+query($owner: String!, $repo: String!, $pr: Int!) {
+  repository(owner: $owner, name: $repo) {
+    pullRequest(number: $pr) { isInMergeQueue mergeQueueEntry { state } mergeCommit { oid } }
   }
 }"""
 
@@ -67,6 +75,8 @@ class Watcher:
         self.review_decision = None
         self.seen = set()
         self.empty_polls = 0
+        self.queue_state = None
+        self.seen_in_queue = False
 
     def view(self):
         fields = "number,url,state,isDraft,headRefOid,mergeable,mergeStateStatus,reviewDecision,comments,reviews"
@@ -110,6 +120,20 @@ class Watcher:
             return sum(1 for n in nodes if not n["isResolved"])
         except (GhError, KeyError, TypeError, ValueError):
             return None
+
+    def queue(self, owner, repo, number):
+        """isInMergeQueue, mergeQueueEntry { state }, and mergeCommit { oid } for the PR."""
+        out = gh(["api", "graphql", "-f", "query=" + QUEUE_QUERY, "-F", "owner=" + owner,
+                  "-F", "repo=" + repo, "-F", "pr=%d" % number]).stdout
+        return json.loads(out)["data"]["repository"]["pullRequest"]
+
+    def failed_queue_run(self, owner, repo, number):
+        """URL of the newest failed merge_group run for this PR; queue branches end in /pr-<number>-<sha>."""
+        out = gh(["run", "list", "-R", "%s/%s" % (owner, repo), "--event", "merge_group", "--status", "failure",
+                  "--limit", "50", "--json", "url,headBranch,createdAt"]).stdout
+        marker = "/pr-%d-" % number
+        runs = [r for r in json.loads(out) if marker in (r.get("headBranch") or "")]
+        return runs[0]["url"] if runs else "no failed queue run found for this PR"
 
     def new_comments(self, pr, owner, repo):
         """Comments, reviews, and inline review comments created after --since."""
@@ -156,6 +180,26 @@ class Watcher:
                     print("%s %s: %s -> %s" % (stamp(), label, getattr(self, attr) or "-", value or "-"))
                 setattr(self, attr, value)
 
+        in_queue = False
+        joining = False
+        if self.opts.until_merged:
+            q = self.queue(owner, repo, number)
+            if pr["state"] == "MERGED":
+                return GREEN, "merged as " + ((q.get("mergeCommit") or {}).get("oid") or "?")
+            in_queue = pr["state"] == "OPEN" and bool(q.get("isInMergeQueue"))
+            if in_queue:
+                self.seen_in_queue = True
+            elif pr["state"] == "OPEN":
+                # Auto-merge adds the PR to the queue only after its checks pass, so absence is removal
+                # only once this watch has seen the PR in the queue.
+                if self.seen_in_queue:
+                    return DEQUEUED, "PR left the merge queue; " + self.failed_queue_run(owner, repo, number)
+                joining = True
+            state = (q.get("mergeQueueEntry") or {}).get("state")
+            if in_queue and state != self.queue_state:
+                print("%s merge queue: %s -> %s" % (stamp(), self.queue_state or "-", state or "-"))
+                self.queue_state = state
+
         if pr["state"] != "OPEN":
             return CLOSED, "PR is " + pr["state"].lower()
 
@@ -190,6 +234,10 @@ class Watcher:
             return None, "%d of %d checks pending" % (buckets.count("pending"), len(buckets))
         if skipped:
             return RED, "required checks skipped, so they never ran: " + ", ".join(skipped)
+        if joining:
+            return None, "waiting to join the merge queue"
+        if in_queue:
+            return None, "in merge queue: %s" % (self.queue_state or "?")
         scope = "required" if self.required_only else "all (no required checks)"
         return GREEN, "%d of %d checks passed, %s" % (buckets.count("pass"), len(buckets), scope)
 
@@ -200,14 +248,19 @@ def main():
         prog="watch-pr",
         description="Poll a PR's checks and comments until it needs an agent. Exit codes: "
         "0 green, 1 red, 2 bad arguments, 3 new comment, 4 merge conflict, 5 closed or merged, "
-        "6 timed out, 7 no checks, 8 gh failing, 10 pending (--once).")
+        "6 timed out, 7 no checks, 8 gh failing, 9 removed from merge queue (--until-merged), "
+        "10 pending (--once).")
     p.add_argument("pr", nargs="?", help="PR number, URL, or branch (default: the current branch's PR)")
     p.add_argument("-R", "--repo", help="OWNER/REPO (default: the current directory's repo)")
     p.add_argument("--interval", type=int, default=60, help="seconds between polls (default 60)")
     p.add_argument("--timeout", type=int, default=60, help="minutes before giving up; 0 means never (default 60)")
     p.add_argument("--since", help="ISO time; only comments after it count as new (default: now)")
     p.add_argument("--once", action="store_true", help="print the current state once and exit")
+    p.add_argument("--until-merged", action="store_true",
+                   help="keep watching past green checks until the merge queue merges or removes the PR")
     opts = p.parse_args()
+    if opts.until_merged and opts.once:
+        p.error("--until-merged cannot be used with --once")
     if opts.interval < 5:
         p.error("--interval must be at least 5 seconds")
     try:
