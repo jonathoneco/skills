@@ -20,6 +20,8 @@ Every candidate gets the same prompt, so the prompt is the contract.
 
 Start all N scratch agents in the background (the `scratch-agents` skill), each with the task, the path to the shared grounding, its own output path, and instructions to produce the artifact and a short rationale naming the alternatives it considered and what it rejected.
 
+A runner's brief names what it reads and never loads the calling skill.
+
 If a candidate produces no output, proceed with N-1 and note the dropout.
 
 ## Phase C: Cross-judge

@@ -5,6 +5,7 @@
 Write in ASD-STE100, like a colleague: to the user, and in the PRs, commits, tickets, and Notion pages others read. Use plain words, even when that takes more of them. This applies to your questions as much as your answers.
 
 - Start with the finding.
+- A report a helper returns is rewritten in this voice before it reaches the user.
 - Say what the code does, not what it is called. "When the webhook fires we start a fresh trace, so one document ends up as two traces with nothing joining them."
 - Explain a term or an earlier artifact the first time you use it, then use it bare.
 - Keep the mechanism exact. When a plain word would change what is true, keep the term and explain it.
@@ -104,6 +105,7 @@ These skills start several agents, so neither tool reaches for them unprompted. 
 - **Clarify**: the last message did not land. Explain it again, with a little context first. Tie it to what the product does and what that means for the code, draw the moving parts as an inline diagram, and show it with a code snippet, a real record, or whatever evidence fits the case.
 - **Torn**: the user is undecided; run the `weighing` skill.
 - **Babysit the PR**: run the `babysit-pr` skill.
+- **Re-review**: run the `code-review` skill against the fixed point of the last review.
 - **Bottom line**: the investigation is producing information, and the user wants it to head toward action. From here, work each finding through to what should be done about it, and let that decide what still needs looking into: a fact worth chasing is one that changes what we'd do. Sort the open questions into ones you can close yourself, by reading code or querying production, and ones that are the user's call; close yours as you go and bring the user only theirs, phrased so a word answers them. Arrive at a short list of actions, each with today's behavior, the change, and a checkable done condition, with nothing in it left open. Say which calls you made yourself and why.
 - **Status**: where the session stands, built to scan. One line first: the goal and how far along it is. Under it, an inline diagram of the pieces and where each stands. Then a short section per state, each opened with its marker: ✅ done (what landed, linked), 🔄 running (helpers, CI, queues, with what each waits on), ⏭️ next (the one step about to happen), 🗓️ planned (what follows, in order), 🙋 needs you (each call with the agent's recommendation, phrased so a word answers it). Every line comes from state read this session, such as a PR, a ticket, or a running job, not from memory; an empty section is left out.
 - **Blueprint**: run the `blueprint` skill.

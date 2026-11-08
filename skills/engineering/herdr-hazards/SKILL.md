@@ -20,7 +20,6 @@ Claude Code's input box also shows grayed suggested prompts. They are inert: not
 - Send one line of text into an empty input line. `send-text` into a line that already holds text merges or truncates the message; one relay arrived as only "the queue needs you." Write a longer relay to a file and send a one-line pointer to it.
 - Confirm submission by the input box being empty, or by the queued-messages banner or context growth. Text in the viewport proves nothing; scrollback echoes match too.
 - `send-keys` names are lowercase throughout: `esc`, `ctrl+c`, `enter`.
-- A vendored skill such as `implement` can tell the implementer to run the full test suite. When the target repo forbids local full suites, that skill text can't be edited to match, so say so in the prompt you send and name the scoped checks to run instead.
 
 ## Launching an agent in a fresh worktree
 

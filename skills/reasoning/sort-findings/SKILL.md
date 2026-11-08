@@ -24,7 +24,7 @@ Every item lands in one bucket. The bucket describes the finding:
 - **Fix:** a certain defect, wrong under every option. Name the lowest PR or file that owns it.
 - **Repair:** one record is wrong, not the mechanism. Name the record and the correction.
 - **Call:** a choice whose options differ in what the product's users see, or a change the user must rule on. Weigh it as the `weighing` skill says.
-- **Noted:** valid, not actionable now: context-dependent, low impact at this stage, or a preference ("I would have done it differently") with no concrete problem behind it.
+- **Noted:** valid, not actionable now: context-dependent, low impact at this stage, or a preference ("I would have done it differently") with no concrete problem behind it. A finding that proposes hardening, tests for unreached cases, or future-proofing the spec did not ask for is Noted.
 - **Dismissed:** wrong, or made without the context you have, with one line why. The dismissed list stays visible: it is how the user overrides your judgment where they disagree.
 
 Who acts: an item inside the ask, you do. An item outside it is a proposal to the user: say what it changes and wait for a yes (the `principle-never-block-on-the-human` skill). Heavy work outside this change gets a ticket, named in the PR body.
