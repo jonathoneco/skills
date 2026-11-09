@@ -7,7 +7,8 @@ Usage: scripts/skill-usage [--format summary|events|both] [--since DATE|DATETIME
        scripts/skill-usage prompts  [same window options]   one row per real prompt, interactive sessions
        scripts/skill-usage excerpt FILE LINE [--after 40]   readable view of one spot in a log
 
-A date means that whole day in UTC. A datetime takes its own offset, so
+With no window given, it counts the 90 days up to now. A date means that
+whole day in UTC. A datetime takes its own offset, so
 --until 2026-11-04T16:45:00-05:00 stops at that moment.
 
 What counts as a load
@@ -80,6 +81,9 @@ THIRD_PARTY = {
     "playwright-cli", "plannotator-annotate", "plannotator-last",
     "plannotator-review",
 }
+NOW = datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0)
+DEFAULT_SINCE = (NOW - datetime.timedelta(days=90)).isoformat()
+DEFAULT_UNTIL = NOW.isoformat()
 SWEEP_NAMES = 3
 BREADTH = 10
 KEEP_CHARS = 1200
@@ -540,8 +544,8 @@ def jobs_for(args, home, win):
 
 def text_main(command, argv):
     parser = argparse.ArgumentParser(prog=f"skill-usage {command}")
-    parser.add_argument("--since", default="2026-08-06")
-    parser.add_argument("--until", default="2026-11-04")
+    parser.add_argument("--since", default=DEFAULT_SINCE)
+    parser.add_argument("--until", default=DEFAULT_UNTIL)
     parser.add_argument("--machine-label", default="macbook")
     parser.add_argument("--home", default=os.path.expanduser("~"))
     parser.add_argument("--skills-list", help="comma-separated skill names shared across machines")
@@ -713,8 +717,8 @@ def main():
         return excerpt_main(sys.argv[2:])
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--format", choices=("summary", "events", "both"), default="summary")
-    parser.add_argument("--since", default="2026-08-06")
-    parser.add_argument("--until", default="2026-11-04")
+    parser.add_argument("--since", default=DEFAULT_SINCE)
+    parser.add_argument("--until", default=DEFAULT_UNTIL)
     parser.add_argument("--machine-label", default="macbook")
     parser.add_argument("--home", default=os.path.expanduser("~"))
     parser.add_argument("--skills-list", help="comma-separated skill names shared across machines")
