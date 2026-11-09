@@ -21,6 +21,8 @@ Done when you know which checks run at this head.
 - (you) The PR body is read against the ticket's Decided section, not only against the diff. A body that states a target nobody ruled, or cites a question as the ruling, is corrected before the merge. The orchestrator edits a lane's PR body after the lane's last evidence publish and before the merge gate. The evidence publish rewrites the PR body, so an edit made before it is lost. The edit lives in a script that can run again, and the gate waits for any check the edit reruns.
 - (you) No question to the user about this PR is open.
 
+A check run by hand gates the merge through its exit code, as in `git merge-base --is-ancestor origin/main <head> && gh pr merge …`. A check whose result is only printed, such as `echo`'s output before `&&`, lets the merge run whatever it found.
+
 When the lane engine verifies an (engine) check at ready, record its verdict from the engine's ready event instead of checking again. Run the (you) checks and the effort's own checks yourself.
 
 A PR that breaks a worker-brief rule goes back to its lane, and the gap is fixed where it lasts ([calls.md](calls.md) step 1).
