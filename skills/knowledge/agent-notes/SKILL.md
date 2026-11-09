@@ -20,7 +20,7 @@ Every note shares the language below, so notes can be found and gathered. A note
 
 ## Shared language
 
-**Kinds.** Name each new file by its kind, alone (`HANDOFF.md`, `RULINGS.md`) or as a folder of them (`briefs/extract.md`, `reports/latency.md`): handoff, log, return, brief, report, rulings, lessons, ledger, draft, facts, rules. A file another skill names, such as the explainer's build sheet, keeps that skill's name.
+**Kinds.** Name each new file by its kind, alone (`HANDOFF.md`, `RULINGS.md`) or as a folder of them (`briefs/extract.md`, `reports/latency.md`): handoff, log, return, brief, report, rulings, lessons, ledger, draft, facts, rules. A file another skill names, such as the explainer's `COLD-<n>.md`, keeps that skill's name.
 
 - **handoff:** one per effort, in that effort's folder, rewritten in place so it holds only the current state, and a reader never has to work out which handoff is current. What it held before goes to the effort's log. A handoff written elsewhere, such as into a temp directory, is folded into the effort's handoff. It names every helper, job, and paid resource still running, and says whether each was stopped or left running for the next session on purpose. It names the skills the next session loads first. When the user asks to stop, stop at a safe boundary: finish or back out of the current step and start nothing new, then write the handoff.
 - **log:** `log.md`, the effort's history, newest entry first, each entry stamped.
