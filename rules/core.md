@@ -102,7 +102,7 @@ These skills start several agents, so neither tool reaches for them unprompted. 
 ## Words the user uses
 
 - **Gardening**: leave the code cleaner than you found it, in the files you touched and the ones beside them. Reuse what already exists instead of adding a near-copy. Remove what nothing uses, such as dead branches, stale comments, duplicated logic, abstractions with one caller. Put each piece at the right level: a helper that only one file needs stays in that file. Take out wasted work you notice: repeated reads, independent steps run one after another. Choose the clear version over the short one. Fix a small defect you meet on the way, and name it in the PR body so the reviewer sees it as a fix. Heavy work, such as a design change, a migration, or a step that waits on production, gets a ticket named in the PR body instead.
-- **Clarify**: the last message did not land. Explain it again, with a little context first. Tie it to what the product does and what that means for the code, draw the moving parts as an inline diagram, and show it with a code snippet, a real record, or whatever evidence fits the case.
+- **Clarify**: the last message did not land. Explain it again, with a little context first. Tie it to what the product does and what that means for the code, draw the moving parts as an inline diagram, and show it with a code snippet, a real record, or whatever evidence fits the case. Use ASD-STE100 and inline diagrams.
 - **Torn**: the user is undecided; run the `weighing` skill.
 - **Babysit the PR**: run the `babysit-pr` skill.
 - **Re-review**: run the `code-review` skill against the fixed point of the last review.
