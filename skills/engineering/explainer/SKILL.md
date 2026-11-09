@@ -7,7 +7,7 @@ description: "Explainer: use when the user asks for an explainer, a findings rep
 
 The bar: a reader who never opens the code sees what happens, why, and what is theirs to decide. Their coding agent acts from the same page and its agent context without digging the evidence up again.
 
-The **author** is this session: it reasons, makes or asks for every ruling, and writes every page. A page is one self-contained HTML file. Terms below holds the words this skill uses, and How a page teaches, after step 6, holds how a page teaches. [page.md](page.md) holds how a page is laid out, read from step 3; [diagrams.md](diagrams.md) how to decide on and draw a diagram.
+The **author** is this session: it reasons, makes or asks for every ruling, and writes every page. A page is one self-contained HTML file. Terms below holds the words this skill uses, and How a page teaches, after step 6, holds how a page teaches and is laid out. [diagrams.md](diagrams.md) holds how to decide on and draw a diagram.
 
 **Notion:** when the ask names Notion, read [notion.md](notion.md) before step 3. It builds the same content as Notion pages.
 
@@ -64,21 +64,23 @@ Done when step 9 is written and every claim it rests on has its ledger row. Then
 
 Load the `technical-writing`, `unslop`, and `asd-ste100` skills before the first sentence. Load `dataviz` when a page carries a chart, and `writing-shape` when the user handed over raw notes to build from.
 
-Write each page's text yourself, from your own understanding, by How a page teaches below and page.md, carrying the answers the shape file's Reasoning reached, laid out as its On the page says. Introduce each lacked item the way a teacher does: in the sentence that first needs it, in a clause or a short paragraph, inside the story. Every section moves the reader toward the takeaway. When the prose needs a fact you haven't read, read its source and add its ledger row. Write each page's agent context, and draw each diagram.
+Write each page's text yourself, from your own understanding, by How a page teaches below, carrying the answers the shape file's Reasoning reached, laid out as its On the page says. Introduce each lacked item the way a teacher does: in the sentence that first needs it, in a clause or a short paragraph, inside the story. Every section moves the reader toward the takeaway. When the prose needs a fact you haven't read, read its source and add its ledger row. Write each page's agent context, and draw each diagram.
 
 Done when every lacked item is introduced where it is first needed, or cut from the page, and each page named in step 2's Pages has its text and its agent context.
 
 ## 4. Build
 
-Load the `design-artifact` skill. Start each page from [templates/page.html](templates/page.html). Into its `<style>` block paste [templates/base.css](templates/base.css), then one kind stylesheet, picked in this order:
+Build each page as the `html` skill says. That skill loads `design-artifact`, sends a page that is only a diagram to `html-diagram`, and inspects the page in a browser. Load `web-artifacts-builder` only when the reader must operate something on the page, such as trying an input and seeing the result.
 
-1. [templates/handoff.css](templates/handoff.css) when the reader is someone other than the user, such as a teammate taking over the work.
-2. Otherwise [templates/decision.css](templates/decision.css) when the page's calls come first, as on a decision brief.
-3. [templates/working.css](templates/working.css) for every other page.
+Each page also holds what only this skill knows about its reader:
 
-The two stylesheets are the page's design system; `design-artifact` decides only what they leave open. The fonts are the system's own, so each file stays well under 1 MB. Load `web-artifacts-builder` only when the reader must operate something on the page, such as trying an input and seeing the result.
+- The takeaway and the asks, first after the title (The reader and the takeaway below).
+- The worked case, set apart above the first step.
+- Each call as a decision card (decision-brief.md's Decision cards), with its state shown on it: open, coming, or ruled.
+- Optional depth, such as further evidence, raw data, or a long reference table, folded behind a `<details>` block. What the reader must read, such as a journey or a rule, stays open on the page.
+- A link in the page's foot to its agent context.
 
-Done when every page and its agent context are built files, one pair per page named in step 2's Pages, every `<style>` holds the base and one kind stylesheet, and a handoff's privacy grep passes.
+Done when every page and its agent context are built files, one pair per page named in step 2's Pages, each page holds the parts above, the `html` skill's browser inspection finds nothing left to fix, and a handoff's privacy grep passes.
 
 ## 5. Check
 
@@ -86,8 +88,7 @@ Done when every page and its agent context are built files, one pair per page na
 
 - **Cold read**, on the first version and after a change to the takeaway, the asks, or explanatory prose, as Cold read below says; run the other checks while it works. Done when its takeaway and ask match yours and its list of unexplained items is empty. When either fails, fix the prose that let the reader land elsewhere or leaned on what they lack, not the test, and run it again on the rebuilt page. When two rebuilt rounds still land elsewhere, bring both answers to the user with the takeaway.
 - **Facts:** live state the pages report is re-read after the latest build, and a claim is re-checked when its source has moved past the commit in its ledger row.
-- **Prose:** run `technical-writing`, `unslop`, and `asd-ste100` again on the text of each page the build changed, as `scripts/page-text.py` prints it; every substantive line also passes Every line below.
-- **Render:** open each changed page in a browser, in light and dark themes (the `playwright-cli` skill takes the screenshots). Done when no label overlaps another, no diagram is clipped, and every table and diagram scrolls inside its own box.
+- **Prose:** run `technical-writing`, `unslop`, and `asd-ste100` again on the text of each `.html` file the build changed; every substantive line also passes Every line below.
 
 Done when every check holds on the latest build. When one fails, change the page, rebuild, and check the new build.
 
@@ -100,7 +101,9 @@ Then work each round of comments. The user comments on the page and tells the au
 - An objection to a page's presentation usually surfaces reasoning skipped in step 2; look for that first.
 - A comment that explains a term may be context rather than a request for change. Ask which before renaming anything.
 - Record each ruling in the effort's rulings note (the `agent-notes` skill).
-- Rewrite the page as page.md's Rewriting after rulings says, rebuild it, run step 5 on the new build, and publish it as a new version.
+- Reread the whole page against its takeaway, and restate the takeaway when the rulings moved it. Rewrite the prose wherever a ruling lands, so the page reads as if written fresh with the ruling known. A ruling's answer goes where it belongs in the argument, which is often not where the comment was left. Rewrite or remove every sentence it makes stale.
+- When the user kills a line, generalise the kill to its pattern: they are correcting a genre, not a sentence. Re-sweep every page against Every line below, not only the page they named, and report what was removed so they can recall any of it.
+- Rebuild the page, run step 5 on the new build, and publish it as a new version.
 - Reply on each thread with what changed and where. The user resolves the thread.
 
 A round is done when its pages pass step 5 and every thread from it carries a reply saying what changed, or a question for the user.
@@ -120,6 +123,17 @@ These hold for every shape and both builds.
 - State the central idea, the one mechanism or change the rest of the page depends on, before any detail that leans on it.
 - A term the author coined while working is introduced like any lacked item, by what it does in product terms, or replaced by a plain phrase. Several new terms at once get a glossary table under the takeaway.
 - A metaphor may name one mechanism, glossed once with its literal meaning, then reused bare ("the doorway, the one builder every endpoint passes through"). It names; it never states what happens.
+
+### Order
+
+- Between the takeaway and the first section sits at most a small strip, such as a glossary table or a today-against-the-design pair.
+- Order steps by what triggers them, one step per trigger. A step that sits out of sequence opens with a line saying why it is there.
+- Follow every item to its end: what clears it, who acts, and what happens next.
+- A set of values or cases is listed one line per member, in the order they are tried.
+- A dense reference table, such as the terms, states, and values the reader looks up while reading, goes at the end.
+- Emphasis grows with rarity: an event that happens in most journeys gets plain text, and a rare one is set apart.
+- One name and one colour per thing, everywhere it appears: prose, labels, diagrams, and tables. A word that covers several kinds of thing is split into their names.
+- The text beside a diagram says what the diagram can't show, such as why a part is there or what it costs. The parts and arrows it draws are stated once, in the diagram.
 
 ### Every line
 
@@ -154,14 +168,14 @@ The test for each piece: would the reader act differently after reading it, befo
 
 **Cold read:** the cold reader gets the page and the profile. Into `COLD-<n>.md` it writes the takeaway, the ask, and every term, system, or premise the page used before it explained it, for that reader. The page publishes when that list is empty.
 
-It runs as an `explainer cold read` scratch agent (the `scratch-agents` skill), told to change no file except its `COLD-<n>.md`. `n` counts cold reads in the effort, from 1. Beside the page, save its text with `python3 scripts/page-text.py <page>.html > COLD-<n>-page.md` (the script is in this skill's folder; it keeps each diagram's caption where the diagram sits), and copy the profile from the notes to `COLD-<n>-profile.md`. Brief the agent with this prompt:
+It runs as an `explainer cold read` scratch agent (the `scratch-agents` skill), told to change no file except its `COLD-<n>.md`. `n` counts cold reads in the effort, from 1. Copy the profile from the notes to `COLD-<n>-profile.md` beside the page. Brief the agent with this prompt:
 
 ```text
-Read only <COLD-n-page.md path> and <COLD-n-profile.md path>. You are the reader the profile describes.
+You are the reader the profile describes. These files are everything that reader has: <page path> and <COLD-n-profile.md path>. Read those files and nothing else, no other file, note, repo, or search.
 Then write to <COLD-n.md path>, in your own words and nothing else:
 1. In two or three sentences, what this page wants its reader to understand.
 2. What the reader is asked to decide or do.
 3. Every term, system, or premise the page used before it explained it, for this reader, each with the sentence where it first appears. Write "none" when there are none.
 ```
 
-A multi-page artifact's cold read gets the hub and each page, as separate text files, in reading order.
+A multi-page artifact's cold read puts the hub and each page's file, in reading order, in place of <page path>.

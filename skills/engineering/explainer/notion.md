@@ -1,6 +1,6 @@
 # Notion
 
-The Notion build of an explainer: the same reasoning, text, and agent context as the HTML page, built as Notion pages with the `notion-pages` skill. This file replaces SKILL.md's Build, its Render check, the text the cold read and the Prose check read, its Publish, and the comment route; every other step runs as SKILL.md says.
+The Notion build of an explainer: the same reasoning, text, and agent context as the HTML page, built as Notion pages with the `notion-pages` skill. This file replaces SKILL.md's Build, the file the cold read and the Prose check read, its Publish, and the comment route; every other step runs as SKILL.md says.
 
 ## Where the pages go
 
@@ -13,11 +13,11 @@ A page goes in the Artifacts database the user names. When the ask names none, a
 - The agent context is a child page titled "Agent context: <page title>", built from `<page>.context.md`.
 - On the hub, each page in the reading order is a page mention; a fact stated on another page is linked with a mention.
 
-The `notion-pages` check stands in for the Render check. Done when every page and its agent context are built from source files, the `notion-pages` check holds on each, and a handoff's privacy grep passes.
+The `notion-pages` check stands in for the `html` skill's browser inspection. Done when every page and its agent context are built from source files, the `notion-pages` check holds on each, and a handoff's privacy grep passes.
 
 ## Blocks
 
-Which Notion block carries which kind of content, the same on every page of the set. It replaces page.md's Elements.
+Which Notion block carries which kind of content, the same on every page of the set.
 
 | Content | Block |
 |---|---|
@@ -43,7 +43,7 @@ Notion has nine text and background colours plus default. Map the subject's pale
 
 ## Diagrams
 
-The frame an HTML block lives in is the `notion-pages` skill's. Start every diagram from its `html-block-template.html`, which fills the frame, follows Notion's theme, and fills every shape, and draw inside its `<g id="figure">`. Its `viewBox` is the 670 × 500 frame, so draw in those units; its colour tokens carry both themes, and it defines a class and an arrowhead for each mechanism kind. Save each as `diagrams/<name>.html` with its caption in `diagrams/<name>.caption`; the caption goes on the block, not inside the frame. For Notion, use diagrams.md's Reasoning, Rules, and What to draw. Replace its Drawing with the frame and classes in the `notion-pages` skill's `html-block-template.html`. A diagram run returns `diagrams/<name>.html` and its `.caption`; its brief carries that template instead of `base.css`.
+The frame an HTML block lives in is the `notion-pages` skill's. Start every diagram from its `html-block-template.html`, which fills the frame, follows Notion's theme, and fills every shape, and draw inside its `<g id="figure">`. Its `viewBox` is the 670 × 500 frame, so draw in those units; its colour tokens carry both themes, and it defines a class and an arrowhead for each mechanism kind. Save each as `diagrams/<name>.html` with its caption in `diagrams/<name>.caption`; the caption goes on the block, not inside the frame. For Notion, use diagrams.md's Reasoning, Rules, and What to draw. Replace its Drawing with the frame and classes in the `notion-pages` skill's `html-block-template.html`. A diagram run returns `diagrams/<name>.html` and its `.caption`; its brief carries that template instead of the `html-diagram` skill.
 
 ## Templates
 

@@ -1,6 +1,6 @@
 # Diagrams
 
-How to decide on and draw an explainer's diagrams. A diagram sits in the page, in a `<figure class="diagram">` with its caption, coloured by the stylesheet's tokens so it reads in both themes. Rich diagrams are wanted: colour that carries meaning, the real parts with labelled arrows, the subject's own records. How far to take the richness is the author's judgment per diagram; every diagram the Reasoning keeps is drawn at that richness.
+How to decide on and draw an explainer's diagrams. A diagram sits in the page as a figure with its caption. Rich diagrams are wanted: colour that carries meaning, the real parts with labelled arrows, the subject's own records. How far to take the richness is the author's judgment per diagram; every diagram the Reasoning keeps is drawn at that richness.
 
 ## Reasoning
 
@@ -26,15 +26,13 @@ For each diagram, work these in order and write the answers into the effort's no
 
 Done when each relationship is a sentence, a `show-me` view, or a drawing brief. Each drawing brief names one question, its form, source-backed parts and connections, static or interactive use, page, section, and caption claim.
 
-A page that is only a diagram, with no prose around it, is built with the `html-diagram` skill.
-
 ## Rules
 
 - One small diagram per step, showing only that step's arrows. One diagram that carries everything teaches nothing.
 - Each kind of part has its own shape and weight: a person, a store, a queue, a service, a boundary, and a transformation each look different, so the reader tells them apart before reading a label. People are drawn as people, and decorative arrows go.
 - Type every mechanism. Each kind in the artifact, such as a read, a write, an event, a direct call, a timer, a webhook, a person acting drawn thicker and dotted, or a provider port, gets its own colour, line, and arrowhead. Line style and weight carry the kind too, so the drawing reads for a colour-blind reader.
 - Group the legend the way a reader traces a chain: triggers (person, webhook, direct call, timer), then reactions (event, read, provider port).
-- The colours are the stylesheet's tokens, one name and one colour per thing as page.md's Lines says.
+- One name and one colour per thing, as SKILL.md's Order says.
 - After the first journey, later journeys draw the established path faint and highlight only the new wiring.
 - A model that compares two designs changes one thing. Anything else it changes, such as capacity or cost, is equalised or stated on the page.
 - A diagram the user has already approved keeps its shape on a rebuild: resize and respace it rather than inventing a new one.
@@ -50,11 +48,7 @@ Draw as the engineer who has to live with the decision.
 
 ## Drawing
 
-- Draw inline `<svg>` with a `viewBox` sized to the drawing and `role="img"` with an `aria-label`; `base.css` scales it to the column. HTML and CSS boxes are fine for a grid, a timeline, or a side-by-side whose text should reflow.
-- Style each mark with `base.css`'s classes: `node` for a part's box, `node-alt` for a store, `boundary` for a boundary, `person` for a person, `faint` for an established path, `edge` and `edge-alt` for a plain step and a branch in a process flow, and `m-read`, `m-write`, `m-event`, `m-call`, `m-timer`, `m-webhook`, `m-person`, or `m-port` for a mechanism's line. Neutral strokes and text use `currentColor`. A hex value written into the SVG is right in one theme only.
-- Give every shape a fill from a class, or `fill="none"` for an outline: an unfilled shape paints black on a dark ground.
-- Labels are at least 12px at the drawn width. A label that would overlap another moves to the nearest free spot, with 7px between labels side by side.
+Draw each diagram as the `html-diagram` skill says, inside the page's own `<figure>`. Two things that skill leaves to the page:
+
 - The caption states the one claim the picture shows, such as "The webhook writes before the sync reads, so the sync sees the new status." It is the figure's `<figcaption>`.
-- Draw with native shapes (`rect`, `circle`, `line`, `polyline`, `path`) and `<text>`, aligned to a grid: shared baselines, one box height per row, even gaps. Wide flows read left to right; layered stacks top to bottom. Straight segments and right-angle elbows read better than curves.
-- Size each box to its longest label: at 12px, allow 7 units of width per character plus 8 units of padding each side. Keep each label to a word or three: the part's name as the page uses it, or the arrow's verb.
-- Draw an arrowhead as a `<marker>` in `<defs>`, one per mechanism, its path carrying the mechanism's `-head` class (`m-write-head`). Prefix every id with the figure's name, such as `step2-write`: all the diagrams on a page share one id space.
+- Prefix every SVG id with the figure's name, such as `step2-write`: all the diagrams on a page share one id space.
