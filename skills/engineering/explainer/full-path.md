@@ -36,8 +36,8 @@ Every name, title, quote, and count the pages show is in the source files.
 
 ## Background runs
 
-Every background run starts as a scratch agent (the `scratch-agents` skill), at the role named here, in the build folder, and is done when it settles; a `blocked` agent is read and answered as that skill says.
+Every background run starts as a scratch agent (the `scratch-agents` skill), at the role named here, in the build folder. A run is done when the author has read its result file and checked it against the brief's completion criterion. A failed run stays open; handle a blocked run as the `scratch-agents` skill says.
 
-- **Evidence run:** reading that Reason sends out, such as tracing a flow through a repo or surveying docs. The `explainer evidence` role, briefed to use the `how` skill for what code does or the `why` skill for why it is that way; the brief names the repo's path and the report file. Its report's claims enter the ledger (SKILL.md's Reason) like any other.
-- **Diagram run:** draws one diagram from the answers to diagrams.md's Reasoning. The `explainer diagram` role; its brief names `diagrams/<name>.svg` as the result file, and carries the diagram's question, parts, and mechanism kinds, with diagrams.md's Rules and Drawing by path.
+- **Evidence run:** reading that Reason sends out, such as tracing a flow through a repo or surveying docs. The `explainer evidence` role, briefed to use the `how` skill for what code does or the `why` skill for why it is that way; the brief names the repo's path, the question, the evidence that would settle it, and the report file. Its report's claims enter the ledger (SKILL.md's Reason) like any other.
+- **Diagram run:** draws one diagram. The `explainer diagram` role; its brief names `diagrams/<name>.svg` as the result file, and carries the complete drawing brief from diagrams.md's Reasoning, with its Rules and Drawing by path.
 - **Cold read:** SKILL.md's Cold read, with its files in the build folder.

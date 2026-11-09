@@ -55,7 +55,7 @@ Write each answer, with its evidence, in the effort's notes. Each claim an answe
 5. **Sort** every finding, open question, and recommendation the chain has not already sorted, as the `sort-findings` skill says. Each call carries your pick as a recommendation, and stays *open* until the user rules it. The page writes an open call as the reader's to make. Done when each has its bucket, and each call carries your pick.
 6. **Ripe.** Can each call be ruled with what the artifact shows? Done when each call that waits on a measurement or an undrawn part is marked coming (Calls below).
 7. **Pages.** One working set stays on one page. For several working sets, read [full-path.md](full-path.md) and map each judgment to a page as its Splitting into pages says. Done when each page is named with its working set. A second working set moves a one-page artifact to the full path.
-8. **Diagrams.** For each page's working set, work [diagrams.md](diagrams.md)'s Reasoning. Done when each relationship it names is either a sentence in the notes or a diagram with its question, parts, and place.
+8. **Diagrams.** For each page's working set, work [diagrams.md](diagrams.md)'s Reasoning. Done when diagrams.md's Reasoning completion criterion holds for every page's working set.
 9. **Takeaway.** Write it and the asks as The reader and the takeaway below says, built from the sorted findings: it carries the strongest finding and names every open call, with what the shape's chain says it carries. Done when it is two or three sentences in the notes and names each ask.
 
 Done when step 9 is written and every claim it rests on has its ledger row. Then post the takeaway and the asks to the user in chat. On the full path, wait for their check as [full-path.md](full-path.md) says; otherwise carry on, so a wrong takeaway can be caught while the page is built.
@@ -70,13 +70,13 @@ Done when every lacked item is introduced where it is first needed, or cut from 
 
 ## 4. Build
 
-Build each page as the `html` skill says. That skill loads `design-artifact`, sends a page that is only a diagram to `html-diagram`, and inspects the page in a browser. Load `web-artifacts-builder` only when the reader must operate something on the page, such as trying an input and seeing the result.
+Build each page as the `html` skill says. Load `web-artifacts-builder` only when the reader must operate something on the page, such as trying an input and seeing the result.
 
 Each page also holds what only this skill knows about its reader:
 
 - The takeaway and the asks, first after the title (The reader and the takeaway below).
 - The worked case, set apart above the first step.
-- Each call as a decision card (decision-brief.md's Decision cards), with its state shown on it: open, coming, or ruled.
+- Each call shown as decision-brief.md's On the page and Decision cards say, with its state beside it: open or coming. After a ruling, fold the decision into the explanation and record the ruling in the notes and agent context, as step 6's rewrite says.
 - Optional depth, such as further evidence, raw data, or a long reference table, folded behind a `<details>` block. What the reader must read, such as a journey or a rule, stays open on the page.
 - A link in the page's foot to its agent context.
 
@@ -145,14 +145,14 @@ Every substantive line passes these; a line that fails joins one that passes, or
 
 ### Calls
 
-- A call appears on the human side only when the reader can make it there: each option carries its consequence for the product's users, or for the reader, and its cost. The decision card (decision-brief.md's Decision cards) is its form.
+- A call appears on the human side only when the reader can make it there: each option carries its consequence for the product's users, or for the reader, and its cost. Its form is set by decision-brief.md's On the page and Decision cards: a card for a call that isn't small, one line for a small call.
 - An open call (step 2's Sort) reads as open wherever the page touches it: the prose around it holds each outcome.
 - A call waiting on a measurement is listed as coming, with what it waits on ("once the retry rate is measured"), and is not asked.
 
 ### Numbers and claims
 
 - Each number and claim meets the `grading-evidence` skill and carries its grade in that skill's page wording, so a reader can tell what was seen from what was inferred. The query behind a number goes to the agent context.
-- Draw the common shape, not the memorable one.
+- Draw the pattern supported by the source records.
 - A partial win is stated as partial ("one corner fixed; the rest still pays"). One overclaim taxes every other number on the page.
 - A figure drawn for illustration, or a case constructed because no source covers it, is labelled as such.
 
