@@ -79,6 +79,7 @@ Each page also holds what only this skill knows about its reader:
 - Each call shown as decision-brief.md's On the page and Decision cards say, with its state beside it: open or coming. After a ruling, fold the decision into the explanation and record the ruling in the notes and agent context, as step 6's rewrite says.
 - Optional depth, such as further evidence, raw data, or a long reference table, folded behind a `<details>` block. What the reader must read, such as a journey or a rule, stays open on the page.
 - A link in the page's foot to its agent context.
+- On an HTML page, both a light and a dark theme, following the reader's system setting, as `design-artifact` says. This is the explainer's theme policy for the `html` skill.
 
 Done when every page and its agent context are built files, one pair per page named in step 2's Pages, each page holds the parts above, the `html` skill's browser inspection finds nothing left to fix, and a handoff's privacy grep passes.
 
@@ -88,6 +89,7 @@ Done when every page and its agent context are built files, one pair per page na
 
 - **Cold read**, on the first version and after a change to the takeaway, the asks, or explanatory prose, as Cold read below says; run the other checks while it works. Done when its takeaway and ask match yours and its list of unexplained items is empty. When either fails, fix the prose that let the reader land elsewhere or leaned on what they lack, not the test, and run it again on the rebuilt page. When two rebuilt rounds still land elsewhere, bring both answers to the user with the takeaway.
 - **Facts:** live state the pages report is re-read after the latest build, and a claim is re-checked when its source has moved past the commit in its ledger row.
+- **Worked case:** trace each step of each worked case through the mechanism the page states. Done when every step follows from a rule the page states, such as who writes, what triggers, and what is read. A step that no stated rule produces is a contradiction: fix the case or the rule.
 - **Prose:** run `technical-writing`, `unslop`, and `asd-ste100` again on the text of each `.html` file the build changed; every substantive line also passes Every line below.
 
 Done when every check holds on the latest build. When one fails, change the page, rebuild, and check the new build.

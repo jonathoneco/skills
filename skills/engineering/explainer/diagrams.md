@@ -52,3 +52,4 @@ Draw each diagram as the `html-diagram` skill says, inside the page's own `<figu
 
 - The caption states the one claim the picture shows, such as "The webhook writes before the sync reads, so the sync sees the new status." It is the figure's `<figcaption>`.
 - Prefix every SVG id with the figure's name, such as `step2-write`: all the diagrams on a page share one id space.
+- At a 390 px wide viewport, every label renders at 12 px or larger. A diagram too wide for that keeps its full size and scrolls sideways inside its figure, or is redrawn top to bottom for narrow screens. Done when the `html` skill's narrow-width inspection shows every label at that size.
