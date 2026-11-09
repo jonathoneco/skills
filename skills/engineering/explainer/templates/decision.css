@@ -1,6 +1,5 @@
 /* Decision brief: the calls come first, each card easy to scan and rule on.
-   Plan (design-artifact): workmanlike, high contrast. Colour: Bench white #fbfbfa ground,
-   Ink #1f1d24, Pewter #5d5966 muted, Indigo ink #3a4a9a accent, Fog #dcdbe2 rule.
+   Plan (design-artifact): workmanlike, high contrast, an indigo accent.
    Status colours (open, coming, ruled) come from base.css and stay apart from the accent.
    Type: the system sans throughout, headings heavy, figures tabular.
    Layout: one column; the takeaway is a framed summary, then the cards, one per call. */

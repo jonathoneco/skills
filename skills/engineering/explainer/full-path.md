@@ -1,6 +1,15 @@
 # The full path
 
-A multi-page artifact adds three things to SKILL.md's steps: a takeaway check with the user, a build folder, and background runs.
+A multi-page artifact adds four things to SKILL.md's steps: how the artifact splits into pages, a takeaway check with the user, a build folder, and background runs.
+
+## Splitting into pages
+
+1. Name what the reader must judge in this artifact, and the working set for each judgment.
+2. A page holds one working set. A section that asks the reader to hold two, such as what a person sees and the fields behind it, becomes two pages.
+3. Split a working set into its parts only when the reader judges each part on its own, such as one page per domain or per failure mode.
+4. The hub links the pages, as page.md's Across pages says.
+
+The shape file says what usually happens for that shape.
 
 ## Takeaway check
 
@@ -11,7 +20,7 @@ Between Reason and Write, send the user one short message: the reader, the takea
 Make it under the effort's notes folder before the first background run, which starts there; screenshots and renders of 1 MB or more go to `~/.local/state/agent-runs/<effort>/`. It holds the artifact's source:
 
 - `<page>.html` per page, the hub as `index.html`.
-- `<page>.context.md` per page: its agent context (presentation.md's Human side and agent context).
+- `<page>.context.md` per page: its agent context (SKILL.md's Human side and agent context).
 - `diagrams/<name>.svg` per diagram a diagram run draws, pasted into its page's figure at build.
 - `PUBLISHED.md`: the artifact's id and links on its host, one line per published version.
 - Each run's result and log: `evidence-<k>.md`, `COLD-<n>.md`, `diagrams/<name>.log`.

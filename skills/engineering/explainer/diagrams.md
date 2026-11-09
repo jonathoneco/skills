@@ -21,8 +21,10 @@ For each diagram, work these in order and write the answers into the effort's no
    | How much, how often, or how fast? | A chart, drawn as the `dataviz` skill says |
 
 4. **Parts:** what are the real parts and connections, taken from the source? Each block is one real thing, each arrow something that happens, and the kinds of mechanism come from the source.
-5. **Use:** the reader looks at it, so it is static. A click is allowed only when operating it is the point, such as trying an input and seeing the result, and never to step through content; stepping through rows hides content, the same fault as a `<details>` on main content. Rows that explain a diagram go in a table under it.
+5. **Use:** the reader looks at it, so it is static. Show every explanatory step together. Use interaction when the reader must try an input and see its result. Put explanatory rows in a table below the diagram.
 6. **Place:** which page and which section, and what the caption claims.
+
+Done when each relationship is a sentence, a `show-me` view, or a drawing brief. Each drawing brief names one question, its form, source-backed parts and connections, static or interactive use, page, section, and caption claim.
 
 A page that is only a diagram, with no prose around it, is built with the `html-diagram` skill.
 

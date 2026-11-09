@@ -1,6 +1,6 @@
 # Page
 
-How a page is laid out: which element carries what, how lines and emphasis read, how pages link, and how a page is rewritten after rulings. Read at Write and at each comment round; [presentation.md](presentation.md) holds how a page reasons and teaches.
+How a page is laid out: which element carries what, how lines and emphasis read, how pages link, and how a page is rewritten after rulings. Read at Write and at each comment round; [SKILL.md](SKILL.md)'s How a page teaches holds how a page reasons and teaches.
 
 ## Across pages
 
@@ -13,7 +13,7 @@ How a page is laid out: which element carries what, how lines and emphasis read,
 
 After each round of rulings, reread the whole page against its takeaway. Restate the takeaway when the rulings moved it, then rewrite the prose wherever a ruling lands, so the page reads as if written fresh with the ruling known. A ruling's answer goes where it belongs in the argument, which is often not where the comment was left, and every sentence it makes stale is rewritten or removed.
 
-The user calibrates by example. When they kill a line, generalise the kill to its pattern before the next pass: they are correcting a genre, not a sentence. Then re-sweep every page against Every line, not only the page they named, and report what was removed so they can recall any of it.
+The user calibrates by example. When they kill a line, generalise the kill to its pattern before the next pass: they are correcting a genre, not a sentence. Then re-sweep every page against SKILL.md's Every line, not only the page they named, and report what was removed so they can recall any of it.
 
 ## Order
 

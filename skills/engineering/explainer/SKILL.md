@@ -1,15 +1,27 @@
 ---
 name: explainer
-description: "Explainer: an HTML page that explains a design, incident, investigation, decision, or handoff to one reader. Use when the user asks for an explainer, a report or findings write-up, or a page, in HTML or Notion, explaining one of those."
+description: "Explainer: use when the user asks for an explainer, a findings report, or a page about a design, incident, investigation, decision, or handoff."
 ---
 
 # Explainer
 
 The bar: a reader who never opens the code sees what happens, why, and what is theirs to decide. Their coding agent acts from the same page and its agent context without digging the evidence up again.
 
-The **author** is this session: it reasons, makes or asks for every ruling, and writes every page. A page is one self-contained HTML file. [presentation.md](presentation.md) holds the terms this skill uses and how a page teaches, read from step 1; [page.md](page.md) how a page is laid out, read from step 3; [diagrams.md](diagrams.md) how to decide on and draw a diagram.
+The **author** is this session: it reasons, makes or asks for every ruling, and writes every page. A page is one self-contained HTML file. Terms below holds the words this skill uses, and How a page teaches, after step 6, holds how a page teaches. [page.md](page.md) holds how a page is laid out, read from step 3; [diagrams.md](diagrams.md) how to decide on and draw a diagram.
 
 **Notion:** when the ask names Notion, read [notion.md](notion.md) before step 3. It builds the same content as Notion pages.
+
+## Terms
+
+- An **artifact** is the whole explainer; a **page** is one HTML file in it. The **hub** is the page a multi-page artifact opens on, which links the others.
+- "The user" is the person the explainer works for. "The reader" is the one person the artifact is written for, often the user. "The product's users" are the people who use the product the artifact describes.
+- The **takeaway** is two or three sentences the reader should be able to say after reading, plus the **asks**: what they are asked to decide or do.
+- A **call** is anything awaiting a ruling.
+- A **working set** is what the reader must hold in mind at once to make one judgment.
+- The **worked case** is one real, named record that runs through the artifact; an incident report has one per failure mode.
+- A **journey** is one worked case walked through the flow, step by step.
+- **Ruling depth** is how a ruling is given: what was decided, why, what was considered and turned down, and where the ruling is recorded.
+- The **agent context** is a Markdown file beside a page, holding what the reader's coding agent needs (Human side and agent context).
 
 Open a todo list before step 1. Its first todo loads the `principle-*` skills the steps below name; then one todo per step, each checked off when its Done when holds, or marked `skip: <reason>`. The run is done when the user has the link to a build that passed step 5; each comment round after that ends as step 6 says.
 
@@ -41,10 +53,10 @@ Write each answer, with its evidence, in the effort's notes. Each claim an answe
 3. **Names.** What does the source call each stage, step, group, and owner of each behavior and label? Done when each has one name, and a proposed name or disputed owner is marked open.
 4. **The shape's chain**, in its order.
 5. **Sort** every finding, open question, and recommendation the chain has not already sorted, as the `sort-findings` skill says. Each call carries your pick as a recommendation, and stays *open* until the user rules it. The page writes an open call as the reader's to make. Done when each has its bucket, and each call carries your pick.
-6. **Ripe.** Can each call be ruled with what the artifact shows? Done when each call that waits on a measurement or an undrawn part is marked coming (presentation.md's Calls).
-7. **Pages**, as Splitting into pages says. Done when each page is named with its working set. A second working set moves a one-page artifact to the full path.
+6. **Ripe.** Can each call be ruled with what the artifact shows? Done when each call that waits on a measurement or an undrawn part is marked coming (Calls below).
+7. **Pages.** One working set stays on one page. For several working sets, read [full-path.md](full-path.md) and map each judgment to a page as its Splitting into pages says. Done when each page is named with its working set. A second working set moves a one-page artifact to the full path.
 8. **Diagrams.** For each page's working set, work [diagrams.md](diagrams.md)'s Reasoning. Done when each relationship it names is either a sentence in the notes or a diagram with its question, parts, and place.
-9. **Takeaway.** Write it and the asks as presentation.md's The reader and the takeaway says, built from the sorted findings: it carries the strongest finding and names every open call, with what the shape's chain says it carries. Done when it is two or three sentences in the notes and names each ask.
+9. **Takeaway.** Write it and the asks as The reader and the takeaway below says, built from the sorted findings: it carries the strongest finding and names every open call, with what the shape's chain says it carries. Done when it is two or three sentences in the notes and names each ask.
 
 Done when step 9 is written and every claim it rests on has its ledger row. Then post the takeaway and the asks to the user in chat. On the full path, wait for their check as [full-path.md](full-path.md) says; otherwise carry on, so a wrong takeaway can be caught while the page is built.
 
@@ -52,17 +64,17 @@ Done when step 9 is written and every claim it rests on has its ledger row. Then
 
 Load the `technical-writing`, `unslop`, and `asd-ste100` skills before the first sentence. Load `dataviz` when a page carries a chart, and `writing-shape` when the user handed over raw notes to build from.
 
-Write each page's text yourself, from your own understanding, by presentation.md and page.md, carrying the answers the shape file's Reasoning reached, laid out as its On the page says. Introduce each lacked item the way a teacher does: in the sentence that first needs it, in a clause or a short paragraph, inside the story. Every section moves the reader toward the takeaway. When the prose needs a fact you haven't read, read its source and add its ledger row. Write each page's agent context, and draw each diagram.
+Write each page's text yourself, from your own understanding, by How a page teaches below and page.md, carrying the answers the shape file's Reasoning reached, laid out as its On the page says. Introduce each lacked item the way a teacher does: in the sentence that first needs it, in a clause or a short paragraph, inside the story. Every section moves the reader toward the takeaway. When the prose needs a fact you haven't read, read its source and add its ledger row. Write each page's agent context, and draw each diagram.
 
 Done when every lacked item is introduced where it is first needed, or cut from the page, and each page named in step 2's Pages has its text and its agent context.
 
 ## 4. Build
 
-Load the `design-artifact` skill. Start each page from [templates/page.html](templates/page.html). Into its `<style>` block paste [templates/base.css](templates/base.css), then one kind stylesheet, picked by the reader:
+Load the `design-artifact` skill. Start each page from [templates/page.html](templates/page.html). Into its `<style>` block paste [templates/base.css](templates/base.css), then one kind stylesheet, picked in this order:
 
-- [templates/working.css](templates/working.css): the reader is the user, working through a spec, an incident, or an investigation.
-- [templates/decision.css](templates/decision.css): a decision brief, or any page whose calls come first.
-- [templates/handoff.css](templates/handoff.css): the reader is someone other than the user, such as a teammate taking over the work.
+1. [templates/handoff.css](templates/handoff.css) when the reader is someone other than the user, such as a teammate taking over the work.
+2. Otherwise [templates/decision.css](templates/decision.css) when the page's calls come first, as on a decision brief.
+3. [templates/working.css](templates/working.css) for every other page.
 
 The two stylesheets are the page's design system; `design-artifact` decides only what they leave open. The fonts are the system's own, so each file stays well under 1 MB. Load `web-artifacts-builder` only when the reader must operate something on the page, such as trying an input and seeing the result.
 
@@ -72,9 +84,9 @@ Done when every page and its agent context are built files, one pair per page na
 
 *Principles: `principle-prove-it-works`.* Run these on the built pages. The user sees the pages only once these hold:
 
-- **Cold read**, on the first version and on any round that changed the takeaway, as Cold read below says; run the other checks while it works. Done when its takeaway and ask match yours and its list of unexplained items is empty. When either fails, fix the prose that let the reader land elsewhere or leaned on what they lack, not the test, and run it again on the rebuilt page. When two rebuilt rounds still land elsewhere, bring both answers to the user with the takeaway.
+- **Cold read**, on the first version and after a change to the takeaway, the asks, or explanatory prose, as Cold read below says; run the other checks while it works. Done when its takeaway and ask match yours and its list of unexplained items is empty. When either fails, fix the prose that let the reader land elsewhere or leaned on what they lack, not the test, and run it again on the rebuilt page. When two rebuilt rounds still land elsewhere, bring both answers to the user with the takeaway.
 - **Facts:** live state the pages report is re-read after the latest build, and a claim is re-checked when its source has moved past the commit in its ledger row.
-- **Prose:** run `technical-writing`, `unslop`, and `asd-ste100` again on the text of each page the build changed, as `scripts/page-text.py` prints it; every substantive line also passes presentation.md's Every line.
+- **Prose:** run `technical-writing`, `unslop`, and `asd-ste100` again on the text of each page the build changed, as `scripts/page-text.py` prints it; every substantive line also passes Every line below.
 - **Render:** open each changed page in a browser, in light and dark themes (the `playwright-cli` skill takes the screenshots). Done when no label overlaps another, no diagram is clipped, and every table and diagram scrolls inside its own box.
 
 Done when every check holds on the latest build. When one fails, change the page, rebuild, and check the new build.
@@ -93,15 +105,50 @@ Then work each round of comments. The user comments on the page and tells the au
 
 A round is done when its pages pass step 5 and every thread from it carries a reply saying what changed, or a question for the user.
 
-## Splitting into pages
+## How a page teaches
 
-1. Stay on one page when one working set covers everything the reader judges.
-2. Otherwise, name what the reader must judge in this artifact, and the working set for each judgment.
-3. A page holds one working set. A section that asks the reader to hold two, such as what a person sees and the fields behind it, becomes two pages.
-4. Split a working set into its parts only when the reader judges each part on its own, such as one page per domain or per failure mode.
-5. The hub links the pages, as page.md's Across pages says.
+These hold for every shape and both builds.
 
-The shape file says what usually happens for that shape.
+### The reader and the takeaway
+
+- Write the takeaway before the prose. Each page opens with it in plain words, the asks included; on a multi-page artifact the hub carries the whole takeaway and each page opens with its part of it.
+- Everything on the page serves the takeaway. A fact, section, or diagram that doesn't is left off, however true or hard-won.
+- The page states what is true now. The author's own records stay in the notes: the reader's profile, versions and round history, ruling ids and dates, "ruled" language, instructions to other owners, notes on what was or wasn't checked, and a count that drifts. Where a fact is uncertain, the claim says so (Numbers and claims). A dated status line belongs only on a page whose job is a snapshot, such as a handoff's "where this stands".
+
+### Explaining
+
+- State the central idea, the one mechanism or change the rest of the page depends on, before any detail that leans on it.
+- A term the author coined while working is introduced like any lacked item, by what it does in product terms, or replaced by a plain phrase. Several new terms at once get a glossary table under the takeaway.
+- A metaphor may name one mechanism, glossed once with its literal meaning, then reused bare ("the doorway, the one builder every endpoint passes through"). It names; it never states what happens.
+
+### Every line
+
+Every substantive line passes these; a line that fails joins one that passes, or goes.
+
+- **Felt stake.** For every claim, point at three things in order: what the reader or the product's users suffer, the quiet cause, and the change. A line with vibe and no mechanism is a slogan; a line with mechanism and no stake is trivia. Both go.
+- **One anchor per claim:** a name, a number, or a mechanism, never a stack. Too vague: "Logic gets a home." Too technical: a line number in a 15,600-line file. Right: "The staging logic becomes its own class, with a name and a short list of what it can touch." Big numbers live in a row of key figures, a table, or a diagram, not inside sentences.
+- **Actors as they are.** Agents read, write, and trace most code; humans brief, review, decide, and get paged. Frame every scenario that way.
+
+### Calls
+
+- A call appears on the human side only when the reader can make it there: each option carries its consequence for the product's users, or for the reader, and its cost. The decision card (decision-brief.md's Decision cards) is its form.
+- An open call (step 2's Sort) reads as open wherever the page touches it: the prose around it holds each outcome.
+- A call waiting on a measurement is listed as coming, with what it waits on ("once the retry rate is measured"), and is not asked.
+
+### Numbers and claims
+
+- Each number and claim meets the `grading-evidence` skill and carries its grade in that skill's page wording, so a reader can tell what was seen from what was inferred. The query behind a number goes to the agent context.
+- Draw the common shape, not the memorable one.
+- A partial win is stated as partial ("one corner fixed; the rest still pays"). One overclaim taxes every other number on the page.
+- A figure drawn for illustration, or a case constructed because no source covers it, is labelled as such.
+
+### Human side and agent context
+
+The test for each piece: would the reader act differently after reading it, before they start? If yes, it goes on the human side. If it matters only once someone is executing, it goes to the agent context.
+
+- Human side: the takeaway, stated so a reader can stop after the first screen; one short real result per claim; tradeoffs and costs that bear on the choice; the code the reader judges, such as snippets of the shapes the design adds or changes, schemas, and class and ownership diagrams, each named by its symbol; further evidence in a `<details>` block.
+- Agent context: `<page>.context.md`, published beside the page and linked from its foot, where the reader's agent goes to act on the artifact and to answer the reader's questions about it. It holds instructions, evidence, the reasoning behind each part, and any depth that would bury the human side: exact paths, commands, queries, line references, sequences, gates, edge cases, and the worked case's ids and states. Anchor each entry to the exact term or entity the human side uses, then attach the rest under it. Write what the agent does as instructions: imperative, one rule per line, each with its check. A diagram there is a Mermaid code block, which agents read and people edit in place.
+- The agent context names each part as the page does. Where a part rests on a ruling, it gives the ruling at ruling depth, in the page's words, with the path of the file that records it.
 
 ## Cold read
 

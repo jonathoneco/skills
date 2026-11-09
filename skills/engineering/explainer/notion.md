@@ -13,7 +13,7 @@ A page goes in the Artifacts database the user names. When the ask names none, a
 - The agent context is a child page titled "Agent context: <page title>", built from `<page>.context.md`.
 - On the hub, each page in the reading order is a page mention; a fact stated on another page is linked with a mention.
 
-Done when every page and its agent context are built from source files, and the `notion-pages` check holds on each. That check stands in for the Render check; the user gets the link to the hub, or to the one page.
+The `notion-pages` check stands in for the Render check. Done when every page and its agent context are built from source files, the `notion-pages` check holds on each, and a handoff's privacy grep passes.
 
 ## Blocks
 
@@ -43,7 +43,7 @@ Notion has nine text and background colours plus default. Map the subject's pale
 
 ## Diagrams
 
-The frame an HTML block lives in is the `notion-pages` skill's. Start every diagram from its `html-block-template.html`, which fills the frame, follows Notion's theme, and fills every shape, and draw inside its `<g id="figure">`. Its `viewBox` is the 670 × 500 frame, so draw in those units; its colour tokens carry both themes, and it defines a class and an arrowhead for each mechanism kind. Save each as `diagrams/<name>.html` with its caption in `diagrams/<name>.caption`; the caption goes on the block, not inside the frame. Everything else is diagrams.md.
+The frame an HTML block lives in is the `notion-pages` skill's. Start every diagram from its `html-block-template.html`, which fills the frame, follows Notion's theme, and fills every shape, and draw inside its `<g id="figure">`. Its `viewBox` is the 670 × 500 frame, so draw in those units; its colour tokens carry both themes, and it defines a class and an arrowhead for each mechanism kind. Save each as `diagrams/<name>.html` with its caption in `diagrams/<name>.caption`; the caption goes on the block, not inside the frame. For Notion, use diagrams.md's Reasoning, Rules, and What to draw. Replace its Drawing with the frame and classes in the `notion-pages` skill's `html-block-template.html`. A diagram run returns `diagrams/<name>.html` and its `.caption`; its brief carries that template instead of `base.css`.
 
 ## Templates
 
@@ -71,6 +71,10 @@ A shape file's Reasoning chain is the only source of its template's reasoning ca
 ## Cold read and prose
 
 The cold reader's page, and the text the Prose check reads, is the `notion-pages` skill's markdown read-back of the built page, saved to `COLD-<n>-page.md`, with each `<embed …>` line replaced by that diagram's caption and no child page's content. A difference the read-back caused, such as a callout read back as a plain paragraph, is not a mismatch.
+
+## Publish
+
+After every step 5 check holds, give the user the link to the hub or the one page. Done when the user has it.
 
 ## Comments
 

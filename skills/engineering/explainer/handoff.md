@@ -5,7 +5,7 @@ A handoff onboards a person to a workflow and its tools. The **owner** is whoeve
 ## Reasoning
 
 1. **Setup gap.** Find who the reader is and how their setup differs from the owner's, assuming none of the owner's machinery. Done when everything the workflow needs is marked as brought by the kit or installed by the reader's agent.
-2. **Parts.** Name who does what and where the work is written, from the owner's own runs. Done when the reader's own role is named among them.
+2. **Parts.** Name who does what and where the work is written, from the owner's own runs. Done when each workflow action has its actor and the place its result is written, including the reader's actions.
 3. **What the reader drives.** Separate what the reader runs from what runs for them out of view, one mode at a time, and count how often each thing happens in the owner's transcripts. Done when each step left on the page is one a newcomer operates, and the owner's shorthand, exact commands, and gate phrases have moved to the agent context.
 4. **Agreements.** Sort each claim as universal or as an agreement made per effort, such as when work merges. Done when every agreement is stated as one the reader makes for each effort.
 5. **Kit.** List what the reader's agent installs and the files that outlive the effort, such as the rulings, settling what a search, a doc, or a `--help` can before writing "ask someone". Done when each file has its path, and each remaining "ask someone" survived that check.
