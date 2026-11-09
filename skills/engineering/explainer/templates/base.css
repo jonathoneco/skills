@@ -1,0 +1,321 @@
+/* Explainer base stylesheet. Paste it into the page's <style> first, then one kind
+   stylesheet (working.css, decision.css, or handoff.css), which sets the palette and type.
+   Components read tokens only; the themes reassign tokens only.
+   page.md's Elements says which element carries which content. */
+
+:root {
+  color-scheme: light dark;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-display: var(--font-body);
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --measure: 46rem;
+  --radius: 3px;
+
+  /* Status lane: kept apart from the accent. */
+  --ok: #2c7a4b;
+  --caution: #a35f00;
+  --risk: #b42d2d;
+  --idle: #6b7280;
+
+  /* Mechanism kinds for diagrams (diagrams.md's Rules). */
+  --m-read: #2b6cb0;
+  --m-write: #c05621;
+  --m-event: #6b46c1;
+  --m-call: #2f855a;
+  --m-timer: #9c6a10;
+  --m-webhook: #c53030;
+  --m-person: #4a5568;
+  --m-port: #0f766e;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ok: #6fcf97;
+    --caution: #f0b35a;
+    --risk: #f08a8a;
+    --idle: #a0a7b4;
+    --m-read: #7fb2ec;
+    --m-write: #f0a06a;
+    --m-event: #b9a2f2;
+    --m-call: #74c69d;
+    --m-timer: #e3bd62;
+    --m-webhook: #f28b8b;
+    --m-person: #c3cad6;
+    --m-port: #5fc9bd;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ok: #6fcf97;
+  --caution: #f0b35a;
+  --risk: #f08a8a;
+  --idle: #a0a7b4;
+  --m-read: #7fb2ec;
+  --m-write: #f0a06a;
+  --m-event: #b9a2f2;
+  --m-call: #74c69d;
+  --m-timer: #e3bd62;
+  --m-webhook: #f28b8b;
+  --m-person: #c3cad6;
+  --m-port: #5fc9bd;
+}
+
+/* Page */
+
+* { box-sizing: border-box; }
+
+html {
+  background: var(--ground);
+  color: var(--ink);
+  font: 17px/1.6 var(--font-body);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0 auto;
+  padding: 3rem 1.25rem 4rem;
+  max-width: calc(var(--measure) + 2.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+body > *, main > *, section > *, article > *, aside > *, details > * { margin: 0; }
+main, section, article { display: flex; flex-direction: column; gap: 1rem; }
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  line-height: 1.2;
+  text-wrap: balance;
+  margin: 0;
+}
+h1 { font-size: 2.1rem; letter-spacing: -0.01em; }
+h2 { font-size: 1.45rem; margin-top: 1.4rem; }
+h3 { font-size: 1.15rem; margin-top: 0.6rem; }
+p, li { text-wrap: pretty; }
+ul, ol { padding-left: 1.3rem; display: flex; flex-direction: column; gap: 0.35rem; }
+a { color: var(--accent); text-underline-offset: 0.15em; }
+a:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+strong { font-weight: 650; }
+hr { border: 0; border-top: 1px solid var(--rule); width: 100%; }
+
+.page-head { display: flex; flex-direction: column; gap: 0.4rem; }
+.page-head .kind {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* The takeaway: the first thing after the title. Each kind styles its frame. */
+.takeaway {
+  font-size: 1.08rem;
+  padding: 1.1rem 1.25rem;
+  border-radius: var(--radius);
+  gap: 0.6rem;
+}
+.takeaway > .label { color: var(--accent); }
+
+/* Labels and chips */
+.label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+span.label { margin-right: 0.4em; }
+
+.chip {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.08rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  vertical-align: 0.15em;
+}
+.chip.open { color: var(--caution); }
+.chip.coming { color: var(--idle); }
+.chip.ruled { color: var(--ok); }
+
+/* Boxes: a tinted ground and a hairline border, no side rail. */
+.box {
+  --tone: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--tone) 9%, var(--ground));
+  border: 1px solid color-mix(in srgb, var(--tone) 30%, var(--ground));
+}
+.box > .label { color: var(--tone); }
+.box.case { --tone: var(--muted); }
+.box.sees { --tone: var(--ink); background: transparent; }
+.box.rule { --tone: var(--caution); }
+.box.warn { --tone: var(--risk); }
+.box.done { --tone: var(--ok); }
+.box.parked { --tone: var(--caution); border-style: dashed; }
+.box.blocked { --tone: var(--risk); border-style: dashed; }
+
+/* Columns and key figures */
+.cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 1rem;
+}
+.cols > div { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 1rem;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.stat strong {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  line-height: 1.1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tables scroll inside their own box. */
+.scroll { overflow-x: auto; }
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.93rem;
+  font-variant-numeric: tabular-nums;
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.5rem 0.7rem 0.5rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+th {
+  font-size: 0.74rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom-color: var(--ink);
+}
+table.glossary td:first-child { font-weight: 650; white-space: nowrap; }
+
+/* Code */
+code, pre { font-family: var(--font-mono); font-size: 0.86em; }
+:not(pre) > code {
+  background: color-mix(in srgb, var(--muted) 12%, var(--ground));
+  padding: 0.05em 0.3em;
+  border-radius: var(--radius);
+}
+pre {
+  overflow-x: auto;
+  padding: 0.9rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  line-height: 1.5;
+}
+pre.prompt { white-space: pre-wrap; }
+
+/* Optional depth */
+details {
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 0.6rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+summary { cursor: pointer; font-weight: 650; }
+details[open] > summary { margin-bottom: 0.6rem; }
+
+/* Decision card */
+.call {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 1rem 1.15rem;
+  background: var(--surface);
+  gap: 0.7rem;
+}
+.call > h3 { margin-top: 0; }
+.pick { font-weight: 600; }
+.pick > .label { color: var(--accent); }
+
+/* Hub reading order */
+.reading-order { counter-reset: page; list-style: none; padding-left: 0; gap: 0.7rem; }
+.reading-order > li { counter-increment: page; display: grid; grid-template-columns: 2rem 1fr; }
+.reading-order > li::before { content: counter(page); font-family: var(--font-display); font-weight: 700; color: var(--accent); }
+
+/* Diagrams */
+figure.diagram {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  overflow-x: auto;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+}
+figure.diagram svg { display: block; width: 100%; height: auto; min-width: 34rem; color: var(--ink); }
+figure.diagram svg text { font-family: var(--font-body); font-size: 13px; fill: currentColor; }
+figure.diagram svg text.small { font-size: 12px; fill: var(--muted); }
+figcaption { font-size: 0.92rem; color: var(--muted); }
+
+.node { fill: var(--surface); stroke: currentColor; stroke-width: 1.2; }
+.node-alt { fill: color-mix(in srgb, var(--accent) 10%, var(--surface)); stroke: var(--accent); stroke-width: 1.2; }
+.person { fill: none; stroke: currentColor; stroke-width: 1.6; }
+.boundary { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 5 4; }
+.faint { opacity: 0.3; }
+
+.edge { fill: none; stroke: currentColor; stroke-width: 1.4; }
+.edge-alt { fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-dasharray: 6 4; }
+.edge-head { fill: currentColor; }
+.edge-alt-head { fill: var(--accent); }
+
+.m-read, .m-write, .m-event, .m-call, .m-timer, .m-webhook, .m-person, .m-port { fill: none; stroke-width: 1.6; }
+.m-read { stroke: var(--m-read); }
+.m-write { stroke: var(--m-write); stroke-width: 2.6; }
+.m-event { stroke: var(--m-event); stroke-dasharray: 7 4; }
+.m-call { stroke: var(--m-call); }
+.m-timer { stroke: var(--m-timer); stroke-dasharray: 2 4; }
+.m-webhook { stroke: var(--m-webhook); stroke-dasharray: 9 3 2 3; }
+.m-person { stroke: var(--m-person); stroke-width: 3; stroke-dasharray: 1 6; stroke-linecap: round; }
+.m-port { stroke: var(--m-port); stroke-dasharray: 4 2; }
+.m-read-head { fill: var(--m-read); }
+.m-write-head { fill: var(--m-write); }
+.m-event-head { fill: var(--m-event); }
+.m-call-head { fill: var(--m-call); }
+.m-timer-head { fill: var(--m-timer); }
+.m-webhook-head { fill: var(--m-webhook); }
+.m-person-head { fill: var(--m-person); }
+.m-port-head { fill: var(--m-port); }
+
+footer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+@media print {
+  html { background: #fff; color: #000; }
+}

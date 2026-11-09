@@ -1,6 +1,6 @@
 # Handoff
 
-A handoff onboards a person to a workflow and its tools. The **owner** is whoever already runs the workflow, often the user. The reader learns how to run it; their agent sets it up on their machine. It usually splits: the pages the person reads, then the kit their agent works from, on the agent context page. Its job is a snapshot, so it may carry a dated "where this stands" line.
+A handoff onboards a person to a workflow and its tools. The **owner** is whoever already runs the workflow, often the user. The reader learns how to run it; their agent sets it up on their machine. It usually splits: the pages the person reads, then the kit their agent works from, in the agent context. Its job is a snapshot, so it may carry a dated "where this stands" line.
 
 ## Reasoning
 
@@ -15,14 +15,14 @@ A handoff onboards a person to a workflow and its tools. The **owner** is whoeve
 
 ## On the page
 
-- The onboarding prompt sits at the top, in the 🧭 callout as a `text` code block, labelled "Read this page first, then give this prompt to your agent".
+- The onboarding prompt sits at the top, in the takeaway section as a code block, labelled "Read this page first, then give this prompt to your agent".
 - Orchestration that happens out of view gets one line saying it happens.
 - A claim that holds only in some modes names which.
-- The kit is a page mention of the agent context page, which holds each file the reader's agent installs; a file written back later, such as the rulings, gets its own place in it.
+- The kit is the link to the agent context, which holds each file the reader's agent installs; a file written back later, such as the rulings, gets its own place in it.
 
 ## Onboarding prompt and privacy check
 
-- The onboarding prompt tells the agent to read the page until it can name the page's parts in the page's words, then read the agent context page, then explore the reader's environment and ask what their next focus is.
+- The onboarding prompt tells the agent to read the page until it can name the page's parts in the page's words, then read the agent context, then explore the reader's environment and ask what their next focus is.
 - The prompt also tells the reader's agent to narrate each step before and after it, define terms on first use, and ask one yes per install or config change, showing the exact command or diff.
 - The privacy grep searches every file the pages are built from, the page sources, the agent context sources, and the diagrams, for each grep term from the notes. It passes when it returns nothing.
 

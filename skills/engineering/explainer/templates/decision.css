@@ -1,0 +1,51 @@
+/* Decision brief: the calls come first, each card easy to scan and rule on.
+   Plan (design-artifact): workmanlike, high contrast. Colour: Bench white #fbfbfa ground,
+   Ink #1f1d24, Pewter #5d5966 muted, Indigo ink #3a4a9a accent, Fog #dcdbe2 rule.
+   Status colours (open, coming, ruled) come from base.css and stay apart from the accent.
+   Type: the system sans throughout, headings heavy, figures tabular.
+   Layout: one column; the takeaway is a framed summary, then the cards, one per call. */
+
+:root {
+  --ground: #fbfbfa;
+  --surface: #ffffff;
+  --ink: #1f1d24;
+  --muted: #5d5966;
+  --rule: #dcdbe2;
+  --accent: #3a4a9a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #141419;
+    --surface: #1c1c23;
+    --ink: #ececf2;
+    --muted: #a6a3b2;
+    --rule: #34333e;
+    --accent: #9eaaf0;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground: #141419;
+  --surface: #1c1c23;
+  --ink: #ececf2;
+  --muted: #a6a3b2;
+  --rule: #34333e;
+  --accent: #9eaaf0;
+}
+
+h1, h2, h3 { font-weight: 750; letter-spacing: -0.01em; }
+
+.takeaway {
+  border: 2px solid var(--accent);
+  background: var(--surface);
+}
+
+.call { border-width: 1px 1px 1px 1px; box-shadow: 0 1px 0 var(--rule); }
+.call > h3 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem; }
+.call table th:first-child, .call table td:first-child { font-weight: 650; }
+.pick {
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--accent) 9%, var(--surface));
+}

@@ -1,0 +1,42 @@
+/* Team handoff: a teammate reads it plainly, in any setup, and prints it if they like.
+   Plan (design-artifact): quiet register. Colour: Paper white #ffffff ground, Charcoal #222a30 ink,
+   Graphite #5f6b75 muted, Steel blue #3d6597 accent (links and the takeaway label only), Mist #e1e4e8 rule.
+   Type: a book serif for body text, the system sans for headings and labels, the system mono for code.
+   Layout: one wider-spaced column; the takeaway is a plain bordered box; no tinted bands. */
+
+:root {
+  --font-body: Charter, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-display: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --ground: #ffffff;
+  --surface: #f7f8f9;
+  --ink: #222a30;
+  --muted: #5f6b75;
+  --rule: #e1e4e8;
+  --accent: #3d6597;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #16191c;
+    --surface: #1d2125;
+    --ink: #e3e6e9;
+    --muted: #a3acb4;
+    --rule: #30363c;
+    --accent: #8fb3e3;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground: #16191c;
+  --surface: #1d2125;
+  --ink: #e3e6e9;
+  --muted: #a3acb4;
+  --rule: #30363c;
+  --accent: #8fb3e3;
+}
+
+html { font-size: 18px; line-height: 1.65; }
+h1, h2, h3 { font-weight: 650; }
+.label, th, .chip, summary { font-family: var(--font-display); }
+
+.takeaway { border: 1px solid var(--ink); }

@@ -19,7 +19,7 @@ A decision brief puts calls in front of the user so they can rule on each one re
 
 ## Decision cards
 
-A decision card holds one call. Its blocks: a Heading 3 with the question; a paragraph giving its **Goal** and how it works **Today**; a table with one row per option and columns for what it **Buys**, what changes and for whom, its **Cost**, and its consequence for the product's users; and the **Pick** in one line in a 💡 callout, with what gets measured after the ruling and what result would reverse it.
+A decision card holds one call, in order: a heading with the question and the call's state; a paragraph giving its **Goal** and how it works **Today**; a table with one row per option and columns for what it **Buys**, what changes and for whom, its **Cost**, and its consequence for the product's users; and the **Pick** in one line, labelled as a recommendation while the call is open, with what gets measured after the ruling and what result would reverse it.
 
 ## Agent context
 

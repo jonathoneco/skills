@@ -1,3 +1,3 @@
 interface:
   display_name: "Explainer"
-  short_description: "Explain a design or finding on a Notion page"
+  short_description: "Explain a design or finding on an HTML page"

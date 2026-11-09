@@ -2,7 +2,7 @@
 
 A spec presents a design. Its reader judges the design without opening the code.
 
-A point still open reads as open where it sits: a short marker and a line or two on what is unsettled, with the page around it written for the recommended answer.
+A point still open reads as open where it sits: an open marker, a line or two on what is unsettled, and the recommended answer labelled as a recommendation.
 
 A spec usually splits into pages by working set: a rulings page first when calls are open, then the flow, then the records behind it.
 
