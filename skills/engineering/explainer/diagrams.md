@@ -4,11 +4,9 @@ How to decide on and draw an explainer's diagrams. A diagram sits in the page as
 
 ## Reasoning
 
-For each diagram, work these in order and write the answers into the effort's notes; they are the diagram run's brief:
+List every relationship in each page's working set that the reader must understand to reach the takeaway: how parts connect, what happens in what order, who owns what, or how two options differ. Each journey and each failure mode the shape's chain traced is one. Then work these for each relationship, in order, and write the answers into the effort's notes; they are the diagram run's brief:
 
-1. **Relationship:** what relationship in the reader's working set, such as how parts connect, what happens in what order, who owns what, or how two options differ, would prose make them assemble themselves? If none, or one sentence says it faster, write the sentence.
-2. **Smallest view:** load the `show-me` skill and try its views first: pseudocode, a call tree, a component or file tree, or a `diff` of one of these when the point is what changes. Such a view goes on the page as a code block. Draw a picture only when none of them makes the point.
-3. **Question:** what one question does this diagram answer? A diagram that answers two becomes two. The question picks the form:
+1. **Question:** what one question does this diagram answer? A diagram that answers two becomes two. The question picks the form:
 
    | Question | Form |
    |---|---|
@@ -20,11 +18,12 @@ For each diagram, work these in order and write the answers into the effort's no
    | How do alternatives compare? | Matrix or aligned comparison |
    | How much, how often, or how fast? | A chart, drawn as the `dataviz` skill says |
 
-4. **Parts:** what are the real parts and connections, taken from the source? Each block is one real thing, each arrow something that happens, and the kinds of mechanism come from the source.
-5. **Use:** the reader looks at it, so it is static. Show every explanatory step together. Use interaction when the reader must try an input and see its result. Put explanatory rows in a table below the diagram.
-6. **Place:** which page and which section, and what the caption claims.
+2. **Code beside it:** when the reader also judges code shape, such as which function calls which or what a change adds, put a code view beside the drawing as a code block: pseudocode, a call tree, a file tree, or a `diff` of one of these.
+3. **Parts:** what are the real parts and connections, taken from the source? Each block is one real thing, each arrow something that happens, and the kinds of mechanism come from the source.
+4. **Use:** the reader looks at it, so it is static. Show every explanatory step together. Use interaction when the reader must try an input and see its result. Put explanatory rows in a table below the diagram.
+5. **Place:** which page and which section, and what the caption claims.
 
-Done when each relationship is a sentence, a `show-me` view, or a drawing brief. Each drawing brief names one question, its form, source-backed parts and connections, static or interactive use, page, section, and caption claim.
+Done when each listed relationship has a drawing brief, and each brief names one question, its form, source-backed parts and connections, static or interactive use, page, section, and caption claim.
 
 ## Rules
 
@@ -48,7 +47,7 @@ Draw as the engineer who has to live with the decision.
 
 ## Drawing
 
-Draw each diagram as the `html-diagram` skill says, inside the page's own `<figure>`. Two things that skill leaves to the page:
+Draw each diagram as the `html-diagram` skill says, inside the page's own `<figure>`. Three things that skill leaves to the page:
 
 - The caption states the one claim the picture shows, such as "The webhook writes before the sync reads, so the sync sees the new status." It is the figure's `<figcaption>`.
 - Prefix every SVG id with the figure's name, such as `step2-write`: all the diagrams on a page share one id space.
