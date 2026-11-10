@@ -21,6 +21,12 @@ Claude Code's input box also shows grayed suggested prompts. They are inert: not
 - Confirm submission by the input box being empty, or by the queued-messages banner or context growth. Text in the viewport proves nothing; scrollback echoes match too.
 - `send-keys` names are lowercase throughout: `esc`, `ctrl+c`, `enter`.
 
+## Starting an agent
+
+- A Herdr agent name is lowercase. An uppercase name fails `agent start`, and the pane sits at a shell with the error easy to miss.
+- A brief with backticks goes in a file. A backtick inside a double-quoted `herdr agent prompt` string runs as a command.
+- Pass the exact model id and the effort on every spawn. `--model fable` resolved to an unknown id.
+
 ## Launching an agent in a fresh worktree
 
 - `herdr worktree create` makes a new workspace each time. It does not add a tab to the workspace you name; `--workspace` only names the source repo.

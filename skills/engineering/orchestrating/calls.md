@@ -8,6 +8,8 @@ A lane may send any message, including a question, news, or a call that would wa
 - **A file the lane says is missing:** look for it at the exact head of `origin/main`. When it is there, the lane's `origin/main` is stale: answer with that head and "merge your origin/main".
 - **A gap in what the lane was started with** (a missing constraint, a worker-brief rule it broke, a refresh step that misled it): answer the lane, then fix it where it lasts, in the effort's practice and in the start field of every lane not yet started.
 
+- **A "reopen" or "incomplete" from a lane or checker on a settled point:** cite the ruling back to the sender. It does not enter the user queue.
+
 Done when the question is one only a call can answer, or it has been answered or sent to grooming.
 
 ## 2. Sort the call into a tier
@@ -47,6 +49,12 @@ Every other call: **decide** when all of these hold, and ask otherwise:
 
 **On a decide or a standing-rule action,** act, then write the log entry in the same turn, before the next call, in the `decision-log` skill's entry form. A product choice nobody made gets a `Look first:` line. Reply to the lane with the pick as an ordinary message; it steers the same agent session and does not cancel or restart it. The reply reaches the active session during a turn, or starts the next turn in that same saved session after the agent ends its current turn. Acceptance means the lane engine retained the reply, not that the agent read it or did the requested work; judge that from the lane's next work. Label the pick "orchestrator call D-<n>", since lanes copy answers into PR bodies; "relayed from the user" is reserved for the user's own words.
 
-**On an ask, and on a parked hard stop,** put the question in the effort's user queue. It opens with what is stopped and what the user's answer frees, such as "Refund approval (ABC-142) can't merge until you pick A or B; your answer frees 3 tickets". Name each ticket by its title with its key beside it; a bare key means nothing to the user at check-in. Then it frames the call as a product choice: the options with what the product's users see under each (the `weighing` skill), your pick, and why it is asked (the hard stop it hits; no covering ruling, with the sources searched; a conflict, naming both sides; or its Ask tier). When the effort's practice sets the queue's format, that format holds. The user meets the question at check-in rather than mid-run. A number in the question comes from the run that measured it, with the constant or default that bounds it read first (`principle-explain-the-number`). A question carried over from an earlier session is re-derived against today's rules and rulings before it is asked.
+**On an ask, and on a parked hard stop,** put the question in the effort's user queue. It opens with what is stopped and what the user's answer frees, such as "Refund approval (ABC-142) can't merge until you pick A or B; your answer frees 3 tickets". Name each ticket by its title with its key beside it; a bare key means nothing to the user at check-in. It carries a required `Searched:` line naming the rulings, decisions and docs read, and why none settles the call. Then it frames the call as a product choice: the options with what the product's users see under each (the `weighing` skill), your pick, and why it is asked (the hard stop it hits; no covering ruling, with the sources searched; a conflict, naming both sides; or its Ask tier). When the effort's practice sets the queue's format, that format holds. The user meets the question at check-in rather than mid-run. A number in the question comes from the run that measured it, with the constant or default that bounds it read first (`principle-explain-the-number`). A question carried over from an earlier session is re-derived against today's rules and rulings before it is asked.
 
 Done when every call in the turn has a log entry or a question in the user queue, and no slot is held by a lane with nothing ungated left to do.
+
+## A fix batch from the user's own QA
+
+Before a lane starts on a ticket in such a batch, agree the ticket's shape with the user, one problem at a time: what the user sees, the owning layer, and the data path. A change to a screen comes with a mock. "As fast as the work allows" covers the build after that agreement. A branch the pitch adds is named as an addition. The ticket records the agreement as an "agreed with the user" line (the `blueprint` skill).
+
+Done when each ticket in the batch carries that line before its lane starts.

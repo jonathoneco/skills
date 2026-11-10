@@ -43,7 +43,7 @@ A merge is an Ask ([calls.md](calls.md)) unless a standing rule authorizes merge
 
 **When `main` has a merge queue, enqueue each PR as soon as it passes.** The queue tests each PR against everything ahead of it and merges them one at a time, so the orchestrator doesn't wait for the previous merge's production deploy before enqueueing the next. The queue deploys a PR as soon as it merges, so a PR with a step that must run before its production deploy, such as a feature-flag check or a production migration's precondition, is enqueued only after that step is read.
 
-Enqueue the PR with the labels its lane gave it; the merge queue runs the full test tier, and a red there comes back to the lane. When the queue removes a PR, the lane engine reports it ready again once the lane has fixed the failure or judged it outside the change; enqueue it again then.
+A PR that touches Convex functions first merges current main, regenerates codegen on the merged tree, and commits the drift, since the queue regenerates and rejects drift. Enqueue the PR with the labels its lane gave it; the merge queue runs the full test tier, and a red there comes back to the lane. When the queue removes a PR, the lane engine reports it ready again once the lane has fixed the failure or judged it outside the change; enqueue it again then.
 
 **Without a merge queue, merge one at a time.** Confirm the merge commit is on `origin/main` and its production deploy succeeded before the next merge.
 

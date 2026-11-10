@@ -23,4 +23,6 @@ Done when each question has an answer the reader can check, each option carries 
 
 ## Presenting a call
 
-Put each option's consequence inside the option, so one word answers the call. When calls are tangled, the upstream call comes first. A call that waits on a measurement not yet taken is listed as coming, with the measurement named, rather than ruled on a guess.
+A call opens with where it came from (the finding or file that raised it), one sentence on what the product's user sees today, and the mechanism in the user's words, with no internal name left unexplained. When more than five calls queue, first collapse them under the rulings the user already made.
+
+Put each option's consequence inside the option, so one word answers the call. An offered word is a verb whose subject is the agent, such as `take-picks` or `show-me-each`. It is never a noun phrase that reads both as "I will do X" and "do X for me". Act on an answer that reads two ways only after asking which way it reads. When calls are tangled, the upstream call comes first. A call that waits on a measurement not yet taken is listed as coming, with the measurement named, rather than ruled on a guess.

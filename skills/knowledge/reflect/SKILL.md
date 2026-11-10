@@ -17,7 +17,7 @@ Done when the list, its count, and the unmarked count are in hand for step 6.
 
 ## 2. Material
 
-Name what is under review: this session by default, or the session or effort the user names. Find its transcripts and notes as the `recall` skill's Agent notes and Transcripts steps say. For this session, the transcript is the newest file in its project folder whose first user message matches this session's. When no transcript can be found, write a tight digest of the session and read that instead.
+Name what is under review: this session by default, or the session or effort the user names. Find its transcripts and notes as the `recall` skill's Agent notes and Transcripts steps say. Compaction summaries are material too: a user message that lands at the moment of compaction is recorded only there. For this session, the transcript is the newest file in its project folder whose first user message matches this session's. When no transcript can be found, write a tight digest of the session and read that instead.
 
 Done when the transcripts, the notes folder, and the PRs or tickets the work produced are named. When the material is trivial or a skill already covers what happened, say so and go to step 6 with step 1's list alone.
 
@@ -60,7 +60,7 @@ A dismissal names the reading it failed. Done when every item has a bucket, an o
 
 Show the user step 1's list with your pick for each entry, then one row per new lesson: the rule, `Seen before:`, owner, bucket. Wait for their ruling row by row; they may redirect an owner.
 
-Then write each new lesson into the effort's lessons note (the `agent-notes` skill's lessons kind), and land each approved row where the `agent-notes` skill's Harvest sends it; a skill change goes through a PR to the skills repo. Mark every entry `→ <destination>`, `→ declined <YYYY-MM-DD>`, or `→ open` when the user defers it.
+Then write each new lesson into the effort's lessons note (the `agent-notes` skill's lessons kind), and land each approved row where the `agent-notes` skill's Harvest sends it; a skill change goes through a PR to the skills repo. A generic effort script moves to the shared scripts folder (`~/.local/state/agent-notes/orchestrators/shared/scripts/`). Mark every entry `→ <destination>`, `→ declined <YYYY-MM-DD>`, or `→ open` when the user defers it.
 
 Done when every lesson from this run and every entry from step 1 carries a harvest mark, each landed change is committed where its repo lands work (with the PR URL for a skill), and the user has a short list: landed, PRs opened, declined, left open, dismissed with reasons.
 
