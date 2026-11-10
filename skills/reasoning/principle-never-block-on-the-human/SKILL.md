@@ -10,6 +10,7 @@ The human supervises asynchronously. A question about a call the agent can make 
 **Inside the ask: decide, log, present.**
 - An execution call within the requested work, such as a bind address, a file layout, a choice between two equivalent libraries, or how to split a task: decide it, record it with the `decision-log` skill, and name it in the result.
 - A fact a tool can answer is never a question for the human. Look it up.
+- Before a proof or a write goes to the user as a manual step, search the repo docs for a documented route and list the CLIs logged in on the host. Bring the manual step only when both come up empty, and say what was searched.
 - A problem you notice inside the ask gets fixed in the next round. A small defect met on the way is fixed and named in the PR body.
 
 **Outside the ask: propose, then wait.**

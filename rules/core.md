@@ -121,6 +121,8 @@ Treat every error as information. When code hits one, surface it where someone w
 - Run `shellcheck` on every script.
 - Quote every variable.
 - Pass captured output on with `printf '%s' "$var"` or a direct pipe, not `echo`: zsh's `echo` turns `\n` inside a JSON string into a real newline, and the parser then refuses it.
+- A heredoc that carries prose uses a quoted delimiter (`<<'EOF'`), and values go in through `printf '%s'`: a backtick span in an unquoted heredoc runs as a command, and one ran a `git rebase` in a primary checkout.
+- In zsh, write `${var}` when the next character is `[`: `$var[` reads as an array subscript.
 - In zsh, never name a variable `path`, `cdpath`, or `fpath`: each is tied to its uppercase variable, so `for path in …` replaces `PATH` and the next command is not found.
 
 ## When the user overrides a rule

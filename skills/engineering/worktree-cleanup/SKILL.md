@@ -1,6 +1,6 @@
 ---
 name: worktree-cleanup
-description: Worktree cleanup, finding the git worktrees whose work has landed and removing them with nothing lost. Use when the user asks to clean up or prune worktrees, or when disk runs short in a repo that keeps them.
+description: Worktree cleanup, finding the git worktrees whose work has landed and removing them with nothing lost. Use when the user asks to clean up or prune worktrees, says "clean" or "clean up" at an effort's close, or when disk runs short in a repo that keeps them.
 ---
 
 # Worktree cleanup
@@ -22,7 +22,7 @@ A cleanup opens a todo list before step 1. Its first todo loads the `principle-*
 2. **Check what the script can't see.** *Principles: `principle-prove-it-works`.* The live panes and lanes are the real artifact; the script's `safe` is advice. A session can work in a worktree by absolute path while its working directory sits elsewhere, so the in-use check misses it. For each `safe` row, check `herdr pane list` for a pane whose cwd is inside it and the lane engine's lanes for its branch, and read its last commit time (`git -C <path> log -1 --format=%cr`). A row with a live pane or lane, or a commit from the last few days you can't account for, moves to held with that reason. Done when every `safe` row is either confirmed unused or moved to held.
 3. **Show the holds that lose work.** For each row held for uncommitted work, show `git -C <path> status --short` and the diff. This skill never removes it; the user commits, stashes, or deletes that work by hand, and the next audit picks it up. Done when each such row is shown.
 4. **Get the yes.** Show the user the list to remove, with each one's merged reason, and the list kept, with one reason each. Done when the user says yes to that list.
-5. **Remove.** *Principles: `principle-prove-it-works`.* Run the script again with `--remove`, and one `--only <name>` for each worktree on the user's list. It runs `git worktree remove` on each safe row, never `--force`, so a worktree that gained a file since step 1 is refused and left in place, then runs `git worktree prune`. Local branches stay. Then run `df -h /` again. Done when the rerun lists none of the worktrees on the user's list, `df -h /` is read again, and every refusal is in the hand-back.
+5. **Remove.** *Principles: `principle-prove-it-works`.* Run the script again with `--remove`, and one `--only <name>` for each worktree on the user's list. The set of trees comes from the effort's own PR list. It runs `git worktree remove` on each safe row, never `--force`, so a worktree that gained a file since step 1 is refused and left in place, then runs `git worktree prune`. Local branches stay. Then run `df -h /` again. Done when the rerun lists none of the worktrees on the user's list, `df -h /` is read again, and every refusal is in the hand-back.
 
 ## Hand back
 

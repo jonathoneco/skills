@@ -32,7 +32,7 @@ Write one clear paragraph. If you're unsure about the intent, ask the user befor
 
 ## Step 3, Spawn Reviewers
 
-Spawn Reviewer A and Reviewer B in parallel, each on a different model provider, both read-only.
+Spawn Reviewer A and Reviewer B in parallel, each on a different model provider. Reviewers start with write access to their own report folder and a brief that says "change no file except your report".
 
 Read `references/reviewer-prompt.md` and fill in the template with:
 1. The stated intent

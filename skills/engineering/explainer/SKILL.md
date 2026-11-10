@@ -98,6 +98,8 @@ Done when every check holds on the latest build. When one fails, change the page
 
 Publish the pages as the install's rules say; the rules name the host and who may open a page, such as Artifact Server (the `artifact-server` skill). When no rule names a host, the pages stay local files. A multi-page artifact publishes as one artifact: the hub first, then the other pages, then each agent context file. Give the user the link to the hub, or to the one page, or its path. Done when the user has it.
 
+A follow-up ask about a page the user is reading extends that page as a new version, unless they ask for a separate page.
+
 Then work each round of comments. The user comments on the page and tells the author; read every open thread on every page through the host's comment route, such as the `artifact-server` skill's. Each round:
 
 - An objection to a page's presentation usually surfaces reasoning skipped in step 2; look for that first.

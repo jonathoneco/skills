@@ -25,6 +25,10 @@ The scripts in `scripts/` make no network calls, so they work beside any route. 
 
 Filing is done when steps 1–5 each meet their done condition.
 
+## Linking a ticket
+
+Link a ticket with the `url` field the API returns, never a hand-built URL. The wrangle workspace slug is `wrangle-ai`, not `wrangle`.
+
 ## Linear's quirks
 
 Linear stores a description with its markdown rewritten and its words unchanged; `scripts/compare-readback` undoes those rewrites. When a readback differs only in markdown, add the rewrite to that script and its selftest.

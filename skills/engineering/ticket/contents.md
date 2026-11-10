@@ -49,7 +49,9 @@ Every ticket carries the **core**: Title, Outcome, Decided, Steps, Done, Relatio
 
     A check that needs production, an operator, another ticket's merge, a paid run the ticket doesn't allow, or a tracker or GitHub action goes under After merge, with the exact action and its owner. In one week of lane runs, lanes asked 40 times how to prove a box only the merge-time run could prove, and 54 times about checks someone else owed.
   - One test or command whose single run proves several boxes is named once, with the boxes it covers; the lane proves them together. A condensed ticket's places usually share one such run.
-  - A box states what to measure or observe.
+  - A box states what to measure or observe. Done names the result the product's user sees on a real record.
+  - A feature that calls an external provider proves one real call in each target environment.
+  - A ticket that adds a path to a user-visible concept (a label, a choice, a figure) names the one builder it reuses.
   - Each box checks what the code does: a test that passes, an observable result, a symbol that exists, or a grep for something that must be gone.
   - Use a line count or fixed-text match only when the code's exact form is the decision.
   - A Done list is judged by behavior, not by shape, by the writer and by whoever merges: a box that fails only because the code took an equivalent form is a note on the PR, not a blocker. A grep in a Done list printed 7 lines instead of 6 because a return type was annotated; recommended: fix first. The user: "this feels like an overly pedantic reading of the ticket and it sounds like the ticket was resolved in a better way." **Counter-example**: a recommendation the user turned down.
