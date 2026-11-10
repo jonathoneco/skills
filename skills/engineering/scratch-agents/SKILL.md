@@ -38,6 +38,8 @@ Pick each agent's row before it starts, by how hard you predict the job is. A br
    - Claude: `herdr agent start <name> --kind claude --pane <pane> -- --model <model> --effort <effort> --permission-mode bypassPermissions`
    - Codex: `herdr agent start <name> --kind codex --pane <pane> -- -m <model> -c model_reasoning_effort=<effort> --dangerously-bypass-approvals-and-sandbox`
 
+   Use [start-agent.sh](start-agent.sh) to validate the start arguments, clear a Codex update prompt, and submit a brief-file pointer.
+
    A script that runs `codex exec` itself closes its input, as in `codex exec … </dev/null`. Left open, `codex exec` waits on stdin and never returns. macOS has no `timeout` command, so a script there bounds the run another way, such as a background job it kills after a deadline.
 
    A scratch agent has the reach of the user's own sessions: shell, network, and the user's MCP servers. A brief that should leave files alone says so in words ("change no file"). A brief whose job makes folders says to make a new one for each attempt, such as `<name>-2`, and to leave earlier attempts in place, since each deletion waits on the user's yes. Done when `agent start` returns ready and a read of the pane (`herdr agent read <name> --source recent-unwrapped`) shows an empty input box with no dialog; `herdr-hazards` says how to clear each dialog.

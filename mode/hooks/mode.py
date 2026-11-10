@@ -17,8 +17,8 @@ One script, one subcommand per hook event:
   stop      Stop              one follow-up when a routed task's reply attributes no principle,
                               or when a substantial edit was never verified
 
-Every hook only adds context; none denies a tool call. Each reads its evidence back
-from the session transcript and writes nothing to disk. Missing or unreadable
+PreToolUse refuses untracked background operators. Other rules add context.
+Each reads its evidence from the session transcript and writes nothing to disk. Missing or unreadable
 evidence, bad input, or any exception means exit 0 with a one-line diagnostic
 on stderr. The prompt hook can run before a transcript exists, so a missing
 file there means nothing is loaded.
@@ -49,7 +49,7 @@ CODE_EXT = re.compile(r"\.(py|ts|tsx|js|jsx|mjs|cjs|go|rs|rb|java|kt|swift|c|cc|
 TEST_PATH = re.compile(r"(^|/)(tests?|__tests__|spec)/|(^|/)test_[^/]*$|_test\.\w+$|\.(test|spec)\.\w+$", re.I)
 # Tools named like ordinary words count only at command position: start, or after ; & | ( or a newline.
 # A lone & ends a command in the background; &&, >&, &> and |& do not.
-DETACHED = re.compile(r"(?<![&>|<])&(?![&>])|(?:^|[;&|(\n])\s*disown\b")
+BACKGROUND = re.compile(r"(?<![&>|<])&(?![&>])")
 READ_ONLY_CMD = re.compile(r"^\s*(cat|head|tail|less|sed|grep|rg|ls|wc|git|find)\b")
 SHELL_WRITE = re.compile(r"(?:>>?|\btee(?:\s+-a)?)\s*['\"]?([^\s'\";|&<>]+)")
 BIG_OUTPUT = 30000
@@ -75,6 +75,12 @@ QUOTED_TEXT = re.compile(r"(?<!>)(?<!> )('[^']*'|\"(?:\\.|[^\"\\])*\")", re.S)
 def shell_text(command):
     """The command with heredoc bodies and quoted strings blanked: what the shell runs, not prose."""
     return QUOTED_TEXT.sub(" ", HEREDOC_BODY.sub(" ", command or ""))
+
+
+def backgrounds(command):
+    text = HEREDOC_BODY.sub(" ", command or "")
+    text = re.sub(r"""'[^']*'|"(?:\\.|[^"\\])*"|\\.|(?:^|(?<=\s))#[^\n]*""", " ", text, flags=re.M)
+    return bool(BACKGROUND.search(text))
 
 
 def shell_writes(command):
@@ -131,7 +137,7 @@ def read_claude_session(path):
                 c.get("text", "") for c in content or [] if c.get("type") == "text")
             is_result = isinstance(content, list) and any(c.get("type") == "tool_result" for c in content)
             if text and not is_result and not text.lstrip().startswith("<"):
-                s.update(prompt=text, marks="", edits=[], edit_lines=0, ran_after_edit=False, reply="", turn_loaded=set())
+                s.update(prompt=text, marks=session_marks(s["marks"]), edits=[], edit_lines=0, ran_after_edit=False, reply="", turn_loaded=set())
                 pending.clear()
             continue
         for c in content if isinstance(content, list) else []:
@@ -208,7 +214,7 @@ def read_codex_session(path):
             kind = item.get("type")
             if kind == "UserMessage":
                 text = " ".join(c.get("text", "") for c in item.get("content", []))
-                s.update(prompt=text, marks="", edits=[], edit_lines=0, ran_after_edit=False, reply="", turn_loaded=set())
+                s.update(prompt=text, marks=session_marks(s["marks"]), edits=[], edit_lines=0, ran_after_edit=False, reply="", turn_loaded=set())
             elif kind == "AgentMessage" and item.get("phase") == "final_answer":
                 s["reply"] = " ".join(c.get("text", "") for c in item.get("content", []))
             elif kind == "CommandExecution" and item.get("exit_code") == 0:
@@ -373,6 +379,8 @@ def ops(tool, inp, cwd=""):
     if tool in HELPER_TOOLS and os.environ.get("HERDR_ENV"):
         found.append(("helper", OPS["helper"]["builtin"]))
     if str(tool).startswith("mcp__"):
+        if re.fullmatch(r"mcp__executor[-_].*__execute", tool):
+            found.append(("executor", OPS["executor"]["text"]))
         name = tool.split("__")[-1].lower()
         writes = any(w.startswith(WRITE_VERBS) for w in re.split(r"[-_.]", name))
         if name == "execute":
@@ -410,7 +418,7 @@ def ops(tool, inp, cwd=""):
             found.append(("outside-write", OPS["outside-write"]["text"]))
     if tool == "Bash":
         paths = shell_writes(inp.get("command"))
-        if not inp.get("run_in_background") and DETACHED.search(shell_text(inp.get("command"))):
+        if not inp.get("run_in_background") and re.search(r"(?:^|[;&|(\n])\s*disown\b", shell_text(inp.get("command"))):
             found.append(("detached-process", OPS["detached-process"]["text"]))
     if any(re.search(r"\.(sh|bash|zsh)$", p) for p in paths):
         found.append(("shell-script", OPS["shell-script"]["text"]))
@@ -424,6 +432,11 @@ def ops(tool, inp, cwd=""):
 
 def read_session(path):
     return read_codex_session(path) if CODEX else read_claude_session(path)
+
+
+def session_marks(marks):
+    return " ".join("%s %s:" % (MARK, key) for key, rule in OPS.items()
+                    if rule.get("session") and "%s %s:" % (MARK, key) in marks)
 
 
 def unloaded(rows, s):
@@ -461,7 +474,7 @@ def emit(obj):
             return text
         if "reason" in obj:
             obj["reason"] = wording(obj["reason"])
-        if "hookSpecificOutput" in obj:
+        if "hookSpecificOutput" in obj and "additionalContext" in obj["hookSpecificOutput"]:
             out = obj["hookSpecificOutput"]
             out["additionalContext"] = wording(out["additionalContext"])
     sys.stdout.write(json.dumps(obj))
@@ -497,6 +510,13 @@ def on_prompt(ev, path):
 
 def on_pretool(ev, path):
     tool, inp = ev.get("tool_name"), ev.get("tool_input") or {}
+    if tool == "Bash" and not inp.get("run_in_background") and backgrounds(inp.get("command")):
+        emit({"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "deny",
+              "permissionDecisionReason": "%s detached-process: Use the Bash tool's run_in_background with an until loop to wait for the result." % MARK}})
+        return
+    if not path:
+        diagnostic("missing transcript_path")
+        return
     if CODEX and tool == "apply_patch":
         paths = patch_paths(inp.get("command"))
     elif tool == "Bash":
@@ -586,7 +606,7 @@ def main():
         if "tool_input" in ev and not isinstance(ev["tool_input"], dict):
             raise ValueError("tool_input must be an object")
         path = ev.get("transcript_path")
-        if not path and sys.argv[1] != "prompt":
+        if not path and sys.argv[1] not in ("prompt", "pretool"):
             diagnostic("missing transcript_path")
             return
         HANDLERS[sys.argv[1]](ev, path)

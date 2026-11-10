@@ -139,10 +139,9 @@ HEAVY = [r"\b(investigat\w*|deep[- ]?dive|go deep|audit\w*|research\w*|post-?mor
          r"\bfor (the|our|a|my) (team|teammates?|product|leadership|stakeholders|reviewers?|manager|customers?)\b",
          r"(^|\s)[/$](blueprint|research|explainer|grilling|how|why|arena)\b"]
 
-# Operational rules, said in one line just before the action they govern. Each points
-# to where the full rule lives. "every" reminders fire on each action; the rest once per
-# task, until the next user prompt.
 OPS = {
+    "executor": {"every": False, "session": True,
+                 "text": "Before this call, load the `executor` skill and follow it."},
     "helper": {"every": False,
                "builtin": "This session runs in Herdr: start this helper as a scratch agent, as the `scratch-agents` "
                           "skill says, with the model and effort from its role table (global agent rules, Before you "
