@@ -25,6 +25,8 @@ The **author** is this session: it reasons, makes or asks for every ruling, and 
 
 Open a todo list before step 1. Its first todo loads the `principle-*` skills the steps below name; then one todo per step, each checked off when its Done when holds, or marked `skip: <reason>`. The run is done when the user has the link to a build that passed step 5; each comment round after that ends as step 6 says.
 
+A draft, report, or page builder made before this skill was called is source material for step 2, read like any other source. Every step still runs for the current ask, and the draft keeps only the structure that meets their results; the notes name what it kept and why.
+
 ## 1. Shape and frame
 
 Take the shape from the ask; ask the user only when two shapes fit equally well.
@@ -44,7 +46,7 @@ Done when the effort's notes name the shape and the path.
 
 ## 2. Reason
 
-*Principles: `principle-experience-first`, `principle-explain-the-number`.* **This is the skill.** Writing and building are mechanical once the takeaway is backed.
+*Principles: `principle-experience-first`, `principle-explain-the-number`.* Reason settles what the page teaches; step 4's design plan settles how the reader sees it. Both come before any page code.
 
 Write each answer, with its evidence, in the effort's notes. Each claim an answer rests on becomes a row in the effort's **ledger** as it is read: the claim, its source, the commit or time it was read, and its grade as the `grading-evidence` skill says. **Ledger:** Done when every source the session read, and every source the user or the effort's notes name on the subject, has its rows.
 
@@ -64,13 +66,13 @@ Done when step 9 is written and every claim it rests on has its ledger row. Then
 
 Load the `technical-writing`, `unslop`, and `asd-ste100` skills before the first sentence. Load `dataviz` when a page carries a chart, and `writing-shape` when the user handed over raw notes to build from.
 
-Write each page's text yourself, from your own understanding, by How a page teaches below, carrying the answers the shape file's Reasoning reached, laid out as its On the page says. Introduce each lacked item the way a teacher does: in the sentence that first needs it, in a clause or a short paragraph, inside the story. Every section moves the reader toward the takeaway. When the prose needs a fact you haven't read, read its source and add its ledger row. Write each page's agent context, and draw each diagram.
+Write each page's text yourself, from your own understanding, by How a page teaches below, carrying the answers the shape file's Reasoning reached, laid out as its On the page says. Introduce each lacked item the way a teacher does: in the sentence that first needs it, in a clause or a short paragraph, inside the story. Every section moves the reader toward the takeaway. When the prose needs a fact you haven't read, read its source and add its ledger row. Write each page's agent context.
 
 Done when every lacked item is introduced where it is first needed, or cut from the page, and each page named in step 2's Pages has its text and its agent context.
 
 ## 4. Build
 
-Build each page as the `html` skill says. Load `web-artifacts-builder` only when the reader must operate something on the page, such as trying an input and seeing the result.
+Load the `html` and `design-artifact` skills before any page code, whatever the project or an earlier draft already settles. Write `design-artifact`'s design plan in the effort's notes: the palette, the type, and the layout idea. The user's direction and the project's design system are inputs to the plan; name the source of each choice they settle. Then draw each diagram as [diagrams.md](diagrams.md)'s Drawing says, with the plan's palette and type, and build each page from the plan as the `html` skill says. Load `web-artifacts-builder` only when the reader must operate something on the page, such as trying an input and seeing the result.
 
 Each page also holds what only this skill knows about its reader:
 
@@ -81,7 +83,7 @@ Each page also holds what only this skill knows about its reader:
 - A link in the page's foot to its agent context.
 - On an HTML page, both a light and a dark theme, following the reader's system setting, as `design-artifact` says. This is the explainer's theme policy for the `html` skill.
 
-Done when every page and its agent context are built files, one pair per page named in step 2's Pages, each page holds the parts above, the `html` skill's browser inspection finds nothing left to fix, and a handoff's privacy grep passes.
+Done when the notes hold the design plan, every page and its agent context are built files, one pair per page named in step 2's Pages, each page holds the parts above and a figure for every drawing brief step 2's Diagrams placed on it, the `html` skill's browser inspection finds nothing left to fix, and a handoff's privacy grep passes.
 
 ## 5. Check
 
@@ -90,6 +92,7 @@ Done when every page and its agent context are built files, one pair per page na
 - **Cold read**, on the first version and after a change to the takeaway, the asks, or explanatory prose, as Cold read below says; run the other checks while it works. Done when its takeaway and ask match yours and its list of unexplained items is empty. When either fails, fix the prose that let the reader land elsewhere or leaned on what they lack, not the test, and run it again on the rebuilt page. When two rebuilt rounds still land elsewhere, bring both answers to the user with the takeaway.
 - **Facts:** live state the pages report is re-read after the latest build, and a claim is re-checked when its source has moved past the commit in its ledger row.
 - **Worked case:** trace each step of each worked case through the mechanism the page states. Done when every step follows from a rule the page states, such as who writes, what triggers, and what is read. A step that no stated rule produces is a contradiction: fix the case or the rule.
+- **Design:** open each built page in a browser at full width and at 390 px, in both themes, and compare it with the design plan: its type, palette, hierarchy, and layout. Then find each relationship from step 2's Diagrams on the page. Done when the page carries out the plan and every listed relationship is visible as its figure.
 - **Prose:** run `technical-writing`, `unslop`, and `asd-ste100` again on the text of each `.html` file the build changed; every substantive line also passes Every line below.
 
 Done when every check holds on the latest build. When one fails, change the page, rebuild, and check the new build.
