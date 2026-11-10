@@ -51,10 +51,11 @@ def run(sub, event, transcript):
     return out.returncode, out.stdout, out.stderr
 
 
-def check(label, sub, event, transcript, expect, absent=None):
+def check(label, sub, event, transcript, expect, absent=None, deny=False):
     global failures
     code, out, _ = run(sub, event, transcript)
-    ok = code == 0 and '"deny"' not in out and (expect in out if expect else out == "")
+    denied = json.loads(out).get("hookSpecificOutput", {}).get("permissionDecision") == "deny" if out else False
+    ok = code == 0 and denied == deny and (expect in out if expect else out == "")
     ok = ok and not (absent and absent in out)
     if not ok:
         failures += 1
@@ -205,12 +206,14 @@ check("plain doc edit is quiet", "pretool", pre("Write", {"file_path": R + "/doc
 check("skill edit once per task", "pretool", pre("Edit", {"file_path": R + "/SKILL.md", "old_string": "a", "new_string": "b"}),
       FIX + [line("context", "[mode] agent-doc: x")], "", "writing-for-agents")
 
-for command in ("sleep 5 &", "x & disown", "nohup ./watch.sh > log &", "a & b"):
-    check("detached: " + command, "pretool", sh(command), FIX, "detached-process:")
-for command in ("a && b", "cmd 2>&1", "cmd &> log", "a |& b", "echo 'a & b'"):
+for command in ("sleep 5 &", "x & disown", "nohup x &", "nohup ./watch.sh > log &", "a & b", "cmd 2>&1 &", r"echo x\\&"):
+    check("detached: " + command, "pretool", sh(command), FIX, "run_in_background with an until loop", deny=True)
+for command in ("a && b", "cmd 2>&1", "cmd 2>&1 | tee", "cmd &> log", "a |& b", "echo 'a & b'", r"echo a\&b",
+                "cmd # sleep &", 'cmd >"a&b"', "cat <<'EOF'\nsleep 5 &\nEOF"):
     check("not detached: " + command, "pretool", sh(command), FIX, "")
-check("detached: run_in_background is quiet", "pretool", pre("Bash", {"command": "sleep 5", "run_in_background": True}), FIX, "")
-check("detached: once per task", "pretool", sh("sleep 5 &"), FIX + [line("context", "[mode] detached-process: x")], "")
+check("detached: run_in_background is quiet", "pretool", pre("Bash", {"command": "sleep 5 &", "run_in_background": True}), FIX, "")
+check("detached: denied on repeat", "pretool", sh("sleep 5 &"), FIX + [line("context", "[mode] detached-process: x")], "until loop", deny=True)
+check("disown still reminds", "pretool", sh("disown"), FIX, "detached-process:")
 
 # Tool output reminders.
 for command in ("hyperfine ./a", "grep BENCH mode.py"):
@@ -269,6 +272,22 @@ check("codex oversized output", "posttool", {"tool_name": "Bash", "tool_input": 
 for CODEX_TEST in (False, True):
     harness = "codex" if CODEX_TEST else "claude"
     prompt = cx_prompt if CODEX_TEST else line("prompt", BUG)
+    marker = {"type": "response_item", "payload": {"type": "message", "role": "developer", "content": [{"text": "[mode] executor: x"}]}} if CODEX_TEST else line("context", "[mode] executor: x")
+    for executor in ("mcp__executor-base__execute", "mcp__executor-personal-agent__execute", "mcp__executor_wrangle__execute"):
+        event = pre(executor, {"code": "await tools.list()"})
+        check(harness + " first Executor call " + executor, "pretool", event, [prompt], "executor:", "outside-write:")
+        check(harness + " Executor once per session " + executor, "pretool", event, [prompt, marker, prompt], "")
+        check(harness + " Executor after compaction " + executor, "pretool", event,
+              [prompt, marker, {"type": "compacted"} if CODEX_TEST else {"subtype": "compact_boundary"}, prompt], "")
+    check(harness + " Executor write keeps both reminders", "pretool",
+          pre("mcp__executor-base__execute", {"code": "await tools.notion.pages.update({id})"}), [prompt], "executor:")
+    check(harness + " Executor first write still reminds", "pretool",
+          pre("mcp__executor-base__execute", {"code": "await tools.notion.pages.update({id})"}), [prompt], "outside-write:")
+    check(harness + " Executor later write still reminds", "pretool",
+          pre("mcp__executor-base__execute", {"code": "await tools.notion.pages.update({id})"}), [prompt, marker, prompt], "outside-write:", "executor:")
+    check(harness + " background denied", "pretool", sh("cmd 2>&1 &"), [prompt], "until loop", deny=True)
+    check(harness + " background denied without evidence", "pretool", sh("sleep 5 &"), None, "until loop", deny=True)
+    check(harness + " background denied without transcript path", "pretool", json.dumps(sh("sleep 5 &")), None, "until loop", deny=True)
     load = cx_load if CODEX_TEST else line("tool", "Skill", {"skill": "principle-fix-root-causes"})
     edit = cx("FileChange", status="completed", changes={R + "/importer.py": {"unified_diff": "+x\n" * 20}}) if CODEX_TEST else line(
         "tool", "Write", {"file_path": R + "/importer.py", "content": "x\n" * 20})
