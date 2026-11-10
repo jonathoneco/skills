@@ -62,12 +62,12 @@ The `principle-*` skills each cover a moment in the work, such as a plan turning
 - To start new work, run `git fetch origin` and create the worktree from `origin/main`. Leave the local `main` checkout as it is; another session may have uncommitted work there.
 - Stage files by name (`git add path/to/file`). Commit only files you changed in this session, and check `git status` before each commit so the staged set is exactly those files.
 - Keep secrets out of commits: `auth.json`, `*.env`, `*.pem`, `secrets/`, and anything that looks like a credential.
-- When you search config or the environment, print variable names only, so a value never lands in a transcript: `env | cut -d= -f1 | grep -i proxy`.
+- When you search config or the environment, print variable names only, so a value never lands in a transcript: `env | cut -d= -f1 | grep -i proxy`. For a config file, print its key paths only (`jq '[paths(scalars) | join(".")]'`), never its values behind a length or shape filter: tokens come in many lengths, and a filter that hid long strings once printed a 32-character token.
 - When a rebase conflicts in a file you didn't change, abort it and ask.
 - The user runs these themselves, with `!`, when they want one: `git add -A`, `git add .`, `git reset --hard`, `git checkout .`, `git stash`, `git clean -fd`, `git commit --no-verify`. The git guardrail blocks them for agents.
 - Never force-push `main` or `master`.
 - Merge a PR only when the user says to merge it.
-- Stacked PRs: merge bottom-up with delete-branch-on-merge, and check `git merge-base --is-ancestor <mergeCommit> origin/main` before calling a stacked merge landed.
+- Stacked PRs: merge bottom-up with delete-branch-on-merge, and check `git merge-base --is-ancestor <mergeCommit> origin/main` before calling a stacked merge landed. Before merging a child, read its base: when the parent's branch survived its merge, retarget the child to the trunk first, or the merge lands on the dead branch. `gh pr merge --delete-branch` deletes neither the local nor the remote branch while that branch is checked out in a worktree.
 
 ## Knowledge placement
 
