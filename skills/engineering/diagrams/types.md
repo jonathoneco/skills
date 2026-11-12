@@ -1,6 +1,6 @@
 # Diagram types
 
-One entry per type in SKILL.md's table, in table order. Each fact links its source page; a line marked *inference* joins the facts named in it. "Reader" is the audience a source names, not a role this skill assigns.
+One entry per row of SKILL.md's table, in table order, then the forms outside the table. Each fact links its source page; a line marked inference joins the facts named in it. "Reader" is the audience a source names, not a role this skill assigns. "Scenario" has three meanings in the sources, so each entry names the kind: a runtime scenario is one run of the system through its parts, a quality scenario makes a quality requirement concrete, and a usage scenario is one way a user uses the system.
 
 ## Boundary
 
@@ -45,7 +45,7 @@ One entry per type in SKILL.md's table, in table order. Each fact links its sour
 ## Interaction
 
 ### UML sequence diagram
-- Answers who sends what to whom, in what order, for one scenario. Ambler calls it the most popular UML artifact for dynamic modelling. ([Agile Modeling](https://agilemodeling.com/artifacts/sequenceDiagram.htm))
+- Ambler lists three subjects for it: a usage scenario, the logic of a method, and the logic of a service. He calls it the most popular UML artifact for dynamic modelling. ([Agile Modeling](https://agilemodeling.com/artifacts/sequenceDiagram.htm))
 - A system-level sequence diagram helps stakeholders see and check the logic of a usage scenario. ([Agile Modeling](https://agilemodeling.com/artifacts/sequenceDiagram.htm))
 - arc42 uses it for runtime scenarios because it shows each building block's responsibility. Focus on the risky, difficult, or interesting parts. With graphical modeling tools, making and managing them may take a lot of effort. ([arc42 tip 6-11](https://docs.arc42.org/tips/6-11/), [arc42 tip 6-6](https://docs.arc42.org/tips/6-6/))
 - Draw one only for logic complex enough to think through; for straightforward logic, go straight to code. Fowler, arguing against model-driven architecture, doubts that sequence or activity diagrams match code for expressing behavioral logic, while he endorses sketches that convey design ideas. This skill's pick: draw when the logic needs thinking through, otherwise write the code. ([Agile Modeling](https://agilemodeling.com/artifacts/sequenceDiagram.htm), [Fowler](https://martinfowler.com/bliki/ModelDrivenArchitecture.html))
@@ -53,8 +53,8 @@ One entry per type in SKILL.md's table, in table order. Each fact links its sour
 ### C4 dynamic diagram (runtime scenario)
 - Shows how elements of the static diagrams work together at runtime for a user story, use case, or feature. The boxes may be systems, containers, or components. ([C4](https://c4model.com/diagrams/dynamic))
 - Reader: technical and non-technical people. C4 says use it sparingly, for interesting or recurring patterns that need a complicated set of interactions. ([C4](https://c4model.com/diagrams/dynamic))
-- arc42 section 6 holds the same idea: pick scenarios by architectural relevance, a few only, and keep them schematic. ([arc42](https://docs.arc42.org/section-6/), [arc42 tip 6-3](https://docs.arc42.org/tips/6-3/))
-- arc42 aims scenarios at stakeholders who will not read the static models. ([arc42](https://docs.arc42.org/section-6/))
+- arc42 section 6 holds the same idea: pick runtime scenarios by architectural relevance, and only a few. A schematic overview is often sufficient to understand how the building blocks interact. ([arc42](https://docs.arc42.org/section-6/), [arc42 tip 6-3](https://docs.arc42.org/tips/6-3/))
+- arc42 aims runtime scenarios at stakeholders who are less willing or able to read the static models. ([arc42](https://docs.arc42.org/section-6/))
 - C4 says its collaboration and sequence styles show the same information. Ambler says that, in his experience, needing sequence numbers on a communication diagram is a good indication to use a sequence diagram instead. This skill's pick: a UML sequence diagram when message order matters; a C4 dynamic diagram when the boxes must be those of the static diagram. ([C4](https://c4model.com/diagrams/dynamic), [Agile Modeling](https://agilemodeling.com/artifacts/communicationDiagram.htm))
 
 ## Behavior
@@ -86,7 +86,6 @@ One entry per type in SKILL.md's table, in table order. Each fact links its sour
 - Shows entities, their relationships, and attributes, as a blueprint for a database. Source: a vendor page. ([Miro](https://miro.com/diagramming/types-of-diagrams/))
 - If you do not document a full domain-driven design model with static and dynamic aspects, arc42 recommends at least a business or domain data model, which gives an overview of the basic data structures and their relationships. ([arc42 tip 8-7](https://docs.arc42.org/tips/8-7/))
 - Physical level: tables, columns, keys, and the relations between tables. ([Agile Modeling](https://agilemodeling.com/artifacts/physicalDataModel.htm))
-- To explore domain concepts with stakeholders, Ambler uses an ORM diagram, then records the result in a class diagram or code and erases the sketch. ([Agile Modeling](https://agilemodeling.com/artifacts/ormDiagram.htm))
 
 ### Data flow diagram
 - Shows data flowing from external entities into the system, from one process to the next, and into storage. ([Agile Modeling](https://agilemodeling.com/artifacts/dataFlowDiagram.htm))
@@ -107,6 +106,7 @@ One entry per type in SKILL.md's table, in table order. Each fact links its sour
 - It follows the tradition of flowcharting notations. ([OMG BPMN 2.0.2](https://www.omg.org/spec/BPMN/2.0.2/PDF))
 - A process is one organisation's flow of activities. A collaboration shows the interaction between two or more business entities, as pools. A choreography shows the exchange of messages between participants, with no central controller. ([OMG BPMN 2.0.2](https://www.omg.org/spec/BPMN/2.0.2/PDF))
 - Miro says UML diagrams model software, while BPMN diagrams outline business processes. Source: a vendor page. ([Miro](https://miro.com/diagramming/what-is-bpmn/))
+- Text art and Mermaid have no BPMN shapes. This skill sends those places to the swimlane flowchart; that is a tool fact and this skill's own rule.
 
 ## Requirements
 
@@ -120,12 +120,14 @@ One entry per type in SKILL.md's table, in table order. Each fact links its sour
 - Many boxes and many connections may signal a system too large for people to learn and understand. ([Agile Modeling](https://agilemodeling.com/artifacts/uiFlowDiagram.htm))
 - UML has no diagram for it. A UI prototype shows screen detail. ([Agile Modeling](https://agilemodeling.com/artifacts/uiFlowDiagram.htm))
 
+## Outside the table
+
 ### arc42 quality tree and quality scenarios
 - Quality scenarios make quality requirements concrete and let you decide whether each is met. ([arc42](https://docs.arc42.org/section-10/))
-- arc42 now favors a simple table over the graphic tree, because a large tree loses overview. A graphic is still useful for finding gaps: a branch with no scenarios may be missing some. ([arc42 tip 10-2](https://docs.arc42.org/tips/10-2/), [arc42 tip 10-4](https://docs.arc42.org/tips/10-4/))
+- arc42 now favors a simple table over the graphic tree, because a large tree loses overview. A graphic is still useful for finding gaps: a branch with no quality scenarios may be missing some. ([arc42 tip 10-2](https://docs.arc42.org/tips/10-2/), [arc42 tip 10-4](https://docs.arc42.org/tips/10-4/))
 - This skill's pick, inference joining those two tips: record the qualities in a table, and use a tree only in a workshop to check for gaps.
 
-## Other business charts
+### Other business charts
 
 Each answers one question. Source for all: vendor pages.
 
