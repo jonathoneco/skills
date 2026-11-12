@@ -14,12 +14,11 @@ A decision brief puts calls in front of the user so they can rule on each one re
 ## On the page
 
 - Tangled calls come first, grouped, with the upstream call on top.
-- Each call that isn't small is a decision card (Decision cards below); the small calls follow, one line each.
+- Each call that isn't small is a decision card.
+- The small calls follow in one table, a row each: the call, its options with what each means for the people it affects, and the pick.
 - The items that turned out not to be calls sit in one short list.
 
-## Decision cards
-
-A decision card holds one call, in order: a heading with the question and the call's state; a paragraph giving its **Goal** and how it works **Today**; a table with one row per option and columns for what it **Buys**, what changes and for whom, its **Cost**, and its consequence for the product's users; and the **Pick** in one line, read as SKILL.md's Sort says while the call is open, with what gets measured after the ruling and what result would reverse it.
+A **decision card** holds one call, in order: a heading with the question and the call's state; a paragraph giving its **Goal** and how it works **Today**; a table with one row per option and columns for what it **Buys**, what changes and for whom, its **Cost**, and its consequence for the product's users; and the **Pick** in one line, labelled as a pick while the call is open, with what gets measured after the ruling and what result would reverse it.
 
 ## Agent context
 

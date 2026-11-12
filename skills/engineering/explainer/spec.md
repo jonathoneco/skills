@@ -2,9 +2,7 @@
 
 A spec presents a design. Its reader judges the design without opening the code.
 
-A point still open (SKILL.md's Sort) reads as open where it sits: an open marker and a line or two on what is unsettled.
-
-A spec usually splits into pages by working set: a rulings page first when calls are open, then the flow, then the records behind it.
+A **journey** is the worked case walked through the flow, step by step. A spec that needs several pages ([full-path.md](full-path.md)) usually splits into a rulings page first when calls are open, then the flow, then the records behind it.
 
 ## Reasoning
 
@@ -27,4 +25,4 @@ A spec usually splits into pages by working set: a rulings page first when calls
 
 ## Agent context
 
-The heaviest on rulings: every section gives its rulings at ruling depth, plus the paths behind its symbols and the checks that show the design holds.
+The heaviest on rulings: every section gives each ruling in full (what was decided, why, what was turned down, and the file that records it), plus the paths behind its symbols and the checks that show the design holds.

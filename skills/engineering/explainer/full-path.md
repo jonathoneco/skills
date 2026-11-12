@@ -1,43 +1,32 @@
-# The full path
+# Several pages
 
-A multi-page artifact adds five things to SKILL.md's steps: how the artifact splits into pages, what the hub holds, a takeaway check with the user, a build folder, and background runs.
+An artifact splits into pages when the reader makes several judgments apart from each other. It adds four things to SKILL.md's steps: the split, the hub, a build folder, and background runs.
 
-## Splitting into pages
+## The split
 
-1. Name what the reader must judge in this artifact, and the working set for each judgment.
-2. A page holds one working set. A section that asks the reader to hold two, such as what a person sees and the fields behind it, becomes two pages.
-3. Split a working set into its parts only when the reader judges each part on its own, such as one page per domain or per failure mode.
-4. The hub links the pages, as The hub below says.
+1. Name what the reader must judge, and what they must hold in mind at once for each judgment.
+2. One page holds one such set. A section that asks the reader to hold two, such as what a person sees and the fields behind it, becomes two pages.
+3. Split a set further only when the reader judges each part on its own, such as one page per domain or per failure mode.
 
-The shape file says what usually happens for that shape.
+The shape file says how its shape usually splits.
 
 ## The hub
 
-Each fact is stated in full on one page. Another page that needs it names the fact in one line and links to that page. The hub holds two things in order:
+The hub is the page the artifact opens on, `index.html`. Each fact is stated in full on one page; another page that needs it names it in one line and links there. The hub holds two things, in order:
 
 1. The takeaway and the asks, with today against the design where the artifact proposes a change.
-2. **Read in this order:** each page, numbered, as a link with the one question the reader answers there ("Is the wiring right?") and a line on what it holds. A page for the user's rulings comes first, marked as the place to rule.
+2. **Read in this order:** each page, numbered, as a link with the one question the reader answers there ("Is the wiring right?") and a line on what it holds. A page for the user's rulings comes first.
 
-## Takeaway check
-
-Between Reason and Write, send the user one short message: the reader, the takeaway, and the asks. Done when the user has given the go or a correction, and a correction is folded into the takeaway.
+Each other page opens with its part of the takeaway. The cold read takes the hub and every page.
 
 ## Build folder
 
-Make it under the effort's notes folder before the first background run, which starts there; screenshots and renders of 1 MB or more go to `~/.local/state/agent-runs/<effort>/`. It holds the artifact's source:
-
-- `<page>.html` per page, the hub as `index.html`.
-- `<page>.context.md` per page: its agent context (SKILL.md's Human side and agent context).
-- `diagrams/<name>.svg` per diagram a diagram run draws, pasted into its page's figure at build.
-- `PUBLISHED.md`: the artifact's id and links on its host, one line per published version.
-- Each run's result and log: `evidence-<k>.md`, `COLD-<n>.md`, `diagrams/<name>.log`.
-
-Every name, title, quote, and count the pages show is in the source files.
+Make one folder under the effort's notes. It holds `<page>.html` and `<page>.context.md` per page, `PUBLISHED.md` with the artifact's id and links on its host, and each background run's brief and result. Screenshots and renders of 1 MB or more go to `~/.local/state/agent-runs/<effort>/`.
 
 ## Background runs
 
-Every background run starts as a scratch agent (the `scratch-agents` skill), at the role named here, in the build folder. A run is done when the author has read its result file and checked it against the brief's completion criterion. A failed run stays open; handle a blocked run as the `scratch-agents` skill says.
+Each run starts as the `scratch-agents` skill says, at the role named here, in the build folder. A run is done when you have read its result file and checked it against its brief.
 
-- **Evidence run:** reading that Reason sends out, such as tracing a flow through a repo or surveying docs. The `explainer evidence` role, briefed to use the `how` skill for what code does or the `why` skill for why it is that way; the brief names the repo's path, the question, the evidence that would settle it, and the report file. Its report's claims enter the ledger (SKILL.md's Reason) like any other.
-- **Diagram run:** draws one diagram. The `explainer diagram` role; its brief names `diagrams/<name>.svg` as the result file, and carries the complete drawing brief from diagrams.md's Reasoning and the design plan's palette and type, with its Rules and Drawing by path.
-- **Cold read:** SKILL.md's Cold read, with its files in the build folder.
+- **Evidence run:** reading that step 2 sends out, such as tracing a flow through a repo. The `explainer evidence` role, briefed to use the `how` skill for what code does or the `why` skill for why. The brief names the repo's path, the question, the evidence that would settle it, and the result file.
+- **Diagram run:** draws one diagram into a file its brief names. The `explainer diagram` role. The brief carries the figure's question and caption, its parts from the source, the design plan's palette and typefaces, and the path of [figures.md](figures.md).
+- **Cold read:** as [cold-read.md](cold-read.md) says.
