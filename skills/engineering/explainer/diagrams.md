@@ -6,24 +6,13 @@ How to decide on and draw an explainer's diagrams. A diagram sits in the page as
 
 List every relationship in each page's working set that the reader must understand to reach the takeaway: how parts connect, what happens in what order, who owns what, or how two options differ. Each journey and each failure mode the shape's chain traced is one. Then work these for each relationship, in order, and write the answers into the effort's notes; they are the diagram run's brief:
 
-1. **Question:** what one question does this diagram answer? A diagram that answers two becomes two. The question picks the form:
-
-   | Question | Form |
-   |---|---|
-   | What exists, and how is it connected? | Topology or system map |
-   | What happens over time? | Sequence, timeline, or request trace |
-   | What decisions or transformations occur? | Process flow |
-   | How can something change? | State diagram |
-   | What contains or owns what? | Hierarchy or nested boundary map |
-   | How do alternatives compare? | Matrix or aligned comparison |
-   | How much, how often, or how fast? | A chart, drawn as the `dataviz` skill says |
-
+1. **Question:** what one question does this diagram answer? A diagram that answers two becomes two. The question picks the type, as the `diagrams` skill says. Take from that skill what one box is, too.
 2. **Code beside it:** when the reader also judges code shape, such as which function calls which or what a change adds, put a code view beside the drawing as a code block: pseudocode, a call tree, a file tree, or a `diff` of one of these.
 3. **Parts:** what are the real parts and connections, taken from the source? Each block is one real thing, each arrow something that happens, and the kinds of mechanism come from the source.
 4. **Use:** the reader looks at it, so it is static. Show every explanatory step together. Use interaction when the reader must try an input and see its result. Put explanatory rows in a table below the diagram.
 5. **Place:** which page and which section, and what the caption claims.
 
-Done when each listed relationship has a drawing brief, and each brief names one question, its form, source-backed parts and connections, static or interactive use, page, section, and caption claim.
+Done when each listed relationship has a drawing brief, and each brief names one question, its type and what one box is, source-backed parts and connections, static or interactive use, page, section, and caption claim.
 
 ## Rules
 
