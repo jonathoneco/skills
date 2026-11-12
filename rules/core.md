@@ -66,7 +66,7 @@ The `principle-*` skills each cover a moment in the work, such as a plan turning
 - When a rebase conflicts in a file you didn't change, abort it and ask.
 - The user runs these themselves, with `!`, when they want one: `git add -A`, `git add .`, `git reset --hard`, `git checkout .`, `git stash`, `git clean -fd`, `git commit --no-verify`. The git guardrail blocks them for agents.
 - Never force-push `main` or `master`.
-- Merge a PR only when the user says to merge it.
+- Merge a PR only when the user says to merge it. That word also covers a follow-up PR that fixes it after the user's review.
 - Stacked PRs: merge bottom-up with delete-branch-on-merge, and check `git merge-base --is-ancestor <mergeCommit> origin/main` before calling a stacked merge landed. Before merging a child, read its base: when the parent's branch survived its merge, retarget the child to the trunk first, or the merge lands on the dead branch. `gh pr merge --delete-branch` deletes neither the local nor the remote branch while that branch is checked out in a worktree.
 
 ## Knowledge placement
