@@ -70,8 +70,8 @@ The ingest steps above are the **writer** round. Follow them with:
 2. **Verify:** check every substantive addition against its owning source and correct the final
    graph.
 
-Use a `reader` scratch agent (the `scratch-agents` skill) for sediment and verify when one can run;
-the reader returns findings and the primary agent applies bundle edits. Otherwise separate the
+Use an `examiner` scratch agent (the `scratch-agents` skill) for sediment and verify when one can run;
+the examiner returns findings and the primary agent applies bundle edits. Otherwise separate the
 rounds with a fresh read. Bump timestamps for meaningful corrections, add one newest-first
 `log.md` entry per round, and validate after each. Completion means all three rounds are logged
 and each validation reports zero errors and zero warnings.
