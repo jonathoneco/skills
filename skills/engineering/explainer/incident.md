@@ -17,7 +17,7 @@ Something broke. The reader decides what to fix and in what order. Their agent p
 
 - What broke, what is still live, and the ranking come first; the reader acts on them before anything else.
 - Each failure mode is a worked case on a real record, with a diagram of its mechanism and its numbers.
-- The calls are decision cards (decision-brief.md's Decision cards); the repairs are listed apart from them.
+- The calls are decision cards, as [decision-brief.md](decision-brief.md) says; the repairs are listed apart from them.
 - What the repair so far taught, wrong turns included, follows the fixes.
 - A downstream session, person, or team is named only where it changes what the reader does, such as a team the reader must warn; what each of them needs goes to them, not onto the page.
 - Each fix's shape is agreed in the artifact before anyone files tickets.

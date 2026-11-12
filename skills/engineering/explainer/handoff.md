@@ -24,7 +24,7 @@ A handoff onboards a person to a workflow and its tools. The **owner** is whoeve
 
 - The onboarding prompt tells the agent to read the page until it can name the page's parts in the page's words, then read the agent context, then explore the reader's environment and ask what their next focus is.
 - The prompt also tells the reader's agent to narrate each step before and after it, define terms on first use, and ask one yes per install or config change, showing the exact command or diff.
-- The privacy grep searches every file the pages are built from, the page sources, the agent context sources, and the diagrams, for each grep term from the notes. It passes when it returns nothing.
+- The privacy grep searches every file the pages are built from, the page sources, the agent context sources, and the diagrams, for each grep term from the notes. It passes when it returns nothing. Run it on the built files before step 5's cold read.
 
 ## Agent context
 

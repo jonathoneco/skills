@@ -13,7 +13,7 @@ An investigation answers an open question with evidence. The reader needs the an
 ## On the page
 
 - The answer comes first, in one or two lines, with how far to trust it and the date any data was queried.
-- A choice is a decision card (decision-brief.md's Decision cards).
+- A choice is a decision card, as [decision-brief.md](decision-brief.md) says.
 - A page of findings, such as a review's, orders its sections by what matters most, so the reader can stop after any section and has already seen the most important part. Supporting reference follows the findings, under a heading that names its subject.
 
 ## Agent context
