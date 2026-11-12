@@ -1,9 +1,9 @@
 ---
-name: diagramming
+name: diagrams
 description: Choose which diagrams a problem needs and the type of each. Use when about to draw, show, or explain a system, workflow, data flow, or business process as a diagram, and when deciding which views a design or its docs need. Charts of numbers go to dataviz.
 ---
 
-# Diagramming
+# Diagrams
 
 A diagram answers one question for one reader. Pick the question, then the type, then the level, then where to draw it. The reader is whoever needs the answer: a teammate, or the person who receives a page. When the problem names no reader, the reader is the user.
 
