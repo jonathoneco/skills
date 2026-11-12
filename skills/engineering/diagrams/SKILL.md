@@ -15,9 +15,9 @@ For one sketch inside a reply, the question is the thing you are about to explai
 
 1. **List the questions.** Write the questions the reader must answer to understand the problem, one per line. Take the angles from the table's eight groups: a problem with a lifecycle has a behavior question even when nobody asked for one. List them from the outside in: the boundary, then the structure, then what runs on top of it. Keep a question only when something the reader will decide or do turns on it. When the problem does not say which angles matter, choose from the problem and say in one line what you assumed. Done when each line is one question and names its group, or says that no group fits.
 
-2. **Pick a row for each question.** Name the diagram as the row does, tradition included: one word, such as component, means different things in different traditions. Read the row's last cell before you draw, because it says when the diagram is the wrong tool. A question that no row fits goes to [Outside the table](#outside-the-table). Done when each question has one row or one form from outside the table, and no two diagrams answer the same question.
+2. **Pick a row for each question.** Name the diagram as the row does, tradition included: one word, such as component, means different things in different traditions. Read the row's last cell before you draw, because it says when the diagram is the wrong tool. A question that no row fits goes to [Outside the table](#outside-the-table). Two diagrams that would differ in only a few elements, such as two environments, are one diagram and a table of the differences. Done when each question has one row or one form from outside the table, and no two diagrams answer the same question.
 
-3. **Size it.** The row says what one box is, and that holds for every box in the diagram: it is the diagram's **level**. A box at another level, such as a machine among services, belongs to another diagram. Draw only what the question turns on. Keep to 15 elements at most, counting each box, participant, and state. Past that, fold a group that belongs together into one named **black box**, a part shown only by what goes in and what comes out, or split the diagram by focus at the same level. To show the inside of a box, **zoom**: draw a new diagram whose scope is that box. Done when the diagram has one question, one level, and 15 elements or fewer.
+3. **Size it.** The row says what one box is, and that holds for every box in the diagram: it is the diagram's **level**. A box at another level, such as a machine among services, belongs to another diagram. Draw only what the question turns on. Keep to 15 elements at most, counting each box, participant, and state, and not a lane or a boundary around them. Past that, fold a group that belongs together into one named **black box**, a part shown only by what goes in and what comes out, or split the diagram by focus at the same level. To show the inside of a box, **zoom**: draw a new diagram whose scope is that box. Done when the diagram has one question, one level, and 15 elements or fewer.
 
 4. **Draw it for its place.**
 
@@ -41,7 +41,7 @@ For one sketch inside a reply, the question is the thing you are about to explai
 
    Done when rules 1 to 3 hold, and rules 4 and 5 hold or the place had no room for them.
 
-5. **Check it against the source.** Each box and each arrow is something you read in the code or the docs, or something the user told you. Mark a guess as assumed on the diagram, or leave it out. Done when every element traces to a source or carries that mark.
+5. **Check it against the source.** Each box and each arrow is something you read in the code or the docs, or something the user told you. Mark a guess as assumed, on the diagram or in a line beside it, or leave it out. Done when every element traces to a source or carries that mark.
 
 ## Which diagram
 

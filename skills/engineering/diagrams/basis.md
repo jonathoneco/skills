@@ -22,10 +22,12 @@ Where each rule in SKILL.md comes from. A rule with a link rests on that page. A
 
 - No source gives the table. Its questions, its eight groups, and the "One box is" column each join a type's purpose in types.md with the elements its source names.
 - A "Wrong tool when" cell restates the skip rule in the row's types.md entry. Five cells are this skill's own reading, with no page that states them: the context diagram when the reader knows the neighbours; the component diagram when the question is not inside that one part; the deployment diagram when everything runs in one place; the entity-relationship diagram against the domain model; and BPMN where the place has no BPMN shapes.
-- A comparison and a question about many items go to a table by this skill's own rule. The quality table is in types.md.
+- A comparison and a question about many items go to a table by this skill's own rule. So does the difference between two near-identical diagrams. The quality table is in types.md.
 - The timeline and the tree in "Outside the table" are this skill's own lines. No source read for this skill gives a rule for either.
 
 ## Step 3, the size
+
+- Counting a participant and a state as an element, and not a lane or a boundary, is this skill's own reading of arc42's "elements".
 
 - Size: 5 to 15 elements (arc42) and 7 plus or minus 2 bubbles (Ambler, for use cases or classes on the package page) are two rules of thumb, a range and a narrower one. The skill states the top of the range as a limit. ([arc42 FAQ](https://faq.arc42.org/questions/D-7/), [Agile Modeling](https://agilemodeling.com/artifacts/packageDiagram.htm))
 - Group cohesive elements into a named black box under explicit criteria; split into diagrams with a specific focus at the same level; mixed levels are a defect; show only what you have to. ([arc42 FAQ](https://faq.arc42.org/questions/D-7/), [C4 FAQ](https://c4model.com/faq), [C4](https://c4model.com/introduction), [Agile Modeling](https://agilemodeling.com/style/general.htm))
