@@ -153,7 +153,8 @@ OPS = {
                               "docs or skills name, after its approval steps, and only inside what the user asked for "
                               "(global agent rules, Tools; this repo's AGENTS.md)."},
     "merge": {"every": True,
-              "text": "Merge on the user's word: go ahead only when the user said merge for this work; otherwise "
+              "text": "Merge on the user's word: go ahead only when the user said merge for this work, or for the PR "
+                      "this one fixes after their review; otherwise "
                       "report the PR as ready and stop (global agent rules, Git; this repo's AGENTS.md may add a "
                       "gate)."},
     "delete": {"every": True,
