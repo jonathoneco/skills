@@ -1,6 +1,6 @@
 ---
 name: diagrams
-description: Choose and draw the diagrams a problem needs, each with the question it answers, its type, and its level. Use before drawing a diagram of a system, a workflow, a data flow, or a business process, and when deciding which views a design or a doc needs. Charts of numbers go to dataviz.
+description: Choose and draw the diagrams a problem needs, each with the question it answers, its type, and its level. Use before drawing any diagram, in a reply, a doc, or a page, and when deciding which views a design or its docs need. Charts of numbers go to dataviz.
 ---
 
 # Diagrams
@@ -13,7 +13,7 @@ The **reader** is the person who needs the answer: the one the problem names, or
 
 For one sketch inside a reply, the question is the thing you are about to explain. Write it as one line and start at step 2.
 
-1. **List the questions.** Write the questions the reader must answer to understand the problem, one per line. Take the angles from the table's eight groups: a problem with a lifecycle has a behavior question even when nobody asked for one. List them from the outside in: the boundary, then the structure, then what runs on top of it. Keep a question only when something the reader will decide or do turns on it. When the problem does not say which angles matter, choose from the problem and say in one line what you assumed. Done when each line is one question the reader would ask in those words.
+1. **List the questions.** Write the questions the reader must answer to understand the problem, one per line. Take the angles from the table's eight groups: a problem with a lifecycle has a behavior question even when nobody asked for one. List them from the outside in: the boundary, then the structure, then what runs on top of it. Keep a question only when something the reader will decide or do turns on it. When the problem does not say which angles matter, choose from the problem and say in one line what you assumed. Done when each line is one question and names its group, or says that no group fits.
 
 2. **Pick a row for each question.** Name the diagram as the row does, tradition included: one word, such as component, means different things in different traditions. Read the row's last cell before you draw, because it says when the diagram is the wrong tool. A question that no row fits goes to [Outside the table](#outside-the-table). Done when each question has one row or one form from outside the table, and no two diagrams answer the same question.
 
@@ -39,7 +39,7 @@ For one sketch inside a reply, the question is the thing you are about to explai
 
    Code-level structure, such as the classes or the tables as built, is generated from the code and not drawn by hand.
 
-   Done when a stranger could answer the question from the diagram alone.
+   Done when rules 1 to 3 hold, and rules 4 and 5 hold or the place had no room for them.
 
 5. **Check it against the source.** Each box and each arrow is something you read in the code or the docs, or something the user told you. Mark a guess as assumed on the diagram, or leave it out. Done when every element traces to a source or carries that mark.
 
@@ -67,7 +67,7 @@ For one sketch inside a reply, the question is the thing you are about to explai
 | Where does data come from, change, rest, and go? | [Data flow diagram](types.md#data-flow-diagram) | a process, a store, or an external entity | order and decisions are the question: flowchart |
 | **Process**: how work crosses people | | | |
 | In what order do the steps and decisions of a business process run, and who does each? | [Flowchart](types.md#flowchart-swimlane), with a swimlane per role when several roles act | a step | it is logic inside code: show the code |
-| How does a process run across departments, in a notation that business and IT both read? | [BPMN](types.md#bpmn) | an activity, an event, or a gateway | the place has no BPMN shapes, as in the terminal and in Mermaid: swimlane flowchart |
+| How does a process run across departments, in a notation that business and IT both read? | [BPMN](types.md#bpmn) | an activity, an event, or a gateway | the place has no BPMN shapes, as in the terminal and in Mermaid: swimlane flowchart, or a page when the reader works in BPMN |
 | **Requirements**: who wants what | | | |
 | Who uses the system, and what do they want from it? | [UML use case diagram](types.md#uml-use-case-diagram) | an actor or a use case | nearly always: write the use cases as text. Draw it only for a stakeholder presentation |
 | How does a user move between screens? | [UI flow diagram](types.md#ui-flow-diagram) | a major UI element, such as a screen | the question is one screen's layout: a prototype |
@@ -77,10 +77,12 @@ For one sketch inside a reply, the question is the thing you are about to explai
 - How do the options compare? A table, with the same rows for each option.
 - A question about many items taken one by one, such as each field or each endpoint: a table.
 - Which qualities matter, and how will we know each is met? A table of quality scenarios.
+- What happened when, on one clock? A timeline: one axis, with the events in order.
+- What contains or owns what? A tree, or boxes nested inside their owner.
 - How much, how often, or how fast? A few numbers go in a table or on the arrows. A series is a chart, drawn as the `dataviz` skill says.
 - When tasks run, who reports to whom, how sets overlap, how a site is laid out: a Gantt chart, an org chart, a Venn diagram, a sitemap.
 
 ## Reference
 
 - [types.md](types.md) has one entry per row: what each source says, and the pick where sources disagree. Open a row's entry when its last cell needs its reason, or when two rows seem to fit.
-- [basis.md](basis.md) has the source of each rule in the steps, and names the rules that are this skill's own. Open it before you change this skill, or when the user asks why a rule holds.
+- [basis.md](basis.md) has the source of each rule in the steps. Open it before you change this skill, or when the user asks why a rule holds.

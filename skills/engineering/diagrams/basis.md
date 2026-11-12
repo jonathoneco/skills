@@ -7,7 +7,7 @@ Where each rule in SKILL.md comes from. A rule with a link rests on that page. A
 - **Boundary**: the line between your system and what it talks to. Every set of diagrams starts there. ([arc42](https://docs.arc42.org/section-3/), [C4](https://c4model.com/introduction))
 - **Zoom**: take one element and draw its parts in a new diagram. The element becomes the new diagram's scope. ([C4](https://c4model.com/introduction), [arc42](https://docs.arc42.org/section-5/))
 - **Black box**: a part described by what goes in and out, with its insides hidden. Opening it shows a **white box** of smaller black boxes. ([arc42 FAQ](https://faq.arc42.org/questions/B-8/), [arc42 FAQ](https://faq.arc42.org/questions/B-9/))
-- **Runtime scenario**: one concrete run of the system through its parts. A **quality scenario** is a different thing: it makes a quality requirement concrete, so you can decide whether it is met. Never use "scenario" bare. ([arc42](https://docs.arc42.org/section-6/), [arc42](https://docs.arc42.org/section-10/))
+- **Runtime scenario**: one concrete run of the system through its parts. A **quality scenario** is a different thing: it makes a quality requirement concrete, so you can decide whether it is met. Write "runtime scenario" or "quality scenario", not "scenario" alone. ([arc42](https://docs.arc42.org/section-6/), [arc42](https://docs.arc42.org/section-10/))
 - **Key**: C4 asks for a key or legend on every diagram, to explain the notation in use, and extends that to UML, ArchiMate, and SysML. This skill narrows the key to the marks whose meaning the labels do not state, and ranks it last when space is short. The narrowing and the rank are this skill's own. ([C4](https://c4model.com/diagrams/notation))
 
 ## Step 1, the questions
@@ -23,7 +23,7 @@ Where each rule in SKILL.md comes from. A rule with a link rests on that page. A
 - No source gives the table. Its questions, its eight groups, and the "One box is" column each join a type's purpose in types.md with the elements its source names.
 - A "Wrong tool when" cell restates the skip rule in the row's types.md entry. Five cells are this skill's own reading, with no page that states them: the context diagram when the reader knows the neighbours; the component diagram when the question is not inside that one part; the deployment diagram when everything runs in one place; the entity-relationship diagram against the domain model; and BPMN where the place has no BPMN shapes.
 - A comparison and a question about many items go to a table by this skill's own rule. The quality table is in types.md.
-- Not covered: a timeline and a hierarchy. The `explainer` skill's `diagrams.md` has forms for both.
+- The timeline and the tree in "Outside the table" are this skill's own lines. No source read for this skill gives a rule for either.
 
 ## Step 3, the size
 
@@ -37,6 +37,7 @@ Where each rule in SKILL.md comes from. A rule with a link rests on that page. A
 - C4's notation rules call for a title, a legend, element types, labelled one-way relationships, and stand-alone reading; C4 extends the legend rule to UML, ArchiMate, and SysML. ([C4](https://c4model.com/diagrams/notation))
 - C4 asks for an explicit technology on every container and component. ([C4](https://c4model.com/diagrams/notation))
 - Consistent names across a set: C4 lists inconsistent naming as a defect. ([C4](https://c4model.com/introduction))
+- Fowler describes UML as sketch as informal and selective, with an emphasis on communication rather than complete specification. This skill uses the word sketch for a diagram inside a reply. ([Fowler](https://martinfowler.com/bliki/UmlAsSketch.html))
 - The order of the five drawing rules, with labels on the arrows first, is this skill's own. It comes from a test in which type tags and a key pushed every arrow label off a text-art sequence diagram.
 - Code-level structure: C4 says to omit hand-made code diagrams or generate them on demand, because they may go stale quickly under active development. ([C4 FAQ](https://c4model.com/diagrams/faq))
 - Text for repo docs: arc42 recommends lightweight tools, paper or text-based, for scenarios, and Fowler says diagram layout is tedious to fiddle with in diagrammatic form. Choosing text-based Mermaid for repo docs is this skill's pick. ([arc42 tip 6-5](https://docs.arc42.org/tips/6-5/), [Fowler](https://martinfowler.com/bliki/UmlSketchingTools.html))
