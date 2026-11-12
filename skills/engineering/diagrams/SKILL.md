@@ -1,87 +1,88 @@
 ---
 name: diagrams
-description: Choose which diagrams a problem needs and the type of each. Use when about to draw, show, or explain a system, workflow, data flow, or business process as a diagram, and when deciding which views a design or its docs need. Charts of numbers go to dataviz.
+description: Choose and draw the diagrams a problem needs, each with the question it answers, its type, and its level. Use before drawing any diagram, in a reply, a doc, or a page, and when deciding which views a design or its docs need. Charts of numbers go to dataviz.
 ---
 
 # Diagrams
 
-A diagram answers one question for one reader. Pick the question, then the type, then the level, then where to draw it. The reader is whoever needs the answer: a teammate, or the person who receives a page. When the problem names no reader, the reader is the user.
+A diagram answers **one question** at **one level**. A drawing that mixes two, such as programs and machines in one picture, or a flow laid over a structure, makes the reader work out which box is what. Every step below holds to that.
+
+The **reader** is the person who needs the answer: the one the problem names, or the user when it names nobody.
 
 ## Steps
 
-1. **Decompose.** List the questions the reader must answer to understand the problem. Put each under a concern: **boundary** (what is in, what is out), **structure** (the parts and how they connect), **interaction** (how the parts work together in one run), **behavior** (how one thing changes or one flow runs), **data**, **deployment** (where it runs), **process** (how work crosses people), **requirements** (who wants what). Start at the boundary, then structure; draw behavior, interaction, and deployment on top of the parts. Skip a concern the reader already holds. Ask the reader which concerns matter to them: a table of typical needs per reader is only a rough guide. With more than one reader, list each reader's questions; one diagram serves every reader who asks its question. Drop a question the reader does not need answered. Done when each question is one question, on one line.
-2. **Pick.** Find each question in the table. Name the diagram as the row does, tradition included. The reader an entry names is what its source says, not a limit: match the question first, and when the reader cannot read the type, add a sentence or a table beside it. Done when every question has one row and no two diagrams answer the same question. A question with no row, or one about many items taken one by one such as each field, is two questions or not a diagram question: split it, or answer it in text or a table.
-3. **Size.** Each row says what one box is. Keep one level in one diagram; a diagram that mixes levels is a defect. Show only what the reader's decision turns on. Hold a diagram to 15 elements at most; every box, participant, or state counts, in each diagram; the legend does not. When it grows past that, group cohesive elements into a named black box, or split it into diagrams that each have a specific focus at the same level. To go deeper, **zoom**: take one element and draw its parts as a new diagram. Done when the diagram has one question, one level, and a count within the limit.
-4. **Draw.** Use the type's standard notation and invent no shapes. Give it a title with the type and the scope, a **legend**, the type of every element, and arrows that each run one way and carry a label that matches the direction. Keep element names the same across a set. Done when a stranger could read it with no narrative.
-5. **Render.** Pick by where the diagram lives. In ASCII, write each element's type as a text tag and put a short key under the diagram. Done when the target holds the type's standard shapes and the box count; if it does not, split the diagram, or take the next place down the render table (`html-diagram` last) and link its file from the doc.
+For one sketch inside a reply, the question is the thing you are about to explain. Write it as one line and start at step 2.
 
-   | Place | Render as |
+1. **List the questions.** Write the questions the reader must answer to understand the problem, one per line. Take the angles from the table's eight groups: a problem with a lifecycle has a behavior question even when nobody asked for one. List them from the outside in: the boundary, then the structure, then what runs on top of it. Keep a question only when something the reader will decide or do turns on it. When the problem does not say which angles matter, choose from the problem and say in one line what you assumed. Done when each line is one question and names its group, or says that no group fits.
+
+2. **Pick a row for each question.** Name the diagram as the row does, tradition included: one word, such as component, means different things in different traditions. Read the row's last cell before you draw, because it says when the diagram is the wrong tool. A question that no row fits goes to [Outside the table](#outside-the-table). Two diagrams that would differ in only a few elements, such as two environments, are one diagram and a table of the differences. Done when each question has one row or one form from outside the table, and no two diagrams answer the same question.
+
+3. **Size it.** The row says what one box is, and that holds for every box in the diagram: it is the diagram's **level**. A box at another level, such as a machine among services, belongs to another diagram. Draw only what the question turns on. Keep to 15 elements at most, counting each box, participant, and state, and not a lane or a boundary around them. Past that, fold a group that belongs together into one named **black box**, a part shown only by what goes in and what comes out, or split the diagram by focus at the same level. To show the inside of a box, **zoom**: draw a new diagram whose scope is that box. Done when the diagram has one question, one level, and 15 elements or fewer.
+
+4. **Draw it for its place.**
+
+   | Place | Draw as |
    |---|---|
-   | A reply in the terminal | ASCII, up to about 10 boxes |
+   | A reply in the terminal | Text art, about 10 boxes at most |
    | A doc in a repo, a PR, an agent doc | Mermaid |
-   | A page for a reader | the `html-diagram` skill |
+   | A page for a reader | the `html-diagram` skill; give it the row, the level, and the elements |
 
-6. **Keep or discard.** A diagram drawn to think is erased once its lessons reach the code or the docs. A diagram that must last comes from source or text: generate it, or write it as text that merges like code.
+   Mermaid has its own kind for four rows: `sequenceDiagram`, `stateDiagram-v2`, `classDiagram`, and `erDiagram`. Draw every other row as a `flowchart`, with a `subgraph` for each lane, boundary, or node. Where the place has the type's own notation, use it unchanged. Where it has none, as in text art, keep what the row means by a box and by an arrow. A mark the type does not have, such as a dotted arrow for a timer or a line for a wait, goes in the key.
+
+   Draw in this order. When space runs short, cut from the bottom of the list:
+
+   1. Each arrow runs one way and carries its label on the arrow: a verb phrase that reads in the arrow's direction, such as `writes` or `polls every 30s`.
+   2. Each box says what it is. Put the type in the box when the types differ, as in `Redis [store]`. A C4 container or component also names its technology.
+   3. Each thing has one name across every diagram in the answer.
+   4. A title line names the type and the scope, as in `Sequence: one login and one token refresh`.
+   5. A **key** explains each mark whose meaning the labels do not state, such as a line style, a colour, or a shape.
+
+   Code-level structure, such as the classes or the tables as built, is generated from the code and not drawn by hand.
+
+   Done when rules 1 to 3 hold, and rules 4 and 5 hold or the place had no room for them.
+
+5. **Check it against the source.** Each box and each arrow is something you read in the code or the docs, or something the user told you. Mark a guess as assumed, on the diagram or in a line beside it, or leave it out. Done when every element traces to a source or carries that mark.
 
 ## Which diagram
 
-No source gives this table. Each row joins the type's own purpose (in [types.md](types.md), with its sources) with a level that is inference. A row's type is a pick among sources; where they disagree, the entry states the pick and cites both sides.
+| The reader asks | Diagram | One box is | Wrong tool when |
+|---|---|---|---|
+| **Boundary**: what is in, what is out | | | |
+| What is outside the system, and who or what talks to it? | [C4 system context diagram](types.md#c4-system-context-diagram) | a system or a person | the reader already knows the neighbours |
+| Over which channels and protocols does it reach them? | [arc42 technical context](types.md#arc42-technical-context) | a neighbour and its channel | it is a web or information system: the deployment diagram covers it |
+| **Structure**: the parts and how they connect | | | |
+| What are the big running parts, and how do they talk? | [C4 container diagram](types.md#c4-container-diagram) | an application or a data store | the question is where they run: deployment diagram |
+| Inside one running part, which code groupings exist? | [C4 component diagram](types.md#c4-component-diagram) | a component: a code grouping, not a deployable unit | the question is not inside that one part |
+| Which business concepts exist, and how do they relate? | [UML class diagram, as a domain model](types.md#uml-class-diagram-domain-model) | a business concept | the detail is code-level: generate it |
+| **Interaction**: how the parts work together in one run | | | |
+| Which part sends what to which, in order, in one run? | [UML sequence diagram](types.md#uml-sequence-diagram) | a participant | the logic is straightforward: show the code |
+| How do the boxes I already drew work together for one feature? | [C4 dynamic diagram](types.md#c4-dynamic-diagram-runtime-scenario) | a box from the earlier diagram | the order of messages is the point: sequence diagram |
+| **Behavior**: how one thing changes, or one flow runs | | | |
+| What states can one thing be in, and what moves it? | [UML state machine diagram](types.md#uml-state-machine-diagram) | a state | its behavior does not differ by state |
+| What does one flow do, step by step, with choices and parallel steps? | [UML activity diagram](types.md#uml-activity-diagram) | an action | it explains one complex operation: refactor that first. People hand work to each other: flowchart |
+| **Deployment**: where it runs | | | |
+| Where does each piece run, in each environment? | [Deployment diagram (C4, UML)](types.md#deployment-diagram-c4-uml) | a node: a machine or a runtime that software runs on | it all runs in one place |
+| **Data**: what is stored, and how it moves | | | |
+| Which entities are stored, and how do they relate? | [Entity-relationship diagram](types.md#entity-relationship-diagram) | an entity | the question is business meaning, not storage: domain model |
+| Where does data come from, change, rest, and go? | [Data flow diagram](types.md#data-flow-diagram) | a process, a store, or an external entity | order and decisions are the question: flowchart |
+| **Process**: how work crosses people | | | |
+| In what order do the steps and decisions of a business process run, and who does each? | [Flowchart](types.md#flowchart-swimlane), with a swimlane per role when several roles act | a step | it is logic inside code: show the code |
+| How does a process run across departments, in a notation that business and IT both read? | [BPMN](types.md#bpmn) | an activity, an event, or a gateway | the place has no BPMN shapes, as in the terminal and in Mermaid: swimlane flowchart, or a page when the reader works in BPMN |
+| **Requirements**: who wants what | | | |
+| Who uses the system, and what do they want from it? | [UML use case diagram](types.md#uml-use-case-diagram) | an actor or a use case | nearly always: write the use cases as text. Draw it only for a stakeholder presentation |
+| How does a user move between screens? | [UI flow diagram](types.md#ui-flow-diagram) | a major UI element, such as a screen | the question is one screen's layout: a prototype |
 
-| The reader asks | Diagram | One box is a |
-|---|---|---|
-| **Boundary** | | |
-| What is outside my system, and who talks to it? | [C4 system context diagram](types.md#c4-system-context-diagram) | system |
-| Over which channels and protocols does it reach its neighbours? | [arc42 technical context](types.md#arc42-technical-context) | neighbour system, with its channel |
-| **Structure** | | |
-| What are the big running parts, and how do they talk? | [C4 container diagram](types.md#c4-container-diagram) | application or data store |
-| Inside one running part, which code groupings exist? | [C4 component diagram](types.md#c4-component-diagram) | component |
-| Which business concepts exist, and how do they relate? | [UML class diagram (domain model)](types.md#uml-class-diagram-domain-model) | business concept |
-| **Interaction** | | |
-| Which part sends what to which, in order, in one run? | [UML sequence diagram](types.md#uml-sequence-diagram) | participant |
-| How do the parts I already drew work together for one feature? | [C4 dynamic diagram](types.md#c4-dynamic-diagram-runtime-scenario) | system, container, or component |
-| **Behavior** | | |
-| What states can one thing be in, and what moves it? | [UML state machine diagram](types.md#uml-state-machine-diagram) | state |
-| What does one flow do, step by step, with choices and parallel steps? | [UML activity diagram](types.md#uml-activity-diagram) | action |
-| **Deployment** | | |
-| Where does each piece run, in each environment? | [Deployment diagram](types.md#deployment-diagram-c4-uml) | node |
-| **Data** | | |
-| Which entities are stored, and how do they relate? | [Entity-relationship diagram](types.md#entity-relationship-diagram) | entity |
-| Where does data come from, change, rest, and go? | [Data flow diagram](types.md#data-flow-diagram) | process, store, or external entity |
-| **Process** | | |
-| In what order do the steps and decisions of one team's business process run? | [Flowchart](types.md#flowchart-swimlane) | step |
-| How does a business process run across departments, so that business and IT read it the same way? | [BPMN](types.md#bpmn) | activity, event, or gateway |
-| **Requirements** | | |
-| Who uses the system, and what do they want from it? | [UML use case diagram](types.md#uml-use-case-diagram) | actor or use case |
-| How does a user move between screens? | [UI flow diagram](types.md#ui-flow-diagram) | screen |
-| Which qualities matter, and how will we know each is met? | [arc42 quality tree and scenarios](types.md#arc42-quality-tree-and-quality-scenarios) | quality or scenario |
-| When, who, how many, which pages (a business chart) | [Other business charts](types.md#other-business-charts) | one item of the chart |
+## Outside the table
 
-## Words
+- How do the options compare? A table, with the same rows for each option.
+- A question about many items taken one by one, such as each field or each endpoint: a table.
+- Which qualities matter, and how will we know each is met? A table of quality scenarios.
+- What happened when, on one clock? A timeline: one axis, with the events in order.
+- What contains or owns what? A tree, or boxes nested inside their owner.
+- How much, how often, or how fast? A few numbers go in a table or on the arrows. A series is a chart, drawn as the `dataviz` skill says.
+- When tasks run, who reports to whom, how sets overlap, how a site is laid out: a Gantt chart, an org chart, a Venn diagram, a sitemap.
 
-- **Boundary**: the line between your system and what it talks to. Every set of diagrams starts there. ([arc42](https://docs.arc42.org/section-3/), [C4](https://c4model.com/introduction))
-- **Zoom**: take one element and draw its parts in a new diagram. The element becomes the new diagram's scope. ([C4](https://c4model.com/introduction), [arc42](https://docs.arc42.org/section-5/))
-- **Black box**: a part described by what goes in and out, with its insides hidden. Opening it shows a **white box** of smaller black boxes. ([arc42 FAQ](https://faq.arc42.org/questions/B-8/), [arc42 FAQ](https://faq.arc42.org/questions/B-9/))
-- **Runtime scenario**: one concrete run of the system through its parts. A **quality scenario** is a different thing: it makes a quality requirement concrete, so you can decide whether it is met. Never use "scenario" bare. ([arc42](https://docs.arc42.org/section-6/), [arc42](https://docs.arc42.org/section-10/))
-- **Legend**: a key that explains every shape, colour, and line used. C4 asks for it in any notation, UML included. ([C4](https://c4model.com/diagrams/notation))
+## Reference
 
-## Basis
-
-Facts in the steps, with their sources:
-
-- Start at the boundary: C4 offers the context diagram as a starting point, and arc42 starts the hierarchy from the context view. The rule to start there is this skill's own. ([C4](https://c4model.com/introduction), [arc42 FAQ](https://faq.arc42.org/questions/B-10/))
-- Ask the reader: arc42 says to ask your specific stakeholders, because its own table is a rough approximation. A reader who will not read static structure gets the runtime view. ([arc42 FAQ](https://faq.arc42.org/questions/B-15/), [arc42](https://docs.arc42.org/section-6/))
-- Size: 5 to 15 elements (arc42) and 7 plus or minus 2 bubbles (Ambler, for use cases or classes on the package page) are two rules of thumb, a range and a narrower one. The skill states the top of the range as a limit. ([arc42 FAQ](https://faq.arc42.org/questions/D-7/), [Agile Modeling](https://agilemodeling.com/artifacts/packageDiagram.htm))
-- Group cohesive elements into a named black box under explicit criteria; split into diagrams with a specific focus at the same level; mixed levels are a defect; show only what you have to. ([arc42 FAQ](https://faq.arc42.org/questions/D-7/), [C4 FAQ](https://c4model.com/faq), [C4](https://c4model.com/introduction), [Agile Modeling](https://agilemodeling.com/style/general.htm))
-- Standard notation: Ambler says to prefer well-known notation. Fowler and Ambler also accept loose sketches that favour communication over the rules, and C4 and arc42 are notation-independent. This skill picks standard notation, so that any reader or tool can read it, and still asks for a legend. ([Agile Modeling](https://agilemodeling.com/style/general.htm), [Fowler](https://martinfowler.com/bliki/UmlAsSketch.html), [Agile Modeling](https://agilemodeling.com/artifacts/activityDiagram.htm), [C4](https://c4model.com/diagrams/notation))
-- C4's notation rules call for a title, a legend, element types, labelled one-way relationships, and stand-alone reading; C4 extends the legend rule to UML, ArchiMate, and SysML. ([C4](https://c4model.com/diagrams/notation))
-- Consistent names across a set: C4 lists inconsistent naming as a defect. ([C4](https://c4model.com/introduction))
-- Keep or discard: Ambler typically erases an exploratory object diagram once its lessons are in code or models, and says keeping one is rare; C4 says to omit hand-made code diagrams or generate them on demand, because they may go stale quickly under active development; arc42 notes that text merges and versions like code. Step 6 extends the C4 code-level rule to every long-lived diagram; that extension is inference. ([Agile Modeling](https://agilemodeling.com/artifacts/objectDiagram.htm), [C4 FAQ](https://c4model.com/diagrams/faq), [arc42 tip 6-5](https://docs.arc42.org/tips/6-5/))
-- Text for repo docs: arc42 recommends lightweight tools, paper or text-based, for scenarios, and Fowler says diagram layout is tedious to fiddle with in diagrammatic form. Choosing text-based Mermaid for repo docs is this skill's pick. ([arc42 tip 6-5](https://docs.arc42.org/tips/6-5/), [Fowler](https://martinfowler.com/bliki/UmlSketchingTools.html))
-
-Inference, with the pieces each joins:
-
-- One diagram answers one question: joins C4's "specific focus" and "same level of abstraction", C4's mixed-levels defect, and Kruchten's complaint that one drawing mixes programs, source, computers, and groupings. ([C4 FAQ](https://c4model.com/faq), [C4](https://c4model.com/introduction), [Kruchten](https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf))
-- The order boundary, structure, then behavior, interaction, deployment: arc42's section order, and its deployment section, which says the top deployment diagram may already sit in the technical context with your infrastructure as one black box, and zooms into that box. No source states it as a drawing order, and C4 says its levels imply no process. Kruchten starts from scenarios instead. ([arc42](https://docs.arc42.org/section-7/), [C4 FAQ](https://c4model.com/faq), [Kruchten](https://www.cs.ubc.ca/~gregor/teaching/papers/4+1view-architecture.pdf))
-- The table's questions, its groups by concern, and the "one box is a" column: each joins the type's purpose in types.md with the elements its source names.
-- The render table: the place decides, ASCII up to about 10 boxes, Mermaid in repo docs. These are conventions of this skill, not source claims.
-- A question with no row, or about many items one by one, is answered in text or a table; an entry's reader is a hint; with several readers one diagram serves each reader who asks its question; a skipped target is linked from the doc; a concern the reader already holds is skipped: these are this skill's rules, not a source's.
+- [types.md](types.md) has one entry per row: what each source says, and the pick where sources disagree. Open a row's entry when its last cell needs its reason, or when two rows seem to fit.
+- [basis.md](basis.md) has the source of each rule in the steps. Open it before you change this skill, or when the user asks why a rule holds.
