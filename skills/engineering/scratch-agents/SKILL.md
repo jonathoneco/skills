@@ -9,14 +9,14 @@ A **scratch agent** is a helper this session starts for one job and reads back w
 
 ## Roles
 
-Each skill splits its work into **roles** and names them; this table is the one place a role becomes a model. A skill's own row wins; a role with no row takes the general row its job matches. Codex accounts are separate from Claude's, so a long run doesn't drain the Claude pool, and lanes build on Codex, so a Codex checker reads a ticket as its builder will.
+Each skill splits its work into **roles** and names them; this table is the one place a role becomes a model. A skill's own row wins; a role with no row takes the general row its job matches. Codex accounts are separate from Claude's, so a long run doesn't drain the Claude pool, and builders often run on Codex, so a Codex checker reads a ticket as its builder will.
 
 | Role | Model | Other provider | Why |
 |---|---|---|---|
 | **reader**: reading whose report a later step weighs or checks against the sources, such as why investigators, how explorer for a question, orchestrating post-merge reading | Codex `gpt-6-luna` | Claude `sonnet` | lists, gathers, or checks sources against a literal bar |
 | **examiner**: reading whose report later steps build on without rereading the sources, such as blueprint explorer, ticket checker, explainer evidence, how explorer before a change, okf sediment and verify | Codex `gpt-6.1-sol` | Claude `opus` | a miss spreads into every ticket, page, or edit built on its report |
-| **light code worker**: a small change the brief already settles (the files, the change, and how to check it) | Codex `gpt-6-luna` | Claude `sonnet` | matches the lane engine's light track |
-| **code worker**: any scratch agent that edits code, such as a swarm worker | Codex `gpt-6.1-sol` | Claude `opus` | matches the lane engine's heavy track |
+| **light code worker**: a small change the brief already settles (the files, the change, and how to check it), or an orchestrating builder whose concern holds only such tickets | Codex `gpt-6-luna` | Claude `sonnet` | the brief holds the decisions |
+| **code worker**: any scratch agent that edits code, such as a swarm worker or an orchestrating builder | Codex `gpt-6.1-sol` | Claude `opus` | it makes judgment calls while it edits |
 | reflect tooling | Codex `gpt-6.1-sol` | Claude `opus` | command flags, library quirks, and CI commands |
 | **writer**: ticket writer, explainer diagram | Claude `opus` | Codex `gpt-6.1-sol` | writes something a person reads |
 | **prose worker**: mechanical edits to prose, skills, and docs (sweeps, renames, rewiring, format files), recall reader, summarizing a run's notes | Claude `sonnet` | Codex `gpt-6-luna` | quick over text from a tight brief; reads conversation and prose the way a person does |
@@ -28,7 +28,7 @@ Each skill splits its work into **roles** and names them; this table is the one 
 | **second opinion**: show-me-your-work's check, a check that repeats another run's job to compare | the other family from the first run, at the same strength and effort | none; it is already the other family | agreement across families is the signal |
 | **frontier** | Claude `fable`, Codex `gpt-6-astra` | the other family's frontier model | the hardest steps, such as a design from scratch or reasoning a strong model is likely to get wrong, or on the user's word |
 
-Pick each agent's row before it starts, by how hard you predict the job is. A brief that already holds the decisions, such as replacement text, a settled spec, or a list of edits, is a worker's job (light code worker or prose worker) unless the change itself is hard: concurrency, a subtle algorithm, or a change through shared code goes to the code worker, and the hardest steps go to frontier. When nothing about the job's difficulty calls for more, take the lowest row whose job fits: a stronger model than the job needs costs time and repeats reasoning the brief should have settled. Lanes on the lane engine take their models from the ticket's estimate, not from this table.
+Pick each agent's row before it starts, by how hard you predict the job is. A brief that already holds the decisions, such as replacement text, a settled spec, or a list of edits, is a worker's job (light code worker or prose worker) unless the change itself is hard: concurrency, a subtle algorithm, or a change through shared code goes to the code worker, and the hardest steps go to frontier. When nothing about the job's difficulty calls for more, take the lowest row whose job fits: a stronger model than the job needs costs time and repeats reasoning the brief should have settled.
 
 **Effort** is picked with the model, before the agent starts, and each model has a default: low for the strong models, Codex `gpt-6.1-sol` and Claude `opus`; medium for the light ones, Codex `gpt-6-luna` and Claude `sonnet`. Pick a higher level when the job's difficulty calls for it, such as a judgment the brief can't settle or a change through shared code, and say why in the brief. The level is set once, at start (step 2). Claude `fable` and Codex `gpt-6-astra` run high wherever a row names them.
 
@@ -60,4 +60,4 @@ When an agent fails, the failure decides the retry:
 
 ## Without Herdr
 
-Where `HERDR_ENV` is unset, such as in a lane or in CI, start the same brief with the harness's own subagent tool, at the role's model from the table, and wait for its completion. Steps 3 and 4 hold as written. When the role's model is the other family's, use this harness's model of the same strength from the table, and say in the result that a panel lost its second family.
+Where `HERDR_ENV` is unset, such as in a container or in CI, start the same brief with the harness's own subagent tool, at the role's model from the table, and wait for its completion. Steps 3 and 4 hold as written. When the role's model is the other family's, use this harness's model of the same strength from the table, and say in the result that a panel lost its second family.

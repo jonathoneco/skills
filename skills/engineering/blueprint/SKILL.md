@@ -5,7 +5,7 @@ description: Blueprint an effort into implementation-ready tickets. Use when the
 
 # Blueprint
 
-Blueprint turns an effort into tickets lanes can build. The `ticket` skill holds the bar each ticket meets and the ticket kinds; the `tracker-hygiene` skill holds the clean state the tracker is left in and the metadata each ticket carries. This skill frames the effort, cuts it into slices, and runs the writing, rulings, checks, and filing. This session is the **coordinator**: it frames, cuts, briefs, and judges, and hands narrow reading and writing to scratch agents (the `scratch-agents` skill), each at the row its role names in that skill's table.
+Blueprint turns an effort into tickets builders can build. The `ticket` skill holds the bar each ticket meets and the ticket kinds; the `tracker-hygiene` skill holds the clean state the tracker is left in and the metadata each ticket carries. This skill frames the effort, cuts it into slices, and runs the writing, rulings, checks, and filing. This session is the **coordinator**: it frames, cuts, briefs, and judges, and hands narrow reading and writing to scratch agents (the `scratch-agents` skill), each at the row its role names in that skill's table.
 
 ## Frame
 
@@ -13,7 +13,7 @@ Blueprint turns an effort into tickets lanes can build. The `ticket` skill holds
 2. **Re-read the rules.** Read the `tracker-hygiene` skill and the tracker doc's values (usually named in the repo's `AGENTS.md` or `docs/`: states, labels, estimate scale), and confirm the `linear` skill's GraphQL route answers. Done when you can name the tracker's build-ready state, its Kind labels, and its estimate scale.
 3. **Count.** List the behaviors the effort asks for, by name, and the likely tickets. One or two tickets take the short path; three or more take the full path. A behavior you can't yet state sharply enough to ticket goes in the project document's Not yet specified list, and work ruled past the outcome goes in its Out of scope list with the reason; neither is cut, and a later blueprint turns a Not yet specified item into tickets once its question can be stated.
 4. **Place it.** Find the project the effort belongs to, as the `tracker-hygiene` skill says: an existing project whose outcome it serves, or a new project with its outcome, overview, and lead, proposed to the user.
-5. **Name the test boundary:** the one seam the effort's tickets test through, so lanes test the same behavior one way. Propose one; the user confirms it or picks another.
+5. **Name the test boundary:** the one seam the effort's tickets test through, so builders test the same behavior one way. Propose one; the user confirms it or picks another.
 6. **Write the done condition:** every behavior from step 3, each ending in exactly one filed ticket at `Draft: ready` that meets the clean state, or closed with a receipt.
 Done when the behaviors, the project, the test boundary, and the done condition are in the effort's notes (the `agent-notes` skill), and the user has confirmed the boundary and the project. For a single ticket filed on the way through other work, propose the boundary and project in the cut instead.
 

@@ -4,7 +4,7 @@ The `blueprint` skill's judgment reference for cutting work into tickets: the Cu
 
 Each rule below is followed by the cases it came from. A case marked **Counter-example** is a recommendation the user turned down; it shows which way they lean at that edge.
 
-**One ticket is one PR; split before the lane starts.** Make the change easy, then make the easy change: a prefactor the change needs is the ticket's first step, in the same PR. A ticket too big for one PR becomes a parent with the fewest children that each land alone (the `ticket` skill's Relationships); a big PR that is one coherent thing stays one PR.
+**One ticket is one PR; split before the builder starts.** Make the change easy, then make the easy change: a prefactor the change needs is the ticket's first step, in the same PR. A ticket too big for one PR becomes a parent with the fewest children that each land alone (the `ticket` skill's Relationships); a big PR that is one coherent thing stays one PR.
 - A codemod over ~1,000 functions became a parent with 4 to 5 grouped children.
 - Two domain moves at the top estimate stayed one PR each: "Neither shows a seam between behaviours."
 
@@ -12,7 +12,7 @@ Each rule below is followed by the cases it came from. A case marked **Counter-e
 - Recommended: one ticket per finding for four findings on one crashing page. The user: "one ticket for all 4" (filed as ABC-161). **Counter-example.**
 - Outcomes saying nobody sees a change: 35 of 77 tickets in one effort, 17 of 81 in another, 8 of 74 in a third. One read: "Nothing calls these members until ABC-168."
 
-**A shared file joins slices only when the work is one slice.** Related work in one slice that touches the same files is a step of that ticket. Work from two slices that only shares a file ships as two PRs, and the later lane resolves the conflict.
+**A shared file joins slices only when the work is one slice.** Related work in one slice that touches the same files is a step of that ticket. Work from two slices that only shares a file ships as two PRs, and the later builder resolves the conflict.
 - A recovery batch that combined work sharing a file broke the most.
 
 **Condense by default.** One change repeated across many files or domains is one ticket, with each place listed as an acceptance check.

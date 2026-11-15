@@ -19,7 +19,7 @@ Behavior differs from what was intended, and someone hits it. Label `Bug`. The i
 
 1. **Who hits it, and what do they see?** Quote what they see today and what they should see. That is the Outcome. Priority follows who hits it now.
 2. **What is the root cause?** Reproduce it on current `main` and trace it (the `principle-fix-root-causes` skill). The reproduction goes in Evidence.
-3. **What shares the cause?** Every symptom of one cause, and findings the same lane fixes in one pass, are one ticket.
+3. **What shares the cause?** Every symptom of one cause, and findings the same builder fixes in one pass, are one ticket.
 4. **What proves it?** A test that fails on today's `main` and passes after the fix.
 
 ## Improvement
@@ -32,7 +32,7 @@ Something that already works gets better for the person using it. Label `Improve
 
 ## Refactor or migration
 
-The behavior stays the same and the code takes a new shape. The person who sees the change is the next maintainer. Label `Refactor`. The lane builds it as the `refactoring` skill says.
+The behavior stays the same and the code takes a new shape. The person who sees the change is the next maintainer. Label `Refactor`. The builder builds it as the `refactoring` skill says.
 
 1. **What does the maintainer find after?** Name it, such as one place to change instead of three. That is the Outcome.
 2. **Which readers does it break?** They land in the same PR. When they are too many for one PR, expand and contract, as the `blueprint` skill's `sizing.md` says.

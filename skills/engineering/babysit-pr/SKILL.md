@@ -31,7 +31,7 @@ A babysit opens a todo list before step 1. Its first todo loads the `principle-*
 
 ## Steps
 
-1. **Read the PR.** Run `gh pr view <pr> --json number,headRefOid,baseRefName,mergeStateStatus,reviewDecision` and `watch-pr <pr> --once`, then read every open review thread with `gh api graphql` for `reviewThreads { isResolved comments { body path line } }`. In a stack, work only the **base PR**, the lowest unmerged PR; read and batch comments on the PRs above it. Keep one babysitter per stack: check that no other session, pane, or lane is already on this stack, and report to the user when one is. Done when no other babysitter is on the stack and you can name the base PR, its head, each required check's state, and each unanswered comment.
+1. **Read the PR.** Run `gh pr view <pr> --json number,headRefOid,baseRefName,mergeStateStatus,reviewDecision` and `watch-pr <pr> --once`, then read every open review thread with `gh api graphql` for `reviewThreads { isResolved comments { body path line } }`. In a stack, work only the **base PR**, the lowest unmerged PR; read and batch comments on the PRs above it. Keep one babysitter per stack: check that no other session, pane, or builder is already on this stack, and report to the user when one is. Done when no other babysitter is on the stack and you can name the base PR, its head, each required check's state, and each unanswered comment.
 2. **Watch.** Run `watch-pr` in the background and wait for it to exit. Done when it exits; its code picks the next step.
 3. **Classify a red check.** Read the failure with `gh run view <run-id> --log-failed`, from the link watch-pr printed. Sort it by where it fails:
    - In code the diff touches: a fix, in step 5.

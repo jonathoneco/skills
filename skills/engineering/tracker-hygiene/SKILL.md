@@ -11,7 +11,7 @@ This skill holds the rules for where work goes in the tracker and what each tick
 
 The **clean state** is what every write leaves the tracker in, and what grooming restores. It follows Linear's own method where the user adopted it. Each filing, move, or close is checked against it; a field Linear leaves optional and the clean state doesn't name is left as it is.
 
-- **An issue is one unit of work,** with a deliverable a lane or a person can finish. A stage of a project is a milestone; a bundle too big for one PR is a parent with sub-issues (the `ticket` skill); a plan or a brief is a project document. An issue named for a stage or a brief ("Milestone 0", "Brief 1") is converted at the next grooming pass.
+- **An issue is one unit of work,** with a deliverable a builder or a person can finish. A stage of a project is a milestone; a bundle too big for one PR is a parent with sub-issues (the `ticket` skill); a plan or a brief is a project document. An issue named for a stage or a brief ("Milestone 0", "Brief 1") is converted at the next grooming pass.
 - **An issue joins the project whose outcome it serves.** An issue that serves no project's outcome is standalone team work, reached through its owner and priority. When several standalone issues share an outcome, they become a project, proposed to the user.
 - **Every open issue and project has a named owner**: the issue's assignee, the project's lead.
 - **Every accepted open issue has a priority;** every planned one also has its Kind label and an estimate (Metadata, below).
