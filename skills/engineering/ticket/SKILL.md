@@ -44,7 +44,7 @@ The estimate is the ticket's **complexity**, as a value on the scale the project
 
 Each line in a ticket's Relationships section is one of these, and every line agrees with the other ticket's body:
 
-- **Blocked by:** the other ticket introduces code, schema, or data that this ticket's Steps or tests call, and the line names that symbol: `Blocked by: ABC-150, for findPricingRules`. Direct blockers only; a link a chain of real links already implies is left off. A ticket that waits on a Decision ticket names the ruling in place of a symbol. Filed as `blocks`.
+- **Blocked by:** the other ticket introduces code, schema, or data that this ticket's Steps or tests call, and the line names that symbol: `Blocked by: ABC-150, for findPricingRules`. Direct blockers only; a link a chain of real links already implies is left off. Filed as `blocks`.
   - An audit of 273 `blocks` links across 237 filed tickets found about a quarter to a third fake; merge order filed as `blocks` was the largest cause, 36 links. In one family of 81 tickets, 33 of 37 fake links held an unstarted ticket and added 4 builders to the longest chain (13 against 9).
 - **Merges after:** this ticket builds now and merges once the other is on `main`, such as behind an eval gate. The line gives the reason: `Merges after: ABC-169, the eval gate passes before switch-on`. Steps name the stand-in the builder builds against meanwhile, such as a scripted `claim`. Filed as `related`; the builder starts at once and the orchestrator holds only the merge.
 - **Related:** the key plus the one fact used.
