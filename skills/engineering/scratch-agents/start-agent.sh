@@ -47,7 +47,12 @@ done
 [[ -f "$brief" && -r "$brief" ]] || fail '--brief must name a readable file'
 brief_dir="$(cd -- "$(dirname -- "$brief")" && pwd -P)" || fail 'Cannot resolve the brief folder'
 brief="$brief_dir/$(basename -- "$brief")"
-prompt="Read the brief file at \"$brief\" and do everything it says."
+# The prompt is the brief's text, not a pointer to the file: the receiving agent's
+# prompt hooks, such as OpenBrain recall, read only the prompt.
+brief_bytes="$(wc -c < "$brief" | tr -d ' ')"
+(( brief_bytes > 0 )) || fail 'The brief file is empty'
+(( brief_bytes <= 100000 )) || fail "The brief is ${brief_bytes} bytes; Linux caps one argument at 128 KB, so keep a brief under 100 KB"
+prompt="$(cat -- "$brief")"
 
 if [[ "$kind" == claude ]]; then
     native=(--model "$model" --effort "$effort" --permission-mode bypassPermissions)
@@ -76,5 +81,5 @@ if [[ "$kind" == codex ]] && printf '%s' "$pane_text" | grep -Eiq 'update availa
 elif (( "$start_status" != 0 )); then
     fail "Cannot start the agent: $start_output. Pane: $pane_text"
 fi
-herdr agent prompt "$name" "$prompt" || fail 'Cannot submit the brief pointer'
+herdr agent prompt "$name" "$prompt" || fail 'Cannot submit the brief'
 printf 'Agent: %s\nPane: %s\n' "$name" "$pane"

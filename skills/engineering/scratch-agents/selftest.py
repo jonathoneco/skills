@@ -86,7 +86,7 @@ class StartAgentTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0, extra)
         self.assertFalse(self.log.exists())
 
-    def test_start_arguments_and_brief_pointer(self):
+    def test_start_arguments_and_brief_text(self):
         for kind in ("claude", "codex"):
             with self.subTest(kind=kind):
                 result = self.run_script(self.args(kind))
@@ -98,11 +98,21 @@ class StartAgentTests(unittest.TestCase):
                 self.assertEqual(calls, [
                     ["agent", "start", "hook-check", "--kind", kind, "--pane", "w1:p9", "--"] + native,
                     ["agent", "read", "hook-check", "--source", "recent-unwrapped"],
-                    ["agent", "prompt", "hook-check",
-                     'Read the brief file at "' + str(self.brief) + '" and do everything it says.'],
+                    ["agent", "prompt", "hook-check", self.brief.read_text().rstrip("\n")],
                 ])
                 self.assertIn("Agent: hook-check\nPane: w1:p9\n", result.stdout)
-                self.assertNotIn("SHOULD_NOT_EXIST", self.log.read_text())
+                self.assertFalse((self.root / "SHOULD_NOT_EXIST").exists())
+                self.assertFalse((self.root / "ALSO_NOT").exists())
+
+    def test_empty_and_oversized_brief(self):
+        self.brief.write_text("")
+        result = self.run_script(self.args())
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("empty", result.stderr)
+        self.brief.write_text("x" * 100001)
+        result = self.run_script(self.args())
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("100 KB", result.stderr)
 
     def test_update_prompt(self):
         result = self.run_script(self.args(), "update")
