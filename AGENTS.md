@@ -4,7 +4,7 @@ The user's agent skills for Claude Code and Codex, and the rules both tools read
 
 ## Changing a skill or the rules
 
-- Load the `writing-for-agents` skill before the first edit, and follow it. Skills call the person they serve "the user".
+- Load the `writing-for-agents` skill before the first edit. Skills call the person they serve "the user".
 - Sessions load the main checkout, so a change reaches them when it merges and `main` is pulled, on every machine that uses them.
 - When a helper makes the edit, read its whole diff before the commit is pushed, and check it against the ruling it carries out.
 - When one PR names a skill another PR adds, merge the one that adds it first.
@@ -19,6 +19,7 @@ The user's agent skills for Claude Code and Codex, and the rules both tools read
 
 ## Before committing
 
+- Read the whole diff against the `writing-for-agents` skill's levers: each meaning lives in one place, each rule states the target behavior, a leading word carries an idea that recurs, and every line changes what an agent does.
 - Run `scripts/check-skills`. It reports a skill or file named that does not exist, frontmatter that does not name its folder or holds an unquoted value with `: ` (invalid YAML), a skill Codex and Claude Code disagree on letting fire on its own.
 - After adding a skill or changing a description, run `scripts/category-readmes.sh`.
 - A new skill gets `agents/openai.yaml`. A skill only the user invokes carries `disable-model-invocation: true` in its frontmatter and `policy: allow_implicit_invocation: false` in that file, so both tools treat it alike.
