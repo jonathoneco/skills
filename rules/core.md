@@ -116,6 +116,8 @@ These skills start several agents, so neither tool reaches for them unprompted. 
 
 Treat every error as information. When code hits one, surface it where someone will see it, with enough context to trace back to the cause. Handle it in place only when you know what should happen next; otherwise let it propagate.
 
+When a failure recurs and its cause sits in code or config we own, fix it there. A hazard note is for behavior we cannot change, such as a vendor's.
+
 ## Shell scripts
 
 - Run `shellcheck` on every script.
