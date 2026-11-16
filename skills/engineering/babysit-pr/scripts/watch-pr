@@ -64,6 +64,25 @@ def one_line(text, limit=200):
     return flat if len(flat) <= limit else flat[: limit - 1] + "…"
 
 
+def latest_per_check(checks):
+    """One entry per workflow and check name: the newest run decides. A head marked ready after a
+    draft carries the draft run's skipped check beside the ready run's real one."""
+    newest = {}
+    for c in checks:
+        key = (c.get("workflow"), c["name"])
+        if key not in newest or (c.get("startedAt") or "") >= (newest[key].get("startedAt") or ""):
+            newest[key] = c
+    return list(newest.values())
+
+
+def settle_skipped(required, every):
+    """A skipped required check whose workflow still has a run in progress on this head is pending:
+    the newer run has not reached that job yet, so the skip belongs to an older run."""
+    running = {c.get("workflow") for c in every if c["bucket"] == "pending"}
+    return [dict(c, bucket="pending") if c["bucket"] == "skipping" and c.get("workflow") in running else c
+            for c in required]
+
+
 class Watcher:
     def __init__(self, opts):
         self.opts = opts
@@ -87,8 +106,15 @@ class Watcher:
         return [self.opts.pr] if self.opts.pr else []
 
     def read_checks(self, number):
-        args = ["pr", "checks", str(number)] + self.repo_flag + ["--json", "name,bucket,link,workflow"]
-        if self.required_only:
+        checks = self.read_check_list(number)
+        if self.required_only and any(c["bucket"] == "skipping" for c in checks):
+            checks = settle_skipped(checks, self.read_check_list(number, required=False))
+        return latest_per_check(checks)
+
+    def read_check_list(self, number, required=None):
+        required = self.required_only if required is None else required
+        args = ["pr", "checks", str(number)] + self.repo_flag + ["--json", "name,bucket,link,workflow,startedAt"]
+        if required:
             proc = subprocess.run(["gh"] + args + ["--required"], capture_output=True, text=True)
             if proc.returncode in (0, 8) and proc.stdout.strip():
                 return json.loads(proc.stdout)
