@@ -1,6 +1,6 @@
 # Ticket kinds
 
-A ticket's **kind** decides how it is cut and written: who sees the change, what one ticket holds, what its Outcome names, and what proves it. The kind follows who sees the change, not the subject: in a workspace about infrastructure, a new thing the user can do is still a Feature. The tracker's Kind label carries the kind.
+A ticket's **kind** decides how it is cut and written: who sees the change, what one ticket holds, what its Outcome names, and what proves it. The kind follows who sees the change, not the subject: in a workspace about infrastructure, a new thing the user can do is still a Feature. The tracker's Kind label carries the kind. A workspace's tracker doc can name fewer kinds for its tracker; work of a kind it leaves out goes where that doc says.
 
 Each kind below is a chain. The cut runs it to set the ticket's boundary; the writer runs it again to fill the sections. One ticket holds one coherent slice: when a kind's chain says the slice is whole, it stays one ticket however many files or findings it covers, and a small ticket names why it is small.
 

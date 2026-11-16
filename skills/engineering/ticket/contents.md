@@ -8,7 +8,7 @@ The ticket carries what its implementer can't find by looking, and names what it
 
 - **Inline** rulings, words the product's users read, new shapes, gotchas, and anything learned in private notes or the conversation. The user: "They shouldn't point to rulings.md, the tickets should be self contained."
 - **A ruling code travels with the ruling's words.** `D-1366` or `Q40` appears only beside the decision it names; one effort cited codes bare in 47 of 74 tickets.
-- **Existing code is read from `main`** (name the ref when it is another). The ticket states the change; current code, listings of how things stand today, and line numbers stay in the repo, since they drift before the ticket is picked up: 17 of 22 line numbers checked in one effort pointed elsewhere.
+- **Existing code is read from `main`** (name the ref when it is another). The ticket states the change; current code and listings of how things stand today stay in the repo. Steps and Done name a file and its symbol, since a line number drifts before the ticket is picked up: 17 of 22 line numbers checked in one effort pointed elsewhere. Evidence is where a `path:line` belongs, as a record of what was read at its SHA.
 - **Standing rules the repo documents**, such as its code, testing, and CI rules, are named by doc path; a restated copy goes stale, and one that disagrees with the docs makes the builder stop and ask (29 answers to building agents in one week restated a standing rule). Decided holds what is specific to this ticket. A constraint the repo's docs don't hold, such as a ruling or contract kept in private notes, is written in as far as this ticket uses it: 4 building agents in one effort stopped to ask for contract rulings they couldn't open.
 - **A team doc**, such as a Notion page, is context; the decision it informs is written into Decided with its own reason.
 
@@ -24,15 +24,15 @@ These hold in every section:
 
 Title is the tracker's title field. Every other section is a `##` heading with the name below, since tools that build from a ticket read sections by name.
 
-Every ticket carries the **core**: Title, Outcome, Decided, Steps, Done, Relationships, and Estimate, plus Refresh if drifted on every ticket that is filed rather than built at once. Each other section appears when its condition holds and is left out when it doesn't, so a ticket is as long as what it changes. A ticket meets the **Contents bar** when the core is present, each section whose condition holds is present, and every rule in this file holds.
+Every ticket carries the **core**: Title, Outcome, Steps, Done, and Estimate, plus Decided when the work rests on a decision, Relationships when the ticket has one, and Refresh if drifted on every ticket that is filed rather than built at once. Each other section appears when its condition holds and is left out when it doesn't, so a ticket is as long as what it changes. A ticket meets the **Contents bar** when the core is present, each section whose condition holds is present, and every rule in this file holds.
 
-- **Title:** the deliverable.
+- **Title:** the work, in one clause that starts with a verb: "Keep the cents in a price field". A defect's title names the repair, and what the product's users see today and after opens Outcome. The area, the stage, and the kind are the tracker's fields; measurements, file names, and error strings go in the body.
 - **Outcome:** who sees what change, as the ticket's kind names it ([kinds.md](kinds.md)): today and after, shaped as the `principle-experience-first` skill says. An Outcome with nothing to see marks a layer, which folds into the ticket it feeds.
 - **Decided:** every decision the work depends on, settled and stated as decided: the decision, the reason, who decided and when.
   - Paid runs, production reads and writes, migrations and backfills, and real emails or SMS are always decisions, even when the step looks routine. For each, the ticket says whether it is allowed, how many times, and where it may run, or that the operator does it.
   - A defect ticket states its fix here like any other decision, unless the ticket exists to ratify a fix already chosen.
   - A decision that contradicts an ADR names the ADR and why it is reopened; reopening it is the user's call.
-- **Evidence,** when an investigation fed the ticket: its findings with their date and SHA. A defect ticket's Evidence carries observed behavior and a reproduction against current `main` or production.
+- **Evidence,** when an investigation fed the ticket: its findings with their date and SHA, each graded as the `grading-evidence` skill says. A defect ticket's Evidence carries observed behavior and a reproduction against current `main` or production.
 - **Refresh if drifted,** on every ticket that is filed rather than built at once: how the implementer brings the ticket up to date before Step 1, since `main` moves while filed work waits:
   - one base SHA and the date the ticket was written against; a refresh replaces both;
   - the paths the ticket touches, in a fenced block opened with ```` ```paths ````, one path per line, so a script can read them; the command that lists what changed in them since the base, and which symbols to re-read when one did;
@@ -60,7 +60,7 @@ Every ticket carries the **core**: Title, Outcome, Decided, Steps, Done, Relatio
 - **Relationships:** as SKILL.md's Relationships says.
   - A ticket that adds a migration lever (a codemod, one-off script, or generator) names the ticket that deletes it once the migration ends, in Relationships or Decided; a lever with no deleting ticket outlives its migration.
 - **Revert,** when backing the change out takes more than reverting its PR: how to back the change out, and what data or deploy state it leaves behind.
-- **Estimate:** as SKILL.md's Estimate says, with its one-sentence reason.
+- **Estimate:** as SKILL.md's Estimate says, with its one-sentence reason. Where the tracker has an estimate field, the value goes there as well.
 - **Shapes and surface,** when the ticket produces or changes a shape, words the product's users read, or paths it shares:
   - Every shape snippet (see Fidelity). A snippet a prototype produced that encodes a decision is inlined here, marked as coming from the prototype.
   - Words the product's users read, such as labels, errors, and confirmations, in a table: where, what they read, and the existing string on that screen it matches. They are in the language the screen is written in, and use the users' words rather than internal terms.
