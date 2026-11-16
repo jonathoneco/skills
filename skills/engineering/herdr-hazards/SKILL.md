@@ -17,14 +17,14 @@ Claude Code's input box also shows grayed suggested prompts. They are inert: not
 
 - Send skills as their literal slash commands (`/implement ABC-1234`, `/code-review`, `/simplify`), never as prose that describes them. A paraphrase runs in the pane's main context or hits the skill's user-only guard. Codex takes the same skills as `$skill` (`$implement ABC-1234`), not `/skill`: Codex rejects `/implement`. Claude Code keeps the slash form.
 - Send the text, then send Enter as its own key press, and spell it lowercase: `herdr pane send-keys <pane> enter`. A capitalized `Enter` is dropped without an error. `pane run` sends its own Enter, and a busy pane can drop it too, so a follow-up lowercase `enter` is the fix when text sits unsubmitted.
-- Send one line of text into an empty input line. `send-text` into a line that already holds text merges or truncates the message; one relay arrived as only "the queue needs you." Send a longer relay with `herdr agent prompt <name> "$(cat <file>)"`, which submits multi-line text whole to Claude Code and Codex. Send the text itself, not a pointer to the file; the `scratch-agents` skill says why.
+- Send one line of text into an empty input line. `send-text` into a line that already holds text merges or truncates the message; one relay arrived as only "the queue needs you."
+- Send a message longer than one line inline: `herdr agent prompt <name> "$(cat <file>)"`. Claude Code and Codex both take the multi-line text whole. A backtick in the `$(cat …)` output stays text, while one typed inside the double-quoted string runs as a command. The `scratch-agents` skill says why a message goes inline.
 - Confirm submission by the input box being empty, or by the queued-messages banner or context growth. Text in the viewport proves nothing; scrollback echoes match too.
 - `send-keys` names are lowercase throughout: `esc`, `ctrl+c`, `enter`.
 
 ## Starting an agent
 
 - A Herdr agent name is lowercase. An uppercase name fails `agent start`, and the pane sits at a shell with the error easy to miss.
-- A brief with backticks goes in a file, sent as `"$(cat <file>)"`. A backtick typed inside a double-quoted `herdr agent prompt` string runs as a command; one inside the output of `$(cat …)` does not.
 - Pass the exact model id and the effort on every spawn. `--model fable` resolved to an unknown id.
 
 ## Launching an agent in a fresh worktree

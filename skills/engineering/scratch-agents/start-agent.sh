@@ -47,8 +47,8 @@ done
 [[ -f "$brief" && -r "$brief" ]] || fail '--brief must name a readable file'
 brief_dir="$(cd -- "$(dirname -- "$brief")" && pwd -P)" || fail 'Cannot resolve the brief folder'
 brief="$brief_dir/$(basename -- "$brief")"
-# The prompt is the brief's text, not a pointer to the file: the receiving agent's
-# prompt hooks, such as OpenBrain recall, read only the prompt.
+# The brief travels inline, as the prompt's text: the receiving agent's prompt
+# hooks, such as OpenBrain recall, read only the prompt.
 brief_bytes="$(wc -c < "$brief" | tr -d ' ')"
 (( brief_bytes > 0 )) || fail 'The brief file is empty'
 (( brief_bytes <= 100000 )) || fail "The brief is ${brief_bytes} bytes; Linux caps one argument at 128 KB, so keep a brief under 100 KB"
