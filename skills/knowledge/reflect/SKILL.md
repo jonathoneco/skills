@@ -11,7 +11,7 @@ Reflection runs when the user asks for it, never as a default end to a session. 
 
 ## 1. Open lessons
 
-Run `scripts/open-lessons` (in this skill's folder). It lists the lessons, rulings, and decisions in `~/.local/state/agent-notes/` still marked `→ open`, oldest first, and counts the notes of those kinds that carry no harvest mark at all. The arrow alone is noisy, since reports, logs, and copied files use it too; the script's header says how it scopes, and its first line says how much it left out.
+Run `python3 scripts/open-lessons` (in this skill's folder; it is Python, so `sh scripts/open-lessons` fails). It lists the lessons, rulings, and decisions in `~/.local/state/agent-notes/` still marked `→ open`, oldest first, and counts the notes of those kinds that carry no harvest mark at all. The arrow alone is noisy, since reports, logs, and copied files use it too; the script's header says how it scopes, and its first line says how much it left out.
 
 Done when the list, its count, and the unmarked count are in hand for step 6.
 
