@@ -19,7 +19,7 @@ Claude Code's input box also shows grayed suggested prompts. They are inert: not
 - Send the text, then send Enter as its own key press, and spell it lowercase: `herdr pane send-keys <pane> enter`. A capitalized `Enter` is dropped without an error. `pane run` sends its own Enter, and a busy pane can drop it too, so a follow-up lowercase `enter` is the fix when text sits unsubmitted.
 - Send one line of text into an empty input line. `send-text` into a line that already holds text merges or truncates the message; one relay arrived as only "the queue needs you."
 - Send a message longer than one line inline: `herdr agent prompt <name> "$(cat <file>)"`. Claude Code and Codex both take the multi-line text whole. A backtick in the `$(cat …)` output stays text, while one typed inside the double-quoted string runs as a command. The `scratch-agents` skill says why a message goes inline.
-- Confirm submission by the input box being empty, or by the queued-messages banner or context growth. Text in the viewport proves nothing; scrollback echoes match too.
+- Confirm submission by the input box being empty, or by the queued-messages banner or context growth. Text in the viewport proves nothing; scrollback echoes match too. An `agent prompt` sent right after `agent start` has left a brief sitting unsent in the box: when `herdr agent get <name>` does not read `working`, send a lowercase `enter`.
 - `send-keys` names are lowercase throughout: `esc`, `ctrl+c`, `enter`.
 
 ## Starting an agent
