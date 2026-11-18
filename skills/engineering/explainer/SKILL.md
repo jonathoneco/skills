@@ -68,7 +68,7 @@ Done when the page's text and its agent context are written, and each item on th
 
 ## 4. Build
 
-Build the page as the `html` skill says. Before any page code, write the design plan that the `design-artifact` skill asks for into the notes.
+Build the page as [build.md](build.md) says. Before any page code, write its design plan into the notes.
 
 - Typefaces: pick a pair from [fonts/README.md](fonts/README.md) and embed it. The palette and the layout are yours to design for this subject.
 - Both a light and a dark theme, following the reader's system setting.

@@ -25,7 +25,7 @@ For one sketch inside a reply, the question is the thing you are about to explai
    |---|---|
    | A reply in the terminal | Text art, about 10 boxes at most |
    | A doc in a repo, a PR, an agent doc | Mermaid |
-   | A page for a reader | the `html-diagram` skill; give it the row, the level, and the elements |
+   | A page for a reader | Inline in the page's HTML, as [drawing.md](drawing.md) says |
 
    Mermaid has its own kind for four rows: `sequenceDiagram`, `stateDiagram-v2`, `classDiagram`, and `erDiagram`. Draw every other row as a `flowchart`, with a `subgraph` for each lane, boundary, or node. Where the place has the type's own notation, use it unchanged. Where it has none, as in text art, keep what the row means by a box and by an arrow. A mark the type does not have, such as a dotted arrow for a timer or a line for a wait, goes in the key.
 
@@ -79,10 +79,11 @@ For one sketch inside a reply, the question is the thing you are about to explai
 - Which qualities matter, and how will we know each is met? A table of quality scenarios.
 - What happened when, on one clock? A timeline: one axis, with the events in order.
 - What contains or owns what? A tree, or boxes nested inside their owner.
-- How much, how often, or how fast? A few numbers go in a table or on the arrows. A series is a chart, drawn as the `dataviz` skill says.
+- How much, how often, or how fast? A few numbers go in a table or on the arrows. A series is a chart, drawn as the `dataviz` skill says. On a page, give that skill the page's palette and typefaces as its parameters, and put the number the chart is there to show on the chart as a direct label, so it reads with no hover.
 - When tasks run, who reports to whom, how sets overlap, how a site is laid out: a Gantt chart, an org chart, a Venn diagram, a sitemap.
 
 ## Reference
 
 - [types.md](types.md) has one entry per row: what each source says, and the pick where sources disagree. Open a row's entry when its last cell needs its reason, or when two rows seem to fit.
+- [drawing.md](drawing.md) has how to draw a diagram on an HTML page.
 - [basis.md](basis.md) has the source of each rule in the steps. Open it before you change this skill, or when the user asks why a rule holds.

@@ -27,9 +27,9 @@ These hold across every diagram on a page, so the reader learns the marks once:
 
 ## Drawing
 
-Draw each diagram as the `html-diagram` skill says, with the design plan's palette and typefaces.
+Draw each diagram as the `diagrams` skill says for a page, with the design plan's palette and typefaces.
 
 - Prefix every SVG id with the figure's name, such as `step2-write`: all figures on a page share one id space.
 - At 390 px wide, every label renders at 12 px or larger. A diagram too wide for that scrolls sideways inside its figure, or is redrawn top to bottom.
-- A figure takes interaction, such as stepping through stages, picking a case, or a switch between designs, where the `html-diagram` skill says it helps. Its default state is the **still frame**: it shows the caption's claim with no click, because a reader of the caption walk, a print, or a Notion copy sees only that frame. The text of every other state goes into the agent context.
-- A figure that runs the reader's own input, such as a simulation, is built with `web-artifacts-builder`.
+- A figure takes interaction, such as stepping through stages, picking a case, or a switch between designs, where the `diagrams` skill says it helps. Its default state, the **still frame**, shows the caption's claim with no click, because a reader of the caption walk, a print, or a Notion copy sees only that frame. The text of every other state goes into the agent context.
+- A figure that runs the reader's own input, such as a simulation, is plain script in the page. It opens at the moment the problem shows, is labelled illustrative, and shows its parameters.

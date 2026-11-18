@@ -44,7 +44,7 @@ Notion has nine text and background colours plus default. Map the subject's pale
 
 ## Diagrams
 
-The frame an HTML block lives in is the `notion-pages` skill's. Start every diagram from its `html-block-template.html`, which fills the frame, follows Notion's theme, and fills every shape, and draw inside its `<g id="figure">`. Its `viewBox` is the 670 × 500 frame, so draw in those units; its colour tokens carry both themes, and it defines a class and an arrowhead for each mechanism kind. Save each diagram as `diagrams/<name>.html` and its caption as `diagrams/<name>.caption`; the caption goes on the block, not inside the frame. For Notion, [figures.md](figures.md) holds except its Drawing section: draw with the frame and classes in the `notion-pages` skill's `html-block-template.html`. A diagram run uses these same output paths, and its brief carries that template instead of the `html-diagram` skill.
+The frame an HTML block lives in is the `notion-pages` skill's. Start every diagram from its `html-block-template.html`, which fills the frame, follows Notion's theme, and fills every shape, and draw inside its `<g id="figure">`. Its `viewBox` is the 670 × 500 frame, so draw in those units; its colour tokens carry both themes, and it defines a class and an arrowhead for each mechanism kind. Save each diagram as `diagrams/<name>.html` and its caption as `diagrams/<name>.caption`; the caption goes on the block, not inside the frame. For Notion, [figures.md](figures.md) holds except its Drawing section: draw with the frame and classes in the `notion-pages` skill's `html-block-template.html`. A diagram run uses these same output paths, and its brief carries that template instead of the `diagrams` skill's `drawing.md`.
 
 ## Templates
 
