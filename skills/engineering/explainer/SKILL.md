@@ -59,7 +59,7 @@ Then write the prose, as the `technical-writing` skill says. The page opens with
 - Introduce each thing the reader has not seen where it is first needed: in a frame's labels or caption, or in the sentence that first uses it. A block of definitions ahead of the first frame is prose to move into frames.
 - Set the worked case apart, above the first step that uses it.
 - Give each thing one name, the source's name, everywhere.
-- State what is true now. Round history and what you checked stay in the notes.
+- State what is true now. Round history and what you checked stay in the notes. A section that reports live state, such as code, records, or a ticket, names what it read and when, such as a commit or a date.
 - Each claim names who is affected, the cause, and the change. A claim reads at its grade: seen, or reasoned out. A partial win is stated as partial.
 - A call reads as its state. Around an open call, the prose holds each outcome. Each call that is not settled shows its options to the reader, in a card or in a table row.
 - The human side holds what changes how the reader acts. Exact paths, commands, queries, and record ids go to the agent context, under the same names the page uses, written as instructions.
@@ -74,9 +74,10 @@ Build the page as the `html` skill says. Before any page code, write the design 
 - Both a light and a dark theme, following the reader's system setting.
 - Draw each frame of the storyboard as [figures.md](figures.md) says.
 - Optional depth, such as raw data or a long reference table, folds behind a `<details>` block. What the reader must read stays open.
-- The page's foot links to its agent context.
+- A page with parts for different readers, such as the person who decides, a reviewer, and an agent, gets a sticky rail of section links grouped by reader.
+- The page points its reader's agent to the agent context twice: in a visually hidden, `aria-hidden` block at the top, and in a collapsed "For agents" section at the foot. A fetch tool drops HTML comments and `<script>` bodies, so the entry stays in page text.
 
-Done when each frame of the storyboard is on the page and the browser shows the page whole at full width and at 390 px, in both themes, with the chosen typefaces loaded.
+Done when each frame of the storyboard is on the page and the browser shows the page whole at full width and at 390 px, in both themes, with the chosen typefaces loaded, in every state of each interactive figure.
 
 ## 5. Check
 

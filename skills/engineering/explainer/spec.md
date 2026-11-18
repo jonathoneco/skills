@@ -22,6 +22,7 @@ A **journey** is the worked case walked through the flow, step by step. A spec t
 - A part sits in the same spot in every diagram.
 - A journey shows its diagram, then its hops as a native table, one row per hop: the step number, from and to, the kind, what moves, and who it reaches or who acts. Each row says what the product's users see or get, and what the code does about it, with the symbol that does it.
 - Today and the proposal sit side by side on the same case, so the one difference stands out.
+- What is outside this work sits in one table, a row each: what is left out, why, and when it comes back.
 
 ## Agent context
 
