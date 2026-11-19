@@ -22,11 +22,17 @@ import sys
 #   `_(...)_` -> `*...*`                                    parentheses inside it dropped
 #   `` ``x`` `` -> `` `` x `` ``                            space inside double backticks dropped
 #   bare URL -> link; `[x](path)` -> `[x](<path>)`          links reduced to their text
+#   bare `#123` -> `<pull-request label="owner/repo#123" …/>`  mention reduced to `#123`
+#   bare `ABC-123` -> `<issue label="ABC-123" …/>`          mention reduced to its key
 ESCAPED = re.compile(r"\\([\[\]#~\"_*<>`\\-])")
 LINK = re.compile(r"\[([^\]]*)\]\(<?([^)>]*)>?\)")
+MENTION = re.compile(r'<(?:pull-request|issue)\b[^>]*?\blabel="([^"]*)"[^>]*/>')
+REPO_REF = re.compile(r"\b[\w.-]+/[\w.-]+#(\d+)")
 
 
 def normalize(text):
+    text = MENTION.sub(r"\1", text)
+    text = REPO_REF.sub(r"#\1", text)
     text = re.sub(r"_\(([^\n]*?)\)_", r"\1", text)
     text = ESCAPED.sub(r"\1", text)
     text = LINK.sub(r"\1", text)

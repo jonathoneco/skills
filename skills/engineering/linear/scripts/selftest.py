@@ -67,6 +67,14 @@ class CompareReadback(unittest.TestCase):
                   "**In** `a.ts`**,** see \\[obs\\] and \\~ and *note* `x` and `` a`b `` at <https://e.com> and [doc](<docs/a.md>).\n")
         self.assertIsNone(compare(draft, stored))
 
+    def test_mentions_linear_links_match(self):
+        draft = "## Evidence\n\nBefore #9238 it fed a count; WRA-10095 found the cause in owner/repo#12.\n"
+        stored = ('## Evidence\n\nBefore <pull-request id="6bbe" label="Wrangle-Labs/wrangle#9238" href="https://linear.app/x" /> '
+                  'it fed a count; <issue id="6230" label="WRA-10095" href="https://linear.app/y" /> found the cause in '
+                  '<pull-request id="1" label="owner/repo#12" href="https://linear.app/z" />.\n')
+        self.assertIsNone(compare(draft, stored))
+        self.assertIn("first difference", compare(draft.replace("#9238", "#9239"), stored))
+
     def test_changed_word_is_caught(self):
         self.assertIn("first difference", compare("## A\n\nkeep this\n", "## A\n\nkeep that\n"))
 
