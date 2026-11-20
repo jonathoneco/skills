@@ -1,0 +1,3 @@
+interface:
+  display_name: "Executor calls"
+  short_description: "Call Executor tools and discover connection paths"
