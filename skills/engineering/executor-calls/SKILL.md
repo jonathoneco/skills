@@ -1,32 +1,30 @@
 ---
 name: executor-calls
-description: "Use when calling Executor. Call and discover tools safely."
+description: "Use when calling Executor or a tool is missing. Look inside."
 ---
 
 # Executor calls
 
 ## Call your client's `execute`
 
-Use the configured client's one `execute` tool for its toolkit. The toolkit scopes which connections it can reach. A server name is not a tool name. Substitute the configured tool name for `mcp__executor_<toolkit>__execute` below.
+Each Executor client has one `execute` tool for its toolkit, and the toolkit scopes which connections it reaches. A server name is not a tool name: substitute your configured tool for `mcp__executor_<toolkit>__execute` below.
 
-Call it through `tool_call`, one local tool per call:
+In Hermes, where `execute` is a deferred tool, call it by its known name through `tool_call`, one tool per call:
 
 ```json
 {"calls": [{"name": "mcp__executor_<toolkit>__execute", "arguments": {"code": "<TypeScript>"}}]}
 ```
 
-Do not run `tool_search` or `tool_describe` first. The outer catalog exposes Executor's entry points, not the connected tools. Discover connections inside `execute` instead.
+The outer catalog lists only Executor's entry points, so the connected tools are found inside `execute`, not with an outer tool search.
 
-Agents use the MCP tool, never the `executor` CLI. A device login can lapse, and a CLI call paused for approval cannot be resumed. Unattended scripts with no model use a script key rather than a device login.
+Agents call the MCP tool. The `executor` CLI rides a device login that lapses, and a CLI call paused for approval cannot be resumed. Unattended scripts with no model use a script key.
 
 ## Inside `execute`
 
-- Call a connection tool by its full path in brackets. Hyphens in a path parse as subtraction with dotted access.
-- A call returns `{ ok: true, data }` or `{ ok: false, error: { code, message } }`. Check `r.ok` before reading `r.data`. Return an error unchanged.
-- Return only fields the step needs. The whole return value enters your context. Batch related reads inside one `execute` and return one compact object.
-- No `fetch`. Never enumerate `tools`, which is a lazy proxy and throws. Use the discovery methods below.
-
-This example uses a placeholder connection path. Replace it with a known or discovered path and its described input:
+- Paths take the form `<integration>.user.<connection>.<op>`. Call one by its full path in brackets, since a hyphen in dotted access parses as subtraction. Get an unfamiliar path's input once from `tools.describe.tool({path})`.
+- A call returns `{ ok: true, data }` or `{ ok: false, error: { code, message } }`. Check `r.ok` before reading `r.data`, and return an error as it came.
+- Return only the fields the step needs; the whole return value enters your context. Batch related reads in one `execute` and return one compact object.
+- Reach the network only through connection tools, since `execute` has no `fetch`. Find tools with `tools.search`; enumerating the `tools` proxy throws.
 
 ```typescript
 const r = await tools["example-api.user.exampleConnection.list_items"]({ limit: 10 });
@@ -34,15 +32,19 @@ if (!r.ok) return r;
 return r.data;
 ```
 
-## Discover a missing path
+## Paused calls
 
-Before reporting a connection missing, search once inside `execute`. If a known path is refused as unknown, use the same lookup:
+A call that needs approval pauses and returns an `approvalUrl` and an `executionId`. Give the user the URL; once they approve, call the same server's `resume` tool with the `executionId`.
+
+## Find a missing path
+
+Before reporting a connection missing, search once inside `execute`. A known path refused as unknown gets the same lookup:
 
 ```typescript
 const { items } = await tools.search({ query: "<intent and key nouns>", limit: 12 });
 return items;
 ```
 
-`tools.search` returns `{ items }`, not a list. For a matching `path`, call `await tools.describe.tool({path})` to learn its input, then call that path. Learn behavior from `describe`, never by probing an operation. Call a write tool only for the write the user approved. Do not fall back to outer `tool_search` or the CLI.
+`tools.search` returns `{ items }`, not a list. For a matching `path`, read its input with `tools.describe.tool({path})`, then call it. Learn behavior from `describe`, and call a write tool only for the write the user approved: a search hit that looked like a "who am I" read was once a create-comment op, and probing it posted an empty comment.
 
-If the search returns no items, probe single nouns from different expected connections in the same `execute` call. If every probe is empty, stop searching and report the affected connections. A missing connection or a `tool_blocked` policy error can be transient. Check again when the user asks or before the next Executor-dependent step, rather than carrying an old outage forward as fact.
+If the search returns nothing, probe single nouns from different expected connections in the same `execute` call. If every probe is empty, stop and name the affected connections. A missing connection or a `tool_blocked` error can be transient: check again when the user asks or before the next step that needs it, rather than carrying an old outage forward as fact.
