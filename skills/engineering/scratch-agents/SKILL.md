@@ -5,7 +5,7 @@ description: Scratch agents, the helpers a session starts for one job. Use when 
 
 # Scratch agents
 
-A **scratch agent** is a helper this session starts for one job and reads back when it settles. In Herdr it runs where the user can see and steer it: one Herdr tab per session, the **scratch tab**, holds every scratch agent that session starts. This is the user's standing request, so the herdr skill's rule against creating tabs unasked doesn't apply to the scratch tab. Read `herdr-hazards` before the first prompt. Without Herdr, the last section says how to start one.
+A **scratch agent** is a helper this session starts for one job and reads back when it settles. In Herdr it runs where the user can see and steer it: one Herdr tab per session, the **scratch tab**, holds every scratch agent that session starts. This is the user's standing request, so the herdr skill's rule against creating tabs unasked doesn't apply to the scratch tab. Read `herdr-hazards` before the first prompt. In a T3 Code conversation, and without Herdr, the last two sections say how to start one.
 
 ## Roles
 
@@ -58,6 +58,17 @@ When an agent fails, the failure decides the retry:
 - **A second failure on the same job:** stop, and bring the job and both failures to the user, unless the calling skill says how a dropout is handled (arena, interrogate).
 - **The harness rejects a model name** because it was renamed or retired: start on that family's nearest model at the same strength, and tell the user the table needs the new name.
 
+## In T3 Code
+
+An agent that runs as a T3 Code conversation has the tool `delegate_task` (it is listed among the agent's tools as `mcp__t3-code__delegate_task`). It starts the helper as a child conversation on any provider and model the machine offers, shows it to the user under **Agents** on the parent, and wakes the parent when the child ends. Use it in place of a Herdr tab. Steps 1, 2 and 5 do not apply.
+
+1. **Take the role's model from the table as written**, Codex rows included. Being a Claude or a Codex agent yourself does not change the row.
+2. **Start the helper.** When the row's model is on another provider than yours, call `delegate_task` with `target: { providerInstanceId, model }` (`providerInstanceId` is `codex` or `claudeAgent` on a default install; `orchestrator_capabilities` lists the instances and models) and the brief as `task`. When the row's model is on your own provider, use your harness's own subagent tool at that model, as T3 Code's rules for its agents say. A child that must not see or change your uncommitted files gets `isolation: "worktree"`; commit first what it needs, since that checkout starts at your last commit.
+3. **Write the brief to stand alone.** A child gets the task text and none of your conversation. Name the file it writes its result to when a later step reads a file; otherwise its last message is the result.
+4. **Do not poll.** Start every independent helper, then end your turn; each completion wakes you. Read a child's result with `task_status`, and its whole conversation with `t3_thread_read` when the summary is empty.
+
+The failure rules above hold, with `task_cancel` in place of closing a pane. An agent outside T3 Code, such as a bot on its tool endpoint, cannot call `delegate_task`: it launches one conversation, and the agent inside delegates.
+
 ## Without Herdr
 
-Where `HERDR_ENV` is unset, such as in a container or in CI, start the same brief with the harness's own subagent tool, at the role's model from the table, and wait for its completion. Steps 3 and 4 hold as written. When the role's model is the other family's, use this harness's model of the same strength from the table, and say in the result that a panel lost its second family.
+Where `HERDR_ENV` is unset and the agent is not a T3 Code conversation, such as in a container or in CI, start the same brief with the harness's own subagent tool, at the role's model from the table, and wait for its completion. Steps 3 and 4 hold as written. When the role's model is the other family's, use this harness's model of the same strength from the table, and say in the result that a panel lost its second family.
