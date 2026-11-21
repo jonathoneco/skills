@@ -21,7 +21,7 @@ When you catch yourself writing the same instruction a second time:
 
 **Feedback loop:**
 - **Capture every correction.** When the human intervenes or tests fail, decide if it's a one-off or a pattern.
-- **Route to the right layer.** A lesson for a later session → the `agent-notes` skill. A mistake agents keep making in this repo → the `correct` skill. A rule every repo needs → a proposal to the user.
+- **Route to the right layer.** A lesson for a later session → an edit to the skill that governs the work, made in this session once the user approves it. A mistake agents keep making in this repo → the `correct` skill. A rule every repo needs → a proposal to the user.
 - **Close the loop.** Apply it now when the ask covers it. Otherwise propose it.
 
 **Anti-patterns:**

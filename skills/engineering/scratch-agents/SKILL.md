@@ -17,7 +17,6 @@ Each skill splits its work into **roles** and names them; this table is the one 
 | **examiner**: reading whose report later steps build on without rereading the sources, such as blueprint explorer, ticket checker, explainer evidence, how explorer before a change, okf sediment and verify | Codex `gpt-6.1-sol` | Claude `opus` | a miss spreads into every ticket, page, or edit built on its report |
 | **light code worker**: a small change the brief already settles (the files, the change, and how to check it), or an orchestrating builder whose concern holds only such tickets | Codex `gpt-6-luna` | Claude `sonnet` | the brief holds the decisions |
 | **code worker**: any scratch agent that edits code, such as a swarm worker or an orchestrating builder | Codex `gpt-6.1-sol` | Claude `opus` | it makes judgment calls while it edits |
-| reflect tooling | Codex `gpt-6.1-sol` | Claude `opus` | command flags, library quirks, and CI commands |
 | **writer**: ticket writer, explainer diagram | Claude `opus` | Codex `gpt-6.1-sol` | writes something a person reads |
 | **prose worker**: mechanical edits to prose, skills, and docs (sweeps, renames, rewiring, format files), recall reader, summarizing a run's notes | Claude `sonnet` | Codex `gpt-6-luna` | quick over text from a tight brief; reads conversation and prose the way a person does |
 | explainer cold read | Claude `sonnet` | Codex `gpt-6-luna` | reads a page the way its reader will |
