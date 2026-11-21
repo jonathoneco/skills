@@ -17,4 +17,4 @@ The hub is the page the artifact opens on, `index.html`. Each fact is stated in 
 1. The takeaway and the asks, with today against the design where the artifact proposes a change.
 2. **Read in this order:** each page, numbered, as a link with the one question the reader answers there ("Is the wiring right?") and a line on what it holds. A page for the user's rulings comes first.
 
-Each other page opens with its part of the takeaway. The cold read takes the hub and every page.
+Each other page opens with its part of the takeaway, and carries the artifact's page list with a link back to the hub. That includes an existing page pulled into the set: rebuild its copy with the page list rather than copying it as it is. A copied page with no way back was the first thing the reader hit. The cold read takes the hub and every page.
