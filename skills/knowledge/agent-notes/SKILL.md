@@ -59,7 +59,7 @@ Two machines that save one file within seconds leave a `*.sync-conflict-*` copy 
 
 ## Searching
 
-To find or resume earlier work, run the `recall` skill; it searches these notes first, then the durable record, then transcripts.
+To resume an effort, read its handoff here first; the `recall` skill rebuilds the rest of its context.
 
 ## Closing an effort
 
