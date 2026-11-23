@@ -56,6 +56,7 @@ The three repo sources are MIT licensed. `dataviz` and `simplify` are copied fro
 | principle-subtract-before-you-add | `skills/reasoning/principle-subtract-before-you-add` | cursor/plugins | `pstack/skills/principle-subtract-before-you-add` | `9f451cf` |
 | principle-test-behavior-not-implementation | `skills/reasoning/principle-test-behavior-not-implementation` | cursor/plugins | `pstack/skills/principle-test-behavior-not-implementation` | `9f451cf` |
 | principle-type-system-discipline | `skills/reasoning/principle-type-system-discipline` | cursor/plugins | `pstack/skills/principle-type-system-discipline` | `9f451cf` |
+| reflect | `skills/knowledge/reflect` | cursor/plugins | `pstack/skills/reflect` | `7a58391` |
 | research | `skills/reasoning/research` | mattpocock/skills | `skills/engineering/research` | `49dd158` |
 | show-me-your-work | `skills/reasoning/show-me-your-work` | cursor/plugins | `pstack/skills/show-me-your-work` | `9f451cf` |
 | simplify | `skills/engineering/simplify` | Claude Code (built-in command) | `simplify` | `2.1.317` |

@@ -20,7 +20,7 @@ Each skill splits its work into **roles** and names them; this table is the one 
 | **writer**: ticket writer, explainer diagram | Claude `opus` | Codex `gpt-6.1-sol` | writes something a person reads |
 | **prose worker**: mechanical edits to prose, skills, and docs (sweeps, renames, rewiring, format files), recall reader, summarizing a run's notes | Claude `sonnet` | Codex `gpt-6-luna` | quick over text from a tight brief; reads conversation and prose the way a person does |
 | explainer cold read | Claude `sonnet` | Codex `gpt-6-luna` | reads a page the way its reader will |
-| **judge**: blueprint batch judge, why synthesizer, reflect judgment | Claude `opus` | Codex `gpt-6.1-sol` | synthesizes, explains, and picks |
+| **judge**: blueprint batch judge, why synthesizer | Claude `opus` | Codex `gpt-6.1-sol` | synthesizes, explains, and picks |
 | **panel**: interrogate reviewers | one Claude `opus`, one Codex `gpt-6.1-sol` | none; the panel already holds both families | a panel needs both families |
 | architect runners | a panel of Claude `fable` and Codex `gpt-6-astra`, plus one Claude `opus` | none; the panel already holds both families | design from scratch is the hardest step |
 | arena judge | `opus` or `gpt-6.1-sol`, the family that wrote fewer runs; on a tie, the family other than this session's | the other family | a judge outside the runners' family |
