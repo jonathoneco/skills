@@ -4,7 +4,7 @@ The user's agent skills for Claude Code and Codex, and the rules both tools read
 
 ## Changing a skill or the rules
 
-- Load the `writing-for-agents` skill before the first edit. Skills call the person they serve "the user".
+- Load the `writing-for-agents` skill before the first edit. Skills call the person they serve "the user", and name the user's things by role, such as "the user's wiki": the user's rules say where each one is, so a skill stays on its own job.
 - Sessions load the main checkout, so a change reaches them when it merges and `main` is pulled, on every machine that uses them.
 - When a helper makes the edit, read its whole diff before the commit is pushed, and check it against the ruling it carries out.
 - When one PR names a skill another PR adds, merge the one that adds it first.

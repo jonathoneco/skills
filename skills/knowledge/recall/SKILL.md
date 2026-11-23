@@ -9,7 +9,7 @@ description: "Reconstruct recent working context from chat history, live state, 
 
 Keep it tight and on-topic. Read only what the in-scope threads need, then stop.
 
-Your context lives in two records. Your own chat history holds what you did and decided. The shared record holds everything that happened around the same code under other names: the symptoms users keep reporting, the fixes that shipped and got reverted, the errors still firing in prod. That second record lives in source control, the issue tracker, chat and issue channels, long-form docs (the user's wiki, today the `okf` skill's knowledge bundles, and Notion), an effort's handoff notes (the `agent-notes` skill), and error tracking. A feature with a long bug tail keeps most of its story there, so don't reconstruct it from your transcripts alone.
+Your context lives in two records. Your own chat history holds what you did and decided. The shared record holds everything that happened around the same code under other names: the symptoms users keep reporting, the fixes that shipped and got reverted, the errors still firing in prod. That second record lives in source control, the issue tracker, chat and issue channels, long-form docs (the user's wiki and Notion), an effort's handoff notes, and error tracking. A feature with a long bug tail keeps most of its story there, so don't reconstruct it from your transcripts alone.
 
 Transcripts live where [transcripts.md](transcripts.md) says.
 
