@@ -4,7 +4,7 @@ The user checks in: read what has fallen due, then give them one digest.
 
 ## 1. Run the readings that fell due
 
-For each post-merge reading in the user queue whose date has passed, start an `orchestrating post-merge reading` scratch agent (the `scratch-agents` skill). It runs the reading exactly as the ticket's After merge section gives it, closes the tickets whose readings hold with a receipt (the tracker's skill, `linear` on Linear), and returns every other reading with the value it saw.
+For each post-merge reading in the user queue whose date has passed, start a `data-reader` helper. It runs the reading exactly as the ticket's After merge section gives it, closes the tickets whose readings hold with a receipt (the tracker's skill, `linear` on Linear), and returns every other reading with the value it saw.
 
 Done when every fallen-due reading is closed, or listed for the digest's Waiting on you with the value it read.
 

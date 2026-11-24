@@ -143,11 +143,10 @@ OPS = {
     "executor": {"every": False, "session": True,
                  "text": "Before this call, load the `executor` skill and follow it."},
     "helper": {"every": False,
-               "builtin": "This session runs in Herdr: start this helper as a scratch agent, as the `scratch-agents` "
-                          "skill says, with the model and effort from its role table (global agent rules, Before you "
-                          "change things).",
-               "unnamed": "Name the model and effort in this start command, from the `scratch-agents` role table "
-                          "(global agent rules, Before you change things)."},
+               "builtin": "This session runs in Herdr: start this helper as a scratch agent, as the global agent rules "
+                          "say, with the model and effort for its role word.",
+               "unnamed": "Name the model and effort for the helper's role word in this start command (global agent "
+                          "rules, Before you change things)."},
     "outside-write": {"every": True,
                       "text": "This call writes to an outside system. Write only through the connector the project's "
                               "docs or skills name, after its approval steps, and only inside what the user asked for "

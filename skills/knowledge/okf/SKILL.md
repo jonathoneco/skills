@@ -19,7 +19,7 @@ Two cases bring you here, and both end with you acting on what a doc says.
 
 1. Find its front door. Follow the indexes from the bundle root to the section's or the initiative's `index.md`.
 2. Read the front door yourself: that `index.md`, the top entries of its `log.md` for what moved recently, its rulings, and whatever it lists as open.
-3. When the rest is large, send `reader` scratch agents (the `scratch-agents` skill) to survey it, one per stage folder, each reporting what is decided, what is open, and what contradicts something else. Build on their reports, and read in full only the docs this session will change or argue with.
+3. When the rest is large, send `data-reader` helpers to survey it, one per stage folder, each reporting what is decided, what is open, and what contradicts something else. Build on their reports, and read in full only the docs this session will change or argue with.
 4. Read the practice that matches the work ahead, in the `practices/` section of the bundle that owns it.
 5. Report what you found: what is settled, what is open, and anything that looks stale against the code or the disk. When grounding was the whole ask, the report is the deliverable; when more was asked, carry on into it.
 
@@ -70,7 +70,7 @@ The ingest steps above are the **writer** round. Follow them with:
 2. **Verify:** check every substantive addition against its owning source and correct the final
    graph.
 
-Use an `examiner` scratch agent (the `scratch-agents` skill) for sediment and verify when one can run;
+Use an `examiner` helper for sediment and verify when one can run;
 the examiner returns findings and the primary agent applies bundle edits. Otherwise separate the
 rounds with a fresh read. Bump timestamps for meaningful corrections, add one newest-first
 `log.md` entry per round, and validate after each. Completion means all three rounds are logged

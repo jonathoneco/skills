@@ -22,7 +22,8 @@ Agents call the MCP tool. The `executor` CLI rides a device login that lapses, a
 ## Inside `execute`
 
 - Paths take the form `<integration>.user.<connection>.<op>`. Call one by its full path in brackets, since a hyphen in dotted access parses as subtraction. Get an unfamiliar path's input once from `tools.describe.tool({path})`.
-- A call returns `{ ok: true, data }` or `{ ok: false, error: { code, message } }`. Check `r.ok` before reading `r.data`, and return an error as it came.
+- A call returns `{ ok: true, data }` or `{ ok: false, error: { code, status, message } }`. Check `r.ok` before reading `r.data`, and return an error as it came. `status` is the upstream HTTP status, missing when Executor itself failed or timed out: retry 429, 5xx and status-less failures; a 400 or 422 is the caller's own bad request.
+- Executor cuts an `execute` result's text at 30,000 characters, mid-string, so the text of a larger result never parses as JSON: return only what you need. Inside Hermes, a spilled result's file ends in a `<mcp-result-metadata>` block whose `structuredContent.result` holds the whole return value as valid JSON; parse that block.
 - Return only the fields the step needs; the whole return value enters your context. Batch related reads in one `execute` and return one compact object.
 - Reach the network only through connection tools, since `execute` has no `fetch`. Find tools with `tools.search`; enumerating the `tools` proxy throws.
 

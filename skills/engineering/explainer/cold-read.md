@@ -6,7 +6,7 @@ Write the profile to `COLD-<n>-profile.md` in the build folder; `n` counts cold 
 
 The **reader's copy** comes from `render <suite> --to cold` ([build.md](build.md), Commands): `out/cold/cold.md` holds the pages' text in reading order, each figure replaced by its caption, its text alternative and a picture of its still frame (shot at 1440 px wide in the light theme), each table kept with its cells, and no fonts, styles, or scripts. Copy it to `COLD-<n>-page.md` in the build folder, and its `stills/` beside it as `COLD-<n>-stills/`, whatever their size. The built page is mostly encoded fonts and markup, which a helper cannot read as a page.
 
-Start one helper as the `scratch-agents` skill says, in its `explainer cold read` role, with this brief:
+Start one `reader` helper in a fresh context, with this brief:
 
 ```text
 You are the reader the profile describes. These files are everything that reader has: <COLD-n-page.md path>, the still-frame pictures in <COLD-n-stills path>, and <COLD-n-profile.md path>. Read those files and nothing else, no other file, note, repo, or search. Change no file except <COLD-n.md path>.

@@ -166,7 +166,7 @@ FIX = [line("prompt", "Fix the importer.")]
 SKILL_DIR = tempfile.mkdtemp()
 open(os.path.join(SKILL_DIR, "SKILL.md"), "w").close()
 IN_HERDR = True
-check("helper: built-in tool in Herdr", "pretool", pre("Agent", {"prompt": "x", "model": "sonnet"}), FIX, "scratch-agents")
+check("helper: built-in tool in Herdr", "pretool", pre("Agent", {"prompt": "x", "model": "sonnet"}), FIX, "start this helper as a scratch agent")
 check("helper: herdr start without model", "pretool", sh("herdr agent start r1 --kind claude --pane w1:p1"), FIX, "model and effort")
 check("helper: herdr start with model and effort", "pretool",
       sh("herdr agent start r1 --kind claude --pane w1:p1 -- --model sonnet --effort medium"), FIX, "")
@@ -260,7 +260,7 @@ check("codex pathname listing not loaded", "prompt", {"prompt": BUG}, [cx_prompt
 check("codex new task resets edits", "stop", STOP, cx_loaded + [cx("UserMessage", content=[{"text": "Print the current branch."}])], "")
 check("codex marker suppresses repeat", "pretool", {"tool_name": "apply_patch", "tool_input": {"command": patch}}, cx_edited + [{"type": "response_item", "payload": {"type": "message", "role": "developer", "content": [{"text": "[mode] first-edit: x"}]}}], "")
 IN_HERDR = True
-check("codex spawn_agent in Herdr", "pretool", pre("spawn_agent", {"message": "x"}), [cx_prompt], "scratch-agents")
+check("codex spawn_agent in Herdr", "pretool", pre("spawn_agent", {"message": "x"}), [cx_prompt], "start this helper as a scratch agent")
 IN_HERDR = False
 check("codex skill patch", "pretool", pre("apply_patch", {"command": patch.replace(R + "/a.py", R + "/CLAUDE.md")}), cx_edited, "writing-for-agents")
 check("codex shell script patch", "pretool", pre("apply_patch", {"command": patch.replace(R + "/a.py", R + "/run.sh")}), cx_edited, "shellcheck")

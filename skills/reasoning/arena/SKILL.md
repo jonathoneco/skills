@@ -13,12 +13,12 @@ Every candidate gets the same prompt, so the prompt is the contract.
 
 1. State the artifact each candidate is producing.
 2. Derive the rubric, 3-6 concrete gradeable criteria for what success looks like on *this* task. It is the picker's tool in Phase D. Candidates only see the task.
-3. Pick the runners. Start each as a scratch agent, per the `scratch-agents` skill. For a judgment call or a review, run them as a `panel` (the `scratch-agents` table), since models of one family share blind spots. Use one row N times when the work is generation-bound rather than judgment-sensitive, picked by how hard you predict the task is. Spawn more runners when the arena covers multiple design directions.
+3. Pick the runners. For a judgment call or a review, run them as a `panel`, since models of one family share blind spots. Use one role word N times when the work is generation-bound rather than judgment-sensitive, picked by how hard you predict the task is. Spawn more runners when the arena covers multiple design directions.
 4. Give each candidate its own output location (a git worktree where possible, otherwise `/tmp/arena-<slug>/candidate-<n>/`), per **principle-separate-before-serializing-shared-state**.
 
 ## Phase B: Fan out
 
-Start all N scratch agents in the background (the `scratch-agents` skill), each with the task, the path to the shared grounding, its own output path, and instructions to produce the artifact and a short rationale naming the alternatives it considered and what it rejected.
+Start all N runners in the background, each with the task, the path to the shared grounding, its own output path, and instructions to produce the artifact and a short rationale naming the alternatives it considered and what it rejected.
 
 A runner's brief names what it reads and never loads the calling skill.
 
@@ -26,7 +26,7 @@ If a candidate produces no output, proceed with N-1 and note the dropout.
 
 ## Phase C: Cross-judge
 
-After all Phase B candidates complete, start the `arena judge` (the `scratch-agents` table) as one scratch agent, told to change no file. It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with your reading in Phase D. Don't start it while candidates are still writing.
+After all Phase B candidates complete, start one `judge` from the family that wrote fewer candidates (on a tie, not this session's), told to change no file. It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with your reading in Phase D.
 
 ## Phase D: Pick a base
 

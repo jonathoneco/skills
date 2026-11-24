@@ -10,7 +10,7 @@ description: Read a profile, trace, heap snapshot, or spindump down to a cited c
 Once captured, the artifact is a fixed dataset, read it, don't re-run it. Keep tooling generic: a DevTools or trace parser for cpuprofile and `.json.gz`, a text editor for a spindump, your heap tooling for a heapsnapshot.
 
 1. If no capture exists yet, capture the live signal on the matching surface through the repo's verification skill, or drive the real surface when the repo has none: a CPU profile for a spinning process, a heap snapshot for a leak, a CDP trace for a visual glitch. A real artifact, not a guess.
-2. Identify the format and load it with the right tool. Parse large artifacts in a scratch agent the `scratch-agents` skill starts (the **principle-guard-the-context-window** skill) and keep the reduced finding in the main thread.
+2. Identify the format and load it with the right tool. Parse large artifacts in an `examiner` helper (the **principle-guard-the-context-window** skill) and keep the reduced finding in the main thread.
 3. Transform the raw artifact into a form you can query. Dump the trace or heap snapshot into sqlite, one row per sample, frame, or node. Reach the queryable shape before you read.
 4. Narrow to the cause. Query for the frames that hold the most time and walk the call tree to the hot path. For a leak, follow the retainer chain from the leaked object to a GC root. For a spindump, find the thread stuck on-CPU or blocked and its wait reason.
 5. Attribute to source. Map the hot frame to file, symbol, and line via the artifact's own symbols. A frame with no source mapping is not yet a diagnosis. Resolve the symbols, or say plainly the artifact does not carry them.

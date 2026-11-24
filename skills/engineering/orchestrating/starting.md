@@ -20,7 +20,7 @@ Done when the ticket's base SHA matches `main` in its paths, the ticket has no R
 
 Before the ticket goes out, list the tree of `origin/main` once and confirm that every path or project the ticket names as a destination exists there. A missing destination sends the ticket to the `tracker-hygiene` skill's grooming.
 
-Give the ticket to the running builder whose concern it fits. A ticket that fits no running builder's concern starts a new builder, on a model that fits the weight of its concern's tickets (the `ticket` skill's Estimate, the `scratch-agents` skill's role table).
+Give the ticket to the running builder whose concern it fits. A ticket that fits no running builder's concern starts a new builder: `light-code` when every ticket in its concern is small and settled (the `ticket` skill's Estimate), else `code`.
 
 Send the ticket with its start constraints, so the first build has them. News that arrives mid-ticket goes to the builder as an ordinary message through the engine. It reaches the same agent session without stopping the work; the agent reads it when its runtime next takes input. Stop a builder only to retire it. When the ticket has a `Merges after` line and the engine can hold a ready PR until a named PR lands and then catch the branch up, name that PR with the ticket; orchestrators otherwise relay each landing by hand. A brief built by copying another builder's brief is searched for the source's names, such as its bot, its secret names, and its ticket ID, before it is sent; a copied brief once named another bot's token. A new builder's first prompt carries the **worker brief** every builder gets:
 

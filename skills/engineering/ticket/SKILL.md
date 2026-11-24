@@ -34,7 +34,7 @@ The run is done when step 1 finds no check is needed, or when the ledger has thi
 3. **Read as the builder.** *Principles: `principle-test-behavior-not-implementation`.* Each place you would guess, look outside, or reopen a decision is a defect. Each test proves the decision it names, passes that principle's check (would it still pass if every import returned `undefined`?), and gets past every guard in the code it runs through (grep the function under test for its guards). Every rule in contents.md holds, a migration lever with no deleting ticket is a defect, and the ticket's kind fits who sees the change and holds its kind's slice; a wrong kind is a defect, fixed in the draft. Done when every defect is fixed in the draft, or written as a `## DECISION PENDING` with the draft set to `Draft: incomplete`.
 4. **Record.** Set `Draft: ready` when nothing is pending, and append the ledger row. Done when the row is written.
 
-A check runs as a `ticket checker` scratch agent (the `scratch-agents` skill), one per ticket, each editing only its own draft file and appending only its own row to the ledger.
+A check runs as an `examiner` helper, one per ticket, each editing only its own draft file and appending only its own row to the ledger.
 
 ## Estimate
 

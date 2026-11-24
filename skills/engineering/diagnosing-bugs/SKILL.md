@@ -129,7 +129,7 @@ Done when one hypothesis survives and runtime evidence shows its mechanism.
 
 *Principles: `principle-fix-root-causes`, `principle-sequence-verifiable-units`, `principle-prove-it-works`.*
 
-The smallest change the evidence supports ships, at the root cause the surviving hypothesis names. If the fix crosses a function boundary, run the `architect` skill first. To hand the fix to a helper, start it as the `scratch-agents` skill says, with a specific scope; you stay the lead and verify its work.
+The smallest change the evidence supports ships, at the root cause the surviving hypothesis names. If the fix crosses a function boundary, run the `architect` skill first. To hand the fix to a `code` helper, give it a specific scope; you stay the lead and verify its work.
 
 Write the regression test **before the fix**, but only if there is a **correct seam** for it.
 
