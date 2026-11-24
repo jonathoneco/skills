@@ -12,7 +12,7 @@ The `why` skill answers why code is shaped the way it is.
 ## Steps
 
 1. **Size the question.** A narrow one (one function, one module, one utility) is traced in this session. A wide one (a subsystem across files or services, a cross-cutting feature) splits into two to four angles, each a distinct slice, such as the write path, the read path, and the background jobs. When the scope is unclear, state your reading and go on. When the size is in doubt, treat it as narrow. Done when the question is narrow, or its angles are named.
-2. **Trace.** For each angle from step 1, in this session or one read-only subagent each in the `how explorer` role (the `scratch-agents` skill's table):
+2. **Trace.** For each angle from step 1, in this session or one read-only subagent each (a `data-reader`, or an `examiner` when a change builds on the trace):
    1. Find the entry point: the request, command, job, or event that starts it.
    2. Follow the calls, reading each function rather than guessing from its name, and note what data passes and how it changes.
    3. Read the key types, services, and interfaces the flow runs through.

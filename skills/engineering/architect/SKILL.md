@@ -29,7 +29,7 @@ Skip Phase A only when the work is genuinely greenfield with no surrounding syst
 
 Run the **arena** skill with the design-sketch task and the Phase A grounding artifacts. Pass `references/runner-prompt.md` as each runner's prompt. Each candidate produces a design package shaped per `references/rationale-template.md`.
 
-Start three runners, in place of the runners arena would pick for itself. Each runner otherwise follows the **arena** skill's runner step.
+Start three runners in place of arena's: a `frontier` `panel` and a `writer`. Each runner otherwise follows the **arena** skill's runner step.
 
 Design it twice. Require at least two structurally distinct candidates before synthesis, even when the first looks sufficient. This is the `principle-exhaust-the-design-space` skill made concrete. Whole-shape alternatives, not point fixes inside one shape.
 

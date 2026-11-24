@@ -19,7 +19,7 @@ description: Make a known path faster, tying every fix to a before-and-after mea
    7. Do it cheaper.
 
    When an earlier mantra meets the target, stop.
-3. Plan the fix from the trace. If it crosses a function boundary, `architect` first. Delegate implementation to a scratch agent at the `scratch-agents` skill's code worker row. Review the diff. Capture a post-fix trace.
+3. Plan the fix from the trace. If it crosses a function boundary, `architect` first. Delegate implementation to a `code` helper. Review the diff. Capture a post-fix trace.
    Apply **principle-sequence-verifiable-units**, verifying each attempt before trying the next.
 4. Parse and compare the artifacts with the **trace-forensics** skill (JSON to sqlite, diff). "Inconclusive" or wrong-surface is not a pass. Flag it.
 5. Cite the measurement in the PR.

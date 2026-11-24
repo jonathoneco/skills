@@ -7,7 +7,7 @@ description: Use when findings come back from a review, an investigation, or a w
 
 The bar: every finding ends in one bucket with a reason, the user sees only the calls and proposals that are theirs, and nothing on the never-skip list is dropped by an agent alone.
 
-Findings come from anywhere: your own reading, a review run (a scratch agent, the `scratch-agents` skill), a review bot's comments, a worker's question, or the user. The sort is the same.
+Findings come from anywhere: your own reading, a helper's review run, a review bot's comments, a worker's question, or the user. The sort is the same.
 
 ## 1. Frame
 

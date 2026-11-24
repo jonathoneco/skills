@@ -35,8 +35,7 @@ Trust what is on disk over your training data and earlier sessions. A one-off qu
 - Read the root docs the repo carries (`AGENTS.md`, `ARCHITECTURE.md`, `DESIGN.md`, `DEVELOPMENT.md`, `GLOSSARY.md`), the parts of `docs/` the change touches, and open work in the tracker the repo names. Open the files themselves, not just their names.
 - Keep reading until you can name the files the change touches and the decisions that constrain it.
 - Send broad reading (all of `docs/`, "find every place that does X") to parallel sub-agents, briefed like a cold colleague: goal, scope, and the shape of the report. Build on their summaries.
-- When you delegate, start each helper as a scratch agent, as the `scratch-agents` skill says.
-- Pick its model from that skill's role table, and name the model and effort in every spawn.
+- When you delegate, name the model and effort in every spawn: a light model for `data-reader`, `reader`, `light-code` and `prose`, the frontier one for `frontier`, a strong one otherwise.
 - Search the repo before asking the user, and say what you checked when you do ask. A question still beats a guessed edit.
 - When a design has several plausible shapes, run the `grilling` skill with the user before planning.
 - Where a spec, ticket, or ruling has settled something, treat it as decided and build on it. Where nothing has, work out the whole change before editing: which files, in what order, and what shows each step worked. Say the plan when it is yours to make rather than already settled.
