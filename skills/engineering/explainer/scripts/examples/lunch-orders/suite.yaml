@@ -1,0 +1,64 @@
+# A built example: the office lunch order, invented to exercise every field the kit reads.
+title: Lunch orders
+reader: Sam, the office manager, who sets when lunch orders close and has not seen the order log
+read_at: Order log read 2026-11-20, a built example with no real records.
+pages:
+  - id: index
+    title: Start here
+  - id: calls
+    title: Your calls
+    question: What do you rule on, and what does each answer change?
+    holds: One open call, one waiting on the caterer, and the settled ones.
+    thread: rules
+  - id: how
+    title: How an order travels
+    question: Where does an order wait, and who sees it?
+    holds: The four stages, who acts at each, and the late orders.
+    thread: flow
+palette:
+  light:
+    paper: "#f7f6f2"
+    ink: "#1f2328"
+    ink2: "#545b64"
+    rule: "#d8d5cc"
+    card: "#ffffff"
+    codebg: "#efede6"
+    accent: "#2f6b4f"
+    critical: "#b3261e"
+    warning: "#8a6100"
+    good: "#2e7a4c"
+    waiting: "#56708a"
+    th-rules: "#7a4f9e"
+    th-flow: "#2f6b9e"
+    kitchen: "#f3e7d3"
+  dark:
+    paper: "#14171a"
+    ink: "#e3e6e8"
+    ink2: "#a7b0b8"
+    rule: "#2f363c"
+    card: "#1a1f23"
+    codebg: "#20262b"
+    accent: "#7cc4a0"
+    critical: "#ff8f85"
+    warning: "#e9b44c"
+    good: "#79c597"
+    waiting: "#9bb4cc"
+    th-rules: "#c3a0e6"
+    th-flow: "#8fb7e6"
+    kitchen: "#3a2f20"
+type:
+  text: source-serif-4
+  heading: ibm-plex-sans
+  mono: jetbrains-mono
+key:
+  - mark: person
+    label: a person acts
+    swatch: '<svg viewBox="0 0 34 16" aria-hidden="true"><circle class="person" cx="17" cy="5" r="3.5"/><path class="person" d="M10 15a7 6 0 0 1 14 0Z"/></svg>'
+  - mark: step
+    label: a step that holds an order
+    swatch: '<svg viewBox="0 0 34 16" aria-hidden="true"><rect class="step" x="2" y="2" width="30" height="12" rx="2"/></svg>'
+  - mark: late
+    label: a late order
+    swatch: '<svg viewBox="0 0 34 16" aria-hidden="true"><path class="late" d="M2 8H30"/></svg>'
+notion:
+  accent: green

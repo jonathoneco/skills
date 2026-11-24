@@ -1,0 +1,10 @@
+# A suite built to break each rule check enforces, one break per element.
+title: Broken on purpose
+reader: The kit's test
+pages:
+  - id: broken
+    title: Broken
+palette:
+  light: {paper: "#fff", ink: "#111", ink2: "#555", rule: "#ccc", card: "#fafafa", codebg: "#eee", accent: "#06c", critical: "#c00", warning: "#960", good: "#070", waiting: "#567"}
+  dark: {paper: "#111", ink: "#eee", ink2: "#aaa", rule: "#333", card: "#181818", codebg: "#222", accent: "#6af", critical: "#f88", warning: "#eb5", good: "#7c7", waiting: "#9bc"}
+type: {text: source-serif-4, heading: ibm-plex-sans, mono: jetbrains-mono}

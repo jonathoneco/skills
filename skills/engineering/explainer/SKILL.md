@@ -13,8 +13,9 @@ You write every page yourself, as a teacher who knows what this one reader has n
 - When the page will go to Notion, because the ask says so or the install's rules send it there, read [notion.md](notion.md) before step 3.
 - A draft or report made before this skill was called is source material. Every step still runs.
 - Reading across a repo goes to an evidence run. A page with four or more diagrams sends each to a diagram run, side by side. For either, read [runs.md](runs.md).
+- A change to this skill leaves existing artifacts as they are; rebuild one only when the user asks.
 
-Every file of the work lives in one **build folder** under the effort's notes: each `<page>.html` and `<page>.context.md`, `PUBLISHED.md` with the artifact's id and links on its host, and each helper run's brief and result. Screenshots and renders of 1 MB or more go to `~/.local/state/agent-runs/<effort>/`, except the cold read's, which stay in the build folder.
+Every file of the work lives in one **build folder** under the effort's notes: the suite's sources ([build.md](build.md)), `PUBLISHED.md` with the artifact's id and links on its host, and each helper run's brief and result. The kit's renders go to `~/.local/state/agent-runs/<effort>/out/` ([build.md](build.md), Commands), and so do other screenshots and renders of 1 MB or more, except the cold read's, which stay in the build folder.
 
 ## 1. Frame
 
@@ -72,9 +73,9 @@ Done when the page's text and its agent context are written, and each item on th
 
 ## 4. Build
 
-Build the page as [build.md](build.md) says, from the design plan it asks for, written into the notes before any page code. Draw each frame of the storyboard as [figures.md](figures.md) says.
+Build the page as [build.md](build.md) says, from the design plan it asks for, written into the notes before any page code. Draw each frame of the storyboard as [figures.md](figures.md) says. Read `scripts/components/` before writing a page; a part a second page could use becomes a component.
 
-Done when each frame of the storyboard is on the page and the browser shows the page whole on a 1440 × 900 screen and on a 390 × 844 screen, with the title on the first screen and no sideways scroll at both, in both themes, with the chosen typefaces loaded, in every state of each interactive figure.
+Done when each frame of the storyboard is on the page and `render <suite> --to check` passes ([build.md](build.md), Check).
 
 ## 5. Check
 
@@ -95,6 +96,6 @@ The user comments on the page. For each round:
 - Read every open thread. An objection to how a page reads often shows reasoning skipped in step 2.
 - Record each ruling in the notes. Fold it into the page where it belongs in the argument, so the page reads as if written with the ruling known. Remove what the ruling makes stale.
 - When the user kills a line, find every line of that kind on every page.
-- Rebuild, run step 5's facts and prose checks, publish a new version, and reply on each thread with what changed.
+- Fold each ruling into its source file, such as a call's `state` and `ruling` in `calls.yaml`, and render again; only the pages that cite it rebuild. Run step 5's facts and prose checks, publish a new version, and reply on each thread with what changed.
 
 Done when the user has the link or the path and, after each round, every open thread has a reply that says what changed.

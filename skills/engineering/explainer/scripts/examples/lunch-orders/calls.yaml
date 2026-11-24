@@ -1,0 +1,72 @@
+- id: cutoff
+  label: "1"
+  question: When do lunch orders close?
+  small: false
+  state: open
+  options:
+    - label: A · 10:30
+      buys: The caterer gets the full list an hour before it cooks.
+      changes: Staff who arrive after 10:30 miss lunch that day.
+      cost: Nothing to build; one email to staff.
+    - label: B · 11:00
+      buys: Late arrivals can still order.
+      changes: The caterer cooks from a list 30 minutes later, and asked for 45 minutes of warning.
+      cost: A second call to the caterer each day.
+  pick:
+    label: A
+    why: The caterer's lead time decides it, and few orders come after 10:30.
+    measure: count orders refused after the cutoff for two weeks.
+    reverse: if more than 1 in 10 orders is refused, move to B.
+- id: caterer-window
+  label: R1
+  question: Will the caterer take a second, smaller list at 11:15?
+  small: false
+  state: waiting
+  waits_on: the caterer
+  options:
+    - label: A · Yes
+      buys: Late orders get lunch.
+      changes: Sam sends two lists a day.
+      cost: A fee per second list.
+    - label: B · No
+      buys: One list, one call.
+      changes: Late orders are refused, as today.
+      cost: None.
+  pick:
+    label: A
+    why: It is the only option that feeds the late arrivals.
+    reverse: if the fee is over the cost of one lunch, pick B.
+- id: menu-day
+  label: S1
+  question: Which day does the menu change?
+  small: true
+  state: settled
+  options:
+    - label: Monday
+      text: The week starts with a new menu.
+    - label: Friday
+      text: Staff see next week's menu before the weekend.
+  pick:
+    label: Monday
+    why: It matches the caterer's own week.
+  ruling:
+    text: Monday, as the caterer asked.
+    date: 2026-11-18
+    by: Sam
+  supersedes: menu-day-old
+- id: menu-day-old
+  label: S0
+  question: Does the menu change every week?
+  small: true
+  state: settled
+  options:
+    - label: Weekly
+      text: A new menu each week.
+    - label: Monthly
+      text: One menu a month.
+  pick:
+    label: Weekly
+  ruling:
+    text: Weekly.
+    date: 2026-10-02
+    by: Sam

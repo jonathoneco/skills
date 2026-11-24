@@ -1,0 +1,17 @@
+<span color="gray">Lunch orders · a built example</span>
+# Orders close at 10:30, and the late ones need a second list
+<callout icon="🧭" color="green_bg">
+	The caterer needs 45 minutes of warning, so lunch orders close at 10:30. Few orders come later, 4 in 100, but each one is refused today. A second list at 11:15 would feed them, and it waits on the caterer's answer.
+</callout>
+### What you decide after reading
+1. Rule on the cutoff: 10:30 or 11:00.
+2. Ask the caterer whether it takes a second list at 11:15.
+![Staff place an order, it joins the day's list, the list goes to the caterer at the cutoff, and an order after the cutoff is refused.](stills/index-figure-flow.png)
+**An order waits at two steps, and only the cutoff decides whether it is late.** The order log stamps each order when it reaches the list.
+## Read in this order
+1. **Your calls.** What do you rule on, and what does each answer change? One open call, one waiting on the caterer, and the settled ones. → <mention-page url="kit:page/calls"/>
+2. **How an order travels.** Where does an order wait, and who sees it? The four stages, who acts at each, and the late orders. → <mention-page url="kit:page/how"/>
+<callout icon="⚠️" color="red_bg">
+	**Built example.** Every count on these pages is invented to show the kit's blocks.
+</callout>
+<span color="gray">Order log read 2026-11-20, a built example with no real records. For your agent: the sources, record ids and grades behind this page are in the child page "Agent context: Start here", at the foot of this page.</span>

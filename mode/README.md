@@ -48,7 +48,7 @@ The hooks run from this checkout, `~/src/skills`, so a change to the mode lands 
 - add `--codex` before each subcommand;
 - use the matcher `apply_patch|Bash|spawn_agent|mcp__.*` for `PreToolUse` and `apply_patch|Bash` for `PostToolUse`.
 
-Codex runs a hook only once it's trusted, and trust is pinned to each hook entry's text, not to the script it runs. The setup script ([`setup-skills`](../skills/engineering/setup-skills/SKILL.md)) writes that pin for the working-mode entries; a hand-made entry asks to be trusted on Codex's next start. A change to `mode.py` or `routes.py` doesn't need trusting again. A change to the hook entries in `hooks.json` does.
+Codex runs a hook only once it's trusted, and trust is pinned to each hook entry's text, not to the script it runs. Whatever installs the working-mode entries writes that pin: the setup script ([`setup-skills`](../skills/engineering/setup-skills/SKILL.md)) on a teammate's machine, the dotfiles bootstrap on the user's. A hand-made entry asks to be trusted on Codex's next start. A change to `mode.py` or `routes.py` doesn't need trusting again. A change to the hook entries in `hooks.json` does.
 
 **To turn the mode off,** remove the hook entries. The Working mode section in the global rules still has the agent load principles at their moments, without the reminders.
 

@@ -1,0 +1,16 @@
+- id: late-share
+  value: 4 in 100
+  source: Order log, 2026-11-03 to 2026-11-14, orders stamped after 10:30 over all orders (built example)
+  grade: observed
+- id: orders-per-day
+  value: "38"
+  source: Order log, the same two weeks, mean orders per working day (built example)
+  grade: observed
+- id: caterer-lead
+  value: 45 minutes
+  source: The caterer's email of 2026-11-12, as Sam forwarded it (built example)
+  grade: supported
+- id: refused-cost
+  value: about 2 lunches a week
+  source: late-share times orders-per-day times 5 days, rounded (built example)
+  grade: inferred

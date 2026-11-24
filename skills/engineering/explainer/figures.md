@@ -27,9 +27,15 @@ These hold across every diagram on a page, so the reader learns the marks once:
 
 ## Drawing
 
-Draw each diagram as the `diagrams` skill says for a page, with the design plan's palette and typefaces.
+Draw each diagram as the `diagrams` skill says for a page, with the design plan's palette and typefaces. A diagram lives in `figures/<id>/` of the suite, and the page places it with `<x-figure id="<id>"></x-figure>`. The folder holds `meta.yaml` (`caption`, the claim; `note`, the rest of the caption; `alt`; `marks`; and for an interactive figure `still` and `states`) and one of three drawing forms:
+
+- `figure.svg`: one drawing for every width. `min_width` in `meta.yaml` sets the width below which it scrolls instead of shrinking.
+- `wide.svg` plus `narrow.svg`: the kit shows the narrow drawing when the figure's container is narrower than `narrow_below` (560 px unless `meta.yaml` says).
+- `figure.html`: HTML and CSS, for a grid form such as a matrix, a timeline, or lanes of cards.
+
+The page's key of marks is built from `suite.yaml`'s `key` and each figure's `marks`.
 
 - Prefix every SVG id with the figure's name, such as `step2-write`: all figures on a page share one id space.
 - At 390 px wide, every label renders at 12 px or larger. A diagram whose labels would be smaller is redrawn top to bottom, for every width.
-- A figure takes interaction, such as stepping through stages, picking a case, or a switch between designs, where the `diagrams` skill says it helps. Its still frame shows the caption's claim, because a reader of the caption walk, a print, or a Notion copy sees only that frame. The text of every other state goes into the agent context.
+- A figure takes interaction, such as stepping through stages, picking a case, or a switch between designs, where the `diagrams` skill says it helps. Its still frame, the state it shows before anyone touches a control, shows the caption's claim, because a reader of the caption walk, a print, or a Notion copy sees only that frame. `meta.yaml` names it in `still`, and gives each other state's `name`, `text`, and the `click` selector that reaches it; the kit adds those texts to the agent context. An interactive island outside a figure names its still frame in a `data-still` attribute.
 - A figure that runs the reader's own input, such as a simulation, is plain script in the page. It opens at the moment the problem shows, is labelled illustrative, and shows its parameters.

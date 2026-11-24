@@ -1,0 +1,16 @@
+# Agent context: Your calls
+
+- Call `cutoff` is Sam's. Change its state in calls.yaml when Sam rules.
+
+## Records this page cites (added by the kit)
+
+- Call `cutoff` (open): When do lunch orders close? Pick: A.
+- Call `caterer-window` (waiting on the caterer): Will the caterer take a second, smaller list at 11:15? Pick: A.
+- Call `menu-day` (settled by Sam): Which day does the menu change? Pick: Monday. Ruling, 2026-11-18, Sam: Monday, as the caterer asked.
+- Call `menu-day-old` (settled by Sam): Does the menu change every week? Pick: Weekly. Ruling, 2026-10-02, Sam: Weekly.
+
+| Fact | Value | Source | Grade |
+|---|---|---|---|
+| `orders-per-day` | 38 | Order log, the same two weeks, mean orders per working day (built example) | observed |
+| `refused-cost` | about 2 lunches a week | late-share times orders-per-day times 5 days, rounded (built example) | inferred |
+| `late-share` | 4 in 100 | Order log, 2026-11-03 to 2026-11-14, orders stamped after 10:30 over all orders (built example) | observed |

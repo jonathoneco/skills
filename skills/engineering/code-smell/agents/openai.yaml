@@ -1,0 +1,3 @@
+interface:
+  display_name: "Code smell"
+  short_description: "Trace a hunch to the mechanism behind it"

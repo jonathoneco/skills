@@ -8,13 +8,16 @@ A page goes in the Artifacts database the ask names, or the default the install'
 
 ## Build
 
-- Write each page's source in Notion's markdown (the `notion-pages` skill), as `<page>.md` beside the notes; the hub is `index.md`. The build folder holds the same files with `.md` in place of `.html`, and keeps `PUBLISHED.md` with each page's id and link.
-- Build each page as a row made from its shape's template (Templates below), with its Shape property set to the shape, and run the `notion-pages` skill's check on it.
-- Keep what [build.md](build.md)'s Depth and Agent entry rules put on a page, using the block types below: a toggle for optional depth, and a link to the agent context child page. Typefaces and themes are Notion's.
-- The agent context is a child page titled "Agent context: <page title>", built from `<page>.context.md`.
-- On the hub, each page in the reading order is a page mention; a fact stated on another page is linked with a mention.
+- `render <suite> --to notion` ([build.md](build.md), Commands) writes, in `out/notion/`, each page's source in Notion's markdown as `<page>.md` (the hub is `index.md`), its agent context as `<page>.agent-context.md`, the still frame of each figure and island in `stills/`, and `pages.json`, which lists each page's uploads, its links to other pages, and each place left for you.
+- Until the image check in Diagrams passes, redraw each figure as Diagrams says and skip its picture: the HTML block takes the place of the image line that names its `stills/<file>`. Once the check passes, upload each picture `pages.json` lists, and put its link where the markdown names `stills/<file>`. Replace each `kit:page/<id>` with that page's Notion link once the page exists. Write by hand each place marked `⟦kit: …⟧`.
+- Build each page as a row made from its shape's template (Templates below), with its Shape property set to the shape, and run the `notion-pages` skill's check on it. The build folder keeps `PUBLISHED.md` with each page's id and link.
+- The agent context is a child page titled "Agent context: <page title>", built from `<page>.agent-context.md`.
 
-The `notion-pages` skill's check stands in for step 4's browser look. Done when every page and its agent context are built from source files, the `notion-pages` skill's check holds on each, and a handoff's privacy grep passes.
+The `notion-pages` skill's check stands in for step 4's browser look. Done when every page and its agent context are built from the kit's files, the `notion-pages` skill's check holds on each, and a handoff's privacy grep passes.
+
+## Translate
+
+To turn an existing HTML suite into Notion, run `render <suite> --to notion` on a suite in the kit's sources (an older hand-built page is ported first), upload the images it lists, and write by hand only the places it marks.
 
 ## Blocks
 
@@ -44,7 +47,7 @@ Notion has nine text and background colours plus default. Map the subject's pale
 
 ## Diagrams
 
-The 670 × 500 box an HTML block lives in is the `notion-pages` skill's. Start every diagram from its `html-block-template.html`, which fills the box, follows Notion's theme, and fills every shape, and draw inside its `<g id="figure">`. Its `viewBox` is that box, so draw in those units; its colour tokens carry both themes, and it defines a class and an arrowhead for each mechanism kind. Save each diagram as `diagrams/<name>.html` and its caption as `diagrams/<name>.caption`; the caption goes on the block, not inside the frame. For Notion, [figures.md](figures.md) holds except its Drawing section: draw with the box and classes in the `notion-pages` skill's `html-block-template.html`. A diagram run uses these same output paths, and its brief carries that template instead of the `diagrams` skill's `drawing.md`.
+The 670 × 500 box an HTML block lives in is the `notion-pages` skill's. Start every diagram from its `html-block-template.html`, which fills the box, follows Notion's theme, and fills every shape, and draw inside its `<g id="figure">`. Its `viewBox` is that box, so draw in those units; its colour tokens carry both themes, and it defines a class and an arrowhead for each mechanism kind. Save each diagram as `diagrams/<name>.html` and its caption as `diagrams/<name>.caption`; the caption goes on the block, not inside the frame. The kit's still frames replace this redraw once the image check passes: upload one still frame, a PNG in the light theme, as an image block in the user's workspace, and look at it in Notion's light theme and in its dark theme, where the picture stays light. For Notion, [figures.md](figures.md) holds except its Drawing section: draw with the box and classes in the `notion-pages` skill's `html-block-template.html`. A diagram run uses these same output paths, and its brief carries that template instead of the `diagrams` skill's `drawing.md`.
 
 ## Templates
 

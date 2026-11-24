@@ -1,0 +1,12 @@
+# Agent context: Lunch orders
+
+The suite is a built example. Its counts come from no real log.
+
+- The cutoff and the second list are the two asks; page `calls` holds both calls.
+
+## Records this page cites (added by the kit)
+
+| Fact | Value | Source | Grade |
+|---|---|---|---|
+| `caterer-lead` | 45 minutes | The caterer's email of 2026-11-12, as Sam forwarded it (built example) | supported |
+| `late-share` | 4 in 100 | Order log, 2026-11-03 to 2026-11-14, orders stamped after 10:30 over all orders (built example) | observed |
