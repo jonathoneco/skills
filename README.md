@@ -4,6 +4,8 @@ Agent skills for Claude Code and Codex: hand-written ones, plus a pinned set of 
 
 The hand-written skills live here as ordinary folders, each with the git history it had in the repo it came from. Matt Pocock's skills and Cursor's pstack skills are copied in and edited here; [`vendored.md`](./vendored.md) records where each came from and the upstream commit it was last brought up to. The remaining third-party skills are not copied in. This repo pins them in [`skills-lock.json`](./skills-lock.json), and the `skills` CLI fetches them at the pinned commit.
 
+This repo is published from a private source repo, and team PRs are welcome: each one merged here is brought back into the source before the next publish.
+
 ## Layout
 
 Skills sit in category folders under `skills/`, the same shape as [mattpocock/skills](https://github.com/mattpocock/skills):
