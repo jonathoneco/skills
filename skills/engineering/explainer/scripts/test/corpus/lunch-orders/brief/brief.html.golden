@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><title>Brief · Lunch orders</title><style>@font-face{font-family:'Source Serif 4';font-style:normal;font-weight:400 700;font-display:block;src:url(data:font/woff2;base64,<font>) format('woff2')}
+@font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:400 700;font-display:block;src:url(data:font/woff2;base64,<font>) format('woff2')}
+:root{--paper:#f7f6f2;--ink:#1f2328;--ink2:#545b64;--rule:#d8d5cc;--card:#ffffff;--codebg:#efede6;--accent:#2f6b4f;--critical:#b3261e;--warning:#8a6100;--good:#2e7a4c;--waiting:#56708a;--th-rules:#7a4f9e;--th-flow:#2f6b9e;--kitchen:#f3e7d3;--font-text:"Source Serif 4",Georgia,serif;--font-head:"IBM Plex Sans",system-ui,sans-serif;--font-mono:"JetBrains Mono",ui-monospace,monospace;}
+@media (prefers-color-scheme: dark){:root{--paper:#14171a;--ink:#e3e6e8;--ink2:#a7b0b8;--rule:#2f363c;--card:#1a1f23;--codebg:#20262b;--accent:#7cc4a0;--critical:#ff8f85;--warning:#e9b44c;--good:#79c597;--waiting:#9bb4cc;--th-rules:#c3a0e6;--th-flow:#8fb7e6;--kitchen:#3a2f20;}}
+nav.rail a.t-rules,ol.read li.t-rules{border-left-color:var(--th-rules)}.th-chip.th-rules{background:var(--th-rules)}nav.rail a.t-flow,ol.read li.t-flow{border-left-color:var(--th-flow)}.th-chip.th-flow{background:var(--th-flow)}
+/* The kit's layout and components. Every colour and face is a token from suite.yaml; nothing here names a value. */
+*{box-sizing:border-box}
+html{background:var(--paper);color:var(--ink);scroll-behavior:smooth}
+body{margin:0;font:17px/1.6 var(--font-text);font-optical-sizing:auto}
+
+/* frame: the rail beside the main column, folded above the title when the window is narrow */
+.shell{display:grid;grid-template-columns:15.5rem minmax(0,1fr);max-width:1400px;margin:0 auto}
+.shell.no-rail{display:block}
+nav.rail{position:sticky;top:0;align-self:start;max-height:100vh;overflow:auto;padding:2.4rem 1rem 2rem 1.4rem;font:14px/1.45 var(--font-head)}
+.rail-fold>summary{display:none;font:600 14px var(--font-head);cursor:pointer;padding:.5rem .8rem;border:1px solid var(--rule);border-radius:6px;list-style-position:inside}
+.rail-body{display:flex;flex-direction:column;gap:1.2rem}
+.rail-h{margin:0 0 .35rem;font:600 12px/1 var(--font-head);letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)}
+nav.rail a{display:block;color:var(--ink);text-decoration:none;padding:3px 0 3px 10px;border-left:3px solid var(--rule)}
+nav.rail a.here{font-weight:600;border-left-width:5px;padding-left:8px}
+nav.rail a:hover{color:var(--accent);text-decoration:underline}
+main{min-width:0;display:grid;grid-template-columns:minmax(1rem,1fr) minmax(0,66ch) minmax(1rem,1fr);row-gap:1.1rem;padding:2.4rem 0 4rem}
+main>*{grid-column:2}
+main>.wide{grid-column:1/-1;max-width:1120px;width:100%;justify-self:center;margin-inline:auto}
+@media (max-width:1180px){
+  .shell{display:block}
+  nav.rail{position:static;max-height:none;overflow:visible;padding:.6rem 1rem;border-bottom:1px solid var(--rule)}
+  .rail-fold>summary{display:block}
+  .rail-fold[open] .rail-body{margin-top:.8rem}
+  main{padding-top:1.2rem}
+}
+@media (min-width:1181px){.rail-fold{display:none}}
+@media (max-width:1180px){.rail-wide{display:none}}
+@media (max-width:1180px){main>.wide{width:calc(100% - 2rem)}}
+
+/* type */
+h1,h2,h3,h4,th,figcaption,.pill,.chip,.eyebrow,.pick,.kit-caveat,details,footer{font-family:var(--font-head)}
+h1{font-size:2rem;line-height:1.2;margin:0;text-wrap:balance;font-weight:700}
+h2{font-size:1.35rem;margin:2.2rem 0 0;text-wrap:balance;font-weight:600;border-top:2px solid var(--accent);padding-top:.7rem}
+h3{font-size:1.05rem;margin:1.2rem 0 0;font-weight:600;text-wrap:balance}
+p,ul,ol{margin:0}
+li+li{margin-top:.3rem}
+a{color:var(--accent)}
+a:focus-visible,summary:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+code,.mono{font-family:var(--font-mono);font-size:.84em;background:var(--codebg);padding:.05em .3em;border-radius:3px;overflow-wrap:anywhere}
+pre,code{font-variant-ligatures:none}
+pre{font-family:var(--font-mono);font-size:.8rem;line-height:1.5;background:var(--codebg);padding:.8rem 1rem;border-radius:4px;overflow-x:auto;margin:0}
+pre code{background:none;padding:0;font-size:inherit}
+.eyebrow{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);font-weight:600;display:flex;align-items:center;gap:.5rem}
+.th-chip{display:inline-block;width:1.4rem;height:.55rem;border-radius:2px;flex:none}
+.muted{color:var(--ink2)}
+.critical{color:var(--critical)} .warning{color:var(--warning)} .good{color:var(--good)} .waiting{color:var(--waiting)}
+
+main ul,main ol{padding-left:1.2rem}
+/* a worked case, set apart above the first step that uses it */
+.case{background:var(--codebg);border-radius:6px;padding:.8rem 1rem;font-family:var(--font-head);font-size:.9rem}
+/* a code view: a highlighted line and a comment */
+pre .hl{background:color-mix(in srgb,var(--critical) 18%,transparent);display:inline-block;width:100%}
+pre .c{color:var(--ink2)}
+
+/* the takeaway and the asks */
+.take{font-size:1.12rem;border-left:4px solid var(--accent);padding:.2rem 0 .2rem 1rem;display:grid;gap:.6rem}
+.asks{background:var(--card);border:1px solid var(--rule);padding:1rem 1.2rem;border-radius:6px;font-size:.98rem}
+.asks h3{margin:0 0 .4rem}
+.asks ol{padding-left:1.3rem}
+
+/* figures and tables */
+figure{margin:.6rem 0;background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:1rem;min-width:0}
+.scroll{overflow-x:auto}
+figcaption{font-size:.92rem;color:var(--ink2);margin-top:.7rem;line-height:1.45}
+figcaption b{color:var(--ink)}
+.kit-draw{container-type:inline-size;overflow-x:auto}
+.kit-draw svg{display:block;max-width:100%;height:auto;font-family:var(--font-head)}
+.kit-narrow{display:none}
+table{border-collapse:collapse;width:100%;font-size:.88rem;font-family:var(--font-head);font-variant-numeric:tabular-nums}
+th{text-align:left;font-weight:600;border-bottom:2px solid var(--rule);padding:.45rem .5rem;vertical-align:bottom}
+td{border-bottom:1px solid var(--rule);padding:.45rem .5rem;vertical-align:top}
+td code{font-size:.78rem}
+
+/* state: a pill in its status colour, with its word */
+.pill{display:inline-block;font-size:.72rem;font-weight:600;padding:.08rem .5rem;border-radius:999px;color:var(--paper);vertical-align:.15em;white-space:nowrap}
+.pill.open{background:var(--warning)} .pill.waiting{background:var(--waiting)} .pill.settled{background:var(--good)}
+.chip{display:inline-block;font-size:.72rem;font-weight:600;padding:.05rem .45rem;border-radius:999px;border:1.5px solid currentColor;white-space:nowrap}
+
+/* calls */
+.card>p+p{margin-top:.6rem}
+.card .pick{margin-top:.7rem;font-size:.92rem;border-left:3px solid var(--accent);padding-left:.7rem}
+.card table td:first-child,.calls td:first-child{font-weight:600}
+.card .scroll{margin-top:.7rem}
+.ruling{margin-top:.5rem;font-size:.92rem}
+
+/* the reading order on a hub */
+ol.read{padding-left:0;list-style:none;counter-reset:ro;display:grid;gap:.6rem}
+ol.read li{counter-increment:ro;position:relative;border:1px solid var(--rule);border-left:5px solid var(--rule);border-radius:6px;padding:.6rem .9rem .6rem 2.8rem;background:var(--paper);font-family:var(--font-head);font-size:.95rem;margin:0}
+ol.read li::before{content:counter(ro);position:absolute;left:.9rem;top:.55rem;font:700 1.2rem/1.2 var(--font-head);color:var(--accent)}
+
+/* depth and caveats */
+details{font-size:.9rem} summary{cursor:pointer;font-weight:600}
+.kit-detail>div{margin-top:.6rem;display:grid;gap:.6rem}
+.kit-caveat{border:1px solid var(--rule);border-left:4px solid var(--critical);border-radius:6px;padding:.7rem 1rem;font-size:.92rem;background:var(--card)}
+.kit-caveat>b:first-child{color:var(--critical);margin-right:.4rem}
+
+/* the key of marks, under the first figure that uses them */
+.key{display:flex;flex-wrap:wrap;gap:.35rem 1.1rem;font:13px/1.3 var(--font-head);color:var(--ink2);margin-top:.8rem;padding-top:.7rem;border-top:1px solid var(--rule)}
+.key .key-h{font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:12px;color:var(--ink)}
+.key .k{display:inline-flex;align-items:center;gap:.4rem}
+.key .k svg{flex:none;width:34px;height:16px;max-width:none}
+
+/* the agent entry and the foot */
+.for-agents{margin-top:2rem}
+footer{font-size:.82rem;color:var(--ink2);border-top:1px solid var(--rule);padding-top:1rem;margin-top:1rem}
+.agent-entry{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+
+@media (max-width:600px){body{font-size:16px} h1{font-size:1.6rem} figure{padding:.7rem}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+@media print{
+  nav.rail,.for-agents,.agent-entry{display:none}
+  .shell{display:block} main{display:block;padding:0} main>*+*{margin-top:1rem}
+  figure,tr{break-inside:avoid} h2,h3{break-after:avoid}
+  .kit-page+.kit-page{break-before:page}
+}
+
+.brief main{display:block;max-width:46rem;margin:0 auto;padding:2rem 1.2rem 3rem}.brief main>*+*{margin-top:1rem}.brief img{display:block;max-width:100%;height:auto}.kit-mark{background:var(--codebg);border:1px dashed var(--warning);border-radius:4px;padding:.3rem .6rem;font:600 .9rem var(--font-head);color:var(--warning)}@media print{.brief main{padding:0}}</style></head><body class="brief"><main>
+<p class="eyebrow">Brief · Lunch orders</p>
+<h1>Orders close at 10:30, and the late ones need a second list</h1>
+<div class="take">
+<p>The caterer needs 45 minutes of warning, so lunch orders close at 10:30. Few orders come later, 4 in 100, but each one is refused today. A second list at 11:15 would feed them, and it waits on the caterer's answer.</p>
+</div>
+<p class="kit-mark">⟦kit: write one sentence for Sam, the office manager, who sets when lunch orders close and has not seen the order log: why this needs them now⟧</p>
+<div class="asks"><h3>What you decide after reading</h3><ol><li>Rule on the cutoff: 10:30 or 11:00.</li><li>Ask the caterer whether it takes a second list at 11:15.</li></ol></div>
+<figure><img src="data:image/png;base64,<png>" alt="Staff place an order, it joins the day's list, the list goes to the caterer at the cutoff, and an order after the cutoff is refused." width="720"><figcaption><b>An order waits at two steps, and only the cutoff decides whether it is late.</b> The order log stamps each order when it reaches the list.</figcaption></figure>
+<h2>Open calls</h2><div class="scroll"><table class="calls"><thead><tr><th>Call</th><th>State</th><th>Pick</th></tr></thead><tbody><tr><td><b>1 ·</b> When do lunch orders close?</td><td><span class="pill open">open</span></td><td>A</td></tr><tr><td><b>R1 ·</b> Will the caterer take a second, smaller list at 11:15?</td><td><span class="pill waiting">waiting · the caterer</span></td><td>A</td></tr></tbody></table></div>
+<p class="kit-mark">⟦kit: write what happens once the calls are answered, and by when⟧</p>
+<footer>Order log read 2026-11-20, a built example with no real records. The full explainer: <a href="../page/index.html">Lunch orders</a>.</footer>
+</main></body></html>

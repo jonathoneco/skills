@@ -107,8 +107,8 @@ check("trust: the hash matches a pin Codex accepts for the same entry",
       setup.trust_hash("Stop", {"hooks": [stop_hook]}, stop_hook) == "sha256:11cff0242e17141334bb418496d552845ab48ee703ccc4bebb6b46fe64d61833")
 
 # Pinned third-party skills a shared skill names: linked once `npx skills experimental_install` restores them.
-check("third-party: the pinned skills shared skills name are herdr, notion-cli, playwright-cli",
-      sorted(setup.third_party(setup.shared_skills())) == ["herdr", "notion-cli", "playwright-cli"])
+check("third-party: the pinned skills shared skills name are herdr, playwright-cli",
+      sorted(setup.third_party(setup.shared_skills())) == ["herdr", "playwright-cli"])
 restored = os.path.join(ROOT, ".agents", "skills", "herdr")
 made = not os.path.exists(restored)
 try:

@@ -5,7 +5,7 @@ description: Use before any write to Linear (filing a batch, rewriting, relating
 
 # Linear
 
-Linear has two routes, and this skill assumes both are connected for the workspace: its MCP server, for single edits, and its GraphQL API, for a batch, a body long enough that a model shouldn't carry it (it takes the body from a file), up to 50 issues in one update, and what the MCP lacks, such as Initiatives. When the GraphQL route is missing, stop and ask the user to connect it before filing. The user's setup names both routes and the workspace each reaches. Eight efforts each wrote their own filer and relearned the quirks below; follow these steps instead.
+Linear has two routes, and this skill assumes both are connected for the workspace: its MCP server, for single edits, and its GraphQL API, for a batch, a body long enough that a model shouldn't carry it (it takes the body from a file), up to 50 issues in one update, and what the MCP lacks, such as Initiatives. Use the routes your setup provides, and check which workspace each reaches before writing. When the GraphQL route is missing, stop and ask the user to connect it before filing: Linear's official MCP server is `https://mcp.linear.app/mcp`, and its GraphQL API is `https://api.linear.app/graphql` with a personal API key. Eight efforts each wrote their own filer and relearned the quirks below; follow these steps instead.
 
 What a ticket's fields hold, and where it belongs, is the `tracker-hygiene` skill's; each workspace's tracker doc holds the values. Write only after the user's go for this effort, such as "file the batch"; until then tickets are drafts in the effort's folder.
 
@@ -27,7 +27,7 @@ Filing is done when steps 1–5 each meet their done condition.
 
 ## Linking a ticket
 
-Link a ticket with the `url` field the API returns, never a hand-built URL. The wrangle workspace slug is `wrangle-ai`, not `wrangle`.
+Link a ticket with the `url` field the API returns, never a hand-built URL: a workspace's URL slug can differ from its name.
 
 ## Linear's quirks
 

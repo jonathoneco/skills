@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 150" width="640" height="150">
+  <circle class="person" cx="40" cy="40" r="12"/><path class="person" d="M22 78a18 16 0 0 1 36 0Z"/>
+  <text x="40" y="100" text-anchor="middle">Staff</text>
+  <path class="flowline" d="M70 60H150"/>
+  <rect class="step" x="150" y="35" width="150" height="50" rx="4"/><text x="225" y="65" text-anchor="middle">Day's list</text>
+  <path class="flowline" d="M300 60H380"/><text x="340" y="50" text-anchor="middle" class="t2">cutoff</text>
+  <rect class="step" x="380" y="35" width="150" height="50" rx="4"/><text x="455" y="65" text-anchor="middle">Caterer</text>
+  <path class="late" d="M70 120H560"/><text x="320" y="140" text-anchor="middle">after the cutoff: refused</text>
+</svg>

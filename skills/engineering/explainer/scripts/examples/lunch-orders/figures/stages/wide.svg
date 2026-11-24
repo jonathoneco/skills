@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 80" width="760" height="80">
+  <rect class="step" x="10" y="12" width="160" height="56" rx="4"/><text x="90" y="36" text-anchor="middle">Order</text><text x="90" y="56" text-anchor="middle" class="t2">staff</text>
+  <rect class="step" x="200" y="12" width="160" height="56" rx="4"/><text x="280" y="36" text-anchor="middle">List</text><text x="280" y="56" text-anchor="middle" class="t2">Sam</text>
+  <rect class="step" x="390" y="12" width="160" height="56" rx="4"/><text x="470" y="36" text-anchor="middle">Kitchen</text><text x="470" y="56" text-anchor="middle" class="t2">caterer</text>
+  <rect class="step" x="580" y="12" width="160" height="56" rx="4"/><text x="660" y="36" text-anchor="middle">Desk</text><text x="660" y="56" text-anchor="middle" class="t2">Sam</text>
+</svg>

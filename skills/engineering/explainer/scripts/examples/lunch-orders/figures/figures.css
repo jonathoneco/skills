@@ -1,0 +1,14 @@
+/* Drawing styles for this suite's figures. They read the palette's tokens. */
+svg text{font-size:13px;fill:var(--ink)}
+svg text.t2{fill:var(--ink2)}
+.person{fill:var(--card);stroke:var(--ink);stroke-width:1.6}
+.step{fill:var(--kitchen);stroke:var(--ink2);stroke-width:1.2}
+.late{stroke:var(--critical);stroke-width:2.4;fill:none;stroke-dasharray:6 4}
+.flowline{stroke:var(--ink2);stroke-width:1.6;fill:none}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem;font:14px/1.35 var(--font-head)}
+.grid>div{border:1px solid var(--rule);border-radius:6px;padding:.5rem .6rem;background:var(--paper)}
+.grid>.h{font-weight:600;background:none;border:0;padding-bottom:0}
+@media (max-width:600px){.grid{grid-template-columns:1fr}.grid>.h{display:none}}
+.stepper .stage{display:none}.stepper .stage.on{display:block}
+.stepper button{font:600 13px var(--font-head);padding:.3rem .7rem;border:1px solid var(--rule);border-radius:4px;background:var(--card);color:var(--ink);cursor:pointer}
+.stepper button[aria-pressed=true]{border-color:var(--accent);color:var(--accent)}

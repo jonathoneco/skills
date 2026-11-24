@@ -1,0 +1,39 @@
+<span color="gray">Page 1 of 2 · your calls</span>
+# One call is yours, one waits on the caterer, and the menu day is settled
+<callout icon="🧭" color="green_bg">
+	The cutoff is yours to set. The second list waits on the caterer. The menu day was settled on 2026-11-18.
+</callout>
+## Call 1: when do orders close? <span color="yellow">**open · Sam**</span>
+**Today:** orders close when the caterer phones, at about 10:45. The office places 38 orders a day.
+<table header-row="true">
+<tr><td>Option</td><td>Buys</td><td>What changes, and for whom</td><td>Cost</td></tr>
+<tr><td>A · 10:30</td><td>The caterer gets the full list an hour before it cooks.</td><td>Staff who arrive after 10:30 miss lunch that day.</td><td>Nothing to build; one email to staff.</td></tr>
+<tr><td>B · 11:00</td><td>Late arrivals can still order.</td><td>The caterer cooks from a list 30 minutes later, and asked for 45 minutes of warning.</td><td>A second call to the caterer each day.</td></tr>
+</table>
+<callout icon="💡" color="yellow_bg">
+	**Pick (open): A.** The caterer's lead time decides it, and few orders come after 10:30. **Measure after the ruling:** count orders refused after the cutoff for two weeks. **Reverse:** if more than 1 in 10 orders is refused, move to B.
+</callout>
+**The caterer's lead time decides the cutoff; the late arrivals are the cost.**
+## R1: does the caterer take a second list? <span color="blue">**waiting · the caterer**</span>
+A refused order costs about 2 lunches a week.
+<table header-row="true">
+<tr><td>Option</td><td>Buys</td><td>What changes, and for whom</td><td>Cost</td></tr>
+<tr><td>A · Yes</td><td>Late orders get lunch.</td><td>Sam sends two lists a day.</td><td>A fee per second list.</td></tr>
+<tr><td>B · No</td><td>One list, one call.</td><td>Late orders are refused, as today.</td><td>None.</td></tr>
+</table>
+<callout icon="💡" color="yellow_bg">
+	**Pick (waiting on the caterer): A.** It is the only option that feeds the late arrivals. **Reverse:** if the fee is over the cost of one lunch, pick B.
+</callout>
+**Only a second list feeds the late arrivals.**
+## Small calls
+<table header-row="true">
+<tr><td>Call</td><td>State</td><td>Options, and what each means</td><td>Pick</td></tr>
+<tr><td>**S1 ·** Which day does the menu change?</td><td><span color="green">**settled · Sam**</span></td><td>**Monday:** The week starts with a new menu. **Friday:** Staff see next week's menu before the weekend. **Ruling, 2026-11-18, Sam:** Monday, as the caterer asked. It replaces the ruling on call S0.</td><td>Monday. It matches the caterer's own week.</td></tr>
+<tr><td>**S0 ·** Does the menu change every week?</td><td><span color="green">**settled · replaced**</span></td><td>**Weekly:** A new menu each week. **Monthly:** One menu a month. **Ruling, 2026-10-02, Sam:** Weekly.</td><td>Weekly.</td></tr>
+</table>
+**Both small calls are settled, and neither waits on you.**
+<details>
+<summary>How the late share was counted</summary>
+	Orders stamped after 10:30, over all orders, for two working weeks: 4 in 100.
+</details>
+<span color="gray">Order log read 2026-11-20, a built example with no real records. For your agent: the sources, record ids and grades behind this page are in the child page "Agent context: Your calls", at the foot of this page.</span>

@@ -1,0 +1,5 @@
+| Page | Bytes | JSON-escaped | Result |
+|---|---:|---:|---|
+| index.html | 54545 | 54974 | pass |
+| calls.html | 55812 | 56132 | pass |
+| how.html | 80636 | 81304 | pass |

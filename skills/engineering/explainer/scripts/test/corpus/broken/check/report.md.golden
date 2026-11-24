@@ -1,0 +1,24 @@
+| Page | Bytes | JSON-escaped | Result |
+|---|---:|---:|---|
+| broken.html | 44295 | 44518 | 18 failures |
+
+## broken.html
+
+- island <div> (top-level element 7) has no data-still naming its still frame
+- figure toggle is interactive and its meta.yaml names no still frame
+- 1440×900 light: face Broken Face normal (failed to decode) did not load
+- 1440×900 light: the title ends at 1094 px, off the first screen
+- 1440×900 light, still frame: clipped label div "A label clipped by its box"
+- 1440×900 dark: face Broken Face normal (failed to decode) did not load
+- 1440×900 dark: the title ends at 1094 px, off the first screen
+- 1440×900 dark, still frame: clipped label div "A label clipped by its box"
+- 390×844 light: face Broken Face normal (failed to decode) did not load
+- 390×844 light: the title ends at 1067 px, off the first screen
+- 390×844 light, still frame: the page scrolls sideways by 538 px
+- 390×844 light, still frame: clipped label div "A label clipped by its box"
+- 390×844 light, still frame: figure label under 12 px: text "A label that shrinks" at 3.1 px
+- 390×844 dark: face Broken Face normal (failed to decode) did not load
+- 390×844 dark: the title ends at 1067 px, off the first screen
+- 390×844 dark, still frame: the page scrolls sideways by 538 px
+- 390×844 dark, still frame: clipped label div "A label clipped by its box"
+- 390×844 dark, still frame: figure label under 12 px: text "A label that shrinks" at 3.1 px

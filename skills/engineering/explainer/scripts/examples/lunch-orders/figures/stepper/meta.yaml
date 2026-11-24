@@ -1,0 +1,10 @@
+caption: An order placed at 10:40 is refused at the list, before the caterer sees it.
+alt: A stepper over one late order. Its still frame shows the refusal at the list.
+still: Stage 2, the list refuses the 10:40 order.
+states:
+  - name: Stage 1
+    text: The order is placed at 10:40.
+    click: button[data-stage="1"]
+  - name: Stage 3
+    text: The caterer cooks from the 10:30 list, without the order.
+    click: button[data-stage="3"]

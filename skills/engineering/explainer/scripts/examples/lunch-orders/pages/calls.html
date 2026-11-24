@@ -1,0 +1,26 @@
+<p class="eyebrow">Page 1 of 2 · your calls</p>
+<h1>One call is yours, one waits on the caterer, and the menu day is settled</h1>
+<x-takeaway>The cutoff is yours to set. The second list waits on the caterer. The menu day was settled on 2026-11-18.</x-takeaway>
+
+<h2 data-group="Yours">Call 1: when do orders close? <x-call id="cutoff" form="pill">Sam</x-call></h2>
+<x-call id="cutoff">
+<p><b>Today:</b> orders close when the caterer phones, at about 10:45. The office places <x-fact id="orders-per-day"></x-fact> orders a day.</p>
+<figcaption><b>The caterer's lead time decides the cutoff; the late arrivals are the cost.</b></figcaption>
+</x-call>
+
+<h2 data-group="Waiting">R1: does the caterer take a second list? <x-call id="caterer-window" form="pill"></x-call></h2>
+<x-call id="caterer-window">
+<p>A refused order costs <x-fact id="refused-cost"></x-fact>.</p>
+<figcaption><b>Only a second list feeds the late arrivals.</b></figcaption>
+</x-call>
+
+<h2 data-group="Settled">Small calls</h2>
+<figure>
+<x-call id="menu-day" form="row"></x-call>
+<x-call id="menu-day-old" form="row" where="replaced"></x-call>
+<figcaption><b>Both small calls are settled, and neither waits on you.</b></figcaption>
+</figure>
+
+<x-detail summary="How the late share was counted">
+<p>Orders stamped after 10:30, over all orders, for two working weeks: <x-fact id="late-share"></x-fact>.</p>
+</x-detail>

@@ -1,0 +1,17 @@
+<div class="stepper" id="stepper-root">
+  <p><button type="button" data-stage="1" aria-pressed="false">1 · placed</button> <button type="button" data-stage="2" aria-pressed="true">2 · list</button> <button type="button" data-stage="3" aria-pressed="false">3 · kitchen</button></p>
+  <p class="stage" data-stage="1">10:40 · Staff place an order for soup.</p>
+  <p class="stage on" data-stage="2">10:40 · The list closed at 10:30, so it refuses the order.</p>
+  <p class="stage" data-stage="3">11:15 · The caterer cooks from the 10:30 list. The soup is not on it.</p>
+  <script>
+    (() => {
+      const root = document.getElementById("stepper-root");
+      root.addEventListener("click", (e) => {
+        const b = e.target.closest("button[data-stage]");
+        if (!b) return;
+        for (const x of root.querySelectorAll("button")) x.setAttribute("aria-pressed", String(x === b));
+        for (const s of root.querySelectorAll(".stage")) s.classList.toggle("on", s.dataset.stage === b.dataset.stage);
+      });
+    })();
+  </script>
+</div>

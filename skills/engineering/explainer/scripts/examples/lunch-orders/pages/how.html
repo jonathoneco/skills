@@ -1,0 +1,25 @@
+<p class="eyebrow">Page 2 of 2 · how an order travels</p>
+<h1>An order passes four stages, and each has one owner</h1>
+<x-takeaway>An order goes from staff to the list, to the kitchen, to the desk. A late order stops at the list.</x-takeaway>
+<h2>The stages</h2>
+<x-figure id="stages"></x-figure>
+<h2>Who a late order reaches</h2>
+<x-figure id="matrix"></x-figure>
+<h2>One late order, step by step</h2>
+<x-figure id="stepper"></x-figure>
+<h2>Today's timings</h2>
+<figure>
+<div class="scroll"><table>
+<thead><tr><th>Stage</th><th>Owner</th><th>Closes</th></tr></thead>
+<tbody>
+<tr><td>Order</td><td>Staff</td><td>10:30</td></tr>
+<tr><td>List</td><td>Sam</td><td>10:30</td></tr>
+<tr><td>Kitchen</td><td>Caterer</td><td>11:15</td></tr>
+</tbody></table></div>
+<figcaption><b>The list closes with the orders, so nothing waits between them.</b></figcaption>
+</figure>
+<h2>Try it</h2>
+<div class="tally" data-still="The counter at 0 late orders." style="font-family:var(--font-head)">
+<button type="button" onclick="this.nextElementSibling.textContent = String(Number(this.nextElementSibling.textContent) + 1)">Add a late order</button>
+<output>0</output> late orders today <em>(illustrative)</em>
+</div>

@@ -36,7 +36,7 @@ Trust what is on disk over your training data and earlier sessions. A one-off qu
 - Keep reading until you can name the files the change touches and the decisions that constrain it.
 - Send broad reading (all of `docs/`, "find every place that does X") to parallel sub-agents, briefed like a cold colleague: goal, scope, and the shape of the report. Build on their summaries.
 - When you delegate, start each helper as a scratch agent, as the `scratch-agents` skill says.
-- Pick its model from that skill's role table by how hard you predict the job is: a brief that settles every decision goes to a worker, a judgment or a change through shared code to a strong model, the hardest steps to frontier. Name the model and effort in every spawn.
+- Pick its model from that skill's role table, and name the model and effort in every spawn.
 - Search the repo before asking the user, and say what you checked when you do ask. A question still beats a guessed edit.
 - When a design has several plausible shapes, run the `grilling` skill with the user before planning.
 - Where a spec, ticket, or ruling has settled something, treat it as decided and build on it. Where nothing has, work out the whole change before editing: which files, in what order, and what shows each step worked. Say the plan when it is yours to make rather than already settled.
@@ -67,7 +67,6 @@ The `principle-*` skills each cover a moment in the work, such as a plan turning
 - The user runs these themselves, with `!`, when they want one: `git add -A`, `git add .`, `git reset --hard`, `git checkout .`, `git stash`, `git clean -fd`, `git commit --no-verify`. The git guardrail blocks them for agents.
 - Never force-push `main` or `master`.
 - Merge a PR only when the user says to merge it. That word also covers a follow-up PR that fixes it after the user's review.
-- Stacked PRs: merge bottom-up with delete-branch-on-merge, and check `git merge-base --is-ancestor <mergeCommit> origin/main` before calling a stacked merge landed. Before merging a child, read its base: when the parent's branch survived its merge, retarget the child to the trunk first, or the merge lands on the dead branch. `gh pr merge --delete-branch` deletes neither the local nor the remote branch while that branch is checked out in a worktree.
 
 ## Knowledge placement
 
@@ -93,24 +92,14 @@ These skills start several agents, so neither tool reaches for them unprompted. 
 ## Working habits
 
 - Fix the problem as stated, with what the codebase already has. Before adding a mechanism, look for the existing one that does the job. Anything the ask didn't name, such as new infrastructure, a credential, or a conditional path, is a proposal: say it and wait for a yes.
-- When work runs long, report as you go, without being asked, in Status's shape, kept short: ✅ what finished, 🔄 what is running and what it waits on, ⏭️ what is next, 🙋 what needs the user, in names and counts. Then carry on.
+- When work runs long, report as you go, without being asked, in the `status` skill's markers, kept short: ✅ what finished, 🔄 what is running and what it waits on, ⏭️ what is next, 🙋 what needs the user, in names and counts. Then carry on.
 - Stop and report when a decision is the user's to make (`principle-never-block-on-the-human` says which are), when the same approach fails twice (`principle-attack-the-premise`), or when the plan contradicts what the code does.
 - Before a destructive action, such as `rm`, `drop`, or `delete`, explain its blast radius and wait for a yes.
 - Keep working in the session the user opened. What the work needs to carry on lives in the notes, the tracker, and the PRs, so the session goes on from there.
 
-
 ## Words the user uses
 
-- **Gardening**: leave the code cleaner than you found it, in the files you touched and the ones beside them. Reuse what already exists instead of adding a near-copy. Remove what nothing uses, such as dead branches, stale comments, duplicated logic, abstractions with one caller. Put each piece at the right level: a helper that only one file needs stays in that file. Take out wasted work you notice: repeated reads, independent steps run one after another. Choose the clear version over the short one. Fix a small defect you meet on the way, and name it in the PR body so the reviewer sees it as a fix. Heavy work, such as a design change, a migration, or a step that waits on production, gets a ticket named in the PR body instead.
-- **Clarify**: the last message did not land. Explain it again, with a little context first. Tie it to what the product does and what that means for the code, draw the moving parts as an inline diagram, and show it with a code snippet, a real record, or whatever evidence fits the case. Use ASD-STE100 and inline diagrams.
-- **Torn**: the user is undecided; run the `weighing` skill.
-- **Babysit the PR**: run the `babysit-pr` skill.
-- **Re-review**: run the `code-review` skill against the fixed point of the last review.
-- **Bottom line**: the investigation is producing information, and the user wants it to head toward action. From here, work each finding through to what should be done about it, and let that decide what still needs looking into: a fact worth chasing is one that changes what we'd do. Sort the open questions into ones you can close yourself, by reading code or querying production, and ones that are the user's call; close yours as you go and bring the user only theirs, phrased so a word answers them. Arrive at a short list of actions, each with today's behavior, the change, and a checkable done condition, with nothing in it left open. Say which calls you made yourself and why.
-- **Status**: where the session stands, built to scan. One line first: the goal and how far along it is. Under it, an inline diagram of the pieces and where each stands. Then a short section per state, each opened with its marker: ✅ done (what landed, linked), 🔄 running (helpers, CI, queues, with what each waits on), ⏭️ next (the one step about to happen), 🗓️ planned (what follows, in order), 🙋 needs you (each call with the agent's recommendation, phrased so a word answers it). Every line comes from state read this session, such as a PR, a ticket, or a running job, not from memory; an empty section is left out.
-- **Blueprint**: run the `blueprint` skill.
-- **Show me the design**: run the `explainer` skill.
-- **Code smell**: the user senses something is off before they can say why, in code, wiring, a design, or prose. Trace it to the mechanism that produces it and report that mechanism before you edit the flagged spot, naming the smell when it has a name, such as a Fowler smell from code-review's baseline. The user's hunch ("feels provider-specific") is a lead to test, not a conclusion.
+Each word runs a skill: **Gardening** `gardening`, **Clarify** `clarify`, **Torn** `weighing`, **Babysit the PR** `babysit-pr`, **Re-review** `code-review` from the last review's fixed point, **Bottom line** `bottom-line`, **Status** `status`, **Blueprint** `blueprint`, **Show me the design** `explainer`, **Code smell** `code-smell`.
 
 ## Errors
 

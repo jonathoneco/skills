@@ -1,0 +1,5 @@
+caption: An order waits at two steps, and only the cutoff decides whether it is late.
+note: The order log stamps each order when it reaches the list.
+alt: Staff place an order, it joins the day's list, the list goes to the caterer at the cutoff, and an order after the cutoff is refused.
+marks: [person, step, late]
+min_width: 640

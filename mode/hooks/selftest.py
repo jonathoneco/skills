@@ -82,9 +82,9 @@ for plain in ["Print the current git branch.", "Add a docstring to count_rows.",
               "Write a short README for the users folder."]:
     check("no route is silent: " + plain, "prompt", {"prompt": plain}, None, "")
 check("routes at first prompt (no transcript yet)", "prompt", {"prompt": BUG}, None, "`principle-fix-root-causes`")
-check("path words do not route", "prompt", {"prompt": "Read /Users/jonco/.local/state/agent-notes/validation-landing/x/brief.md and do it."}, None, "", "principle-boundary-discipline")
+check("path words do not route", "prompt", {"prompt": "Read /Users/me/.local/state/agent-notes/validation-landing/x/brief.md and do it."}, None, "", "principle-boundary-discipline")
 check("prose validation still routes", "prompt", {"prompt": "validate the config at parse time"}, None, "principle-boundary-discipline")
-check("generic spec path does not route experience", "prompt", {"prompt": "Read /Users/jonco/x/spec-brief.md and do it"}, None, "", "principle-experience-first")
+check("generic spec path does not route experience", "prompt", {"prompt": "Read /Users/me/x/spec-brief.md and do it"}, None, "", "principle-experience-first")
 check("user experience prose still routes", "prompt", {"prompt": "the users hate this onboarding flow, the UX feels clunky"}, None, "principle-experience-first")
 check("failed second fix still routes", "prompt", {"prompt": "second fix still fails the same check"}, None, "principle-attack-the-premise")
 check("routes a ticket", "prompt", {"prompt": "Write a ticket for adding a --dry-run flag."}, [], "principle-prove-it-works")

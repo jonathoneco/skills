@@ -1,0 +1,10 @@
+# Agent context: How an order travels
+
+- The stage owners come from Sam's note of 2026-11-20 (built example).
+
+## Figure states (added by the kit)
+
+### stepper: An order placed at 10:40 is refused at the list, before the caterer sees it.
+- Still frame: Stage 2, the list refuses the 10:40 order.
+- Stage 1: The order is placed at 10:40.
+- Stage 3: The caterer cooks from the 10:30 list, without the order.
