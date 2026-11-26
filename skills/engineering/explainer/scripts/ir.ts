@@ -151,6 +151,6 @@ export type CallForm = (typeof CALL_FORMS)[number];
 /** An error in the author's sources. render prints it and exits 2. */
 export class SourceError extends Error {}
 
-/** One artifact publish argument holds 128 KiB of JSON-escaped text. */
-export const SIZE_LIMIT = 128 * 1024;
+/** Page budget that stops a runaway page; publishing has no size limit. */
+export const SIZE_LIMIT = 8 * 1024 * 1024;
 export const escapedSize = (text: string) => Buffer.byteLength(JSON.stringify(text));

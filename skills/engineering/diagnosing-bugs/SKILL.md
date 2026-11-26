@@ -1,13 +1,11 @@
 ---
 name: diagnosing-bugs
-description: Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something broken/throwing/failing/slow, or a production record showing a wrong value. A diagnosis counts as observed only after the same path runs on a deployment with the same data shape.
+description: Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something broken/throwing/failing/slow.
 ---
 
 # Diagnosing Bugs
 
-A discipline for hard bugs. Every shipped line traces to runtime evidence.
-
-Open a todo list before Phase 1. Its first todo loads the `principle-*` skills the phases name; a phase's *Principles:* line says where each applies. Then one todo per phase, each checked off when its done condition holds, or marked `skip: <reason>`.
+A discipline for hard bugs. Skip phases only when explicitly justified.
 
 When exploring the codebase, read `GLOSSARY.md` (if it exists) to get a clear mental model of the relevant modules, and check ADRs in the area you're touching.
 
@@ -18,10 +16,6 @@ This skill has you show commands, outputs and captured artifacts. **Redact every
 If the redacted output is not enough to diagnose the bug, say so and ask the user.
 
 ## Phase 1: Build a feedback loop
-
-*Principles: `principle-fix-root-causes`.*
-
-Reproduce it yourself first, on the surface where the user saw it: the repo's verification skill if it has one (the kind `create-verification-skill` makes), otherwise the real page, CLI, or endpoint. Do this even when a debug or instrumentation protocol says to ask the user to reproduce. Record the steps and their output; Phase 5 re-runs exactly this repro. The loop below may sit at a lower seam, but this surface repro is the one that says the bug is gone.
 
 **This is the skill.** Everything else is mechanical. If you have a **tight** pass/fail signal for the bug (one that goes red on _this_ bug), you will find the cause; bisection, hypothesis-testing, and instrumentation all just consume it. If you don't have one, no amount of staring at code will save you.
 
@@ -58,7 +52,7 @@ The goal is not a clean repro but a **higher reproduction rate**. Loop the trigg
 
 ### When you genuinely cannot build a loop
 
-First drive the surface as far as it goes. If it won't reproduce directly, synthesize the trigger, tighten conditions, or instrument until it fires. Ask the user only with a stated, specific reason the surface cannot reach the bug. Then stop and say so explicitly. List what you tried. Ask the user for: (a) access to whatever environment reproduces it, (b) a redacted captured artifact (HAR file, log dump, core dump, screen recording with timestamps), or (c) permission to add temporary production instrumentation. Do **not** proceed to hypothesise without a loop.
+Stop and say so explicitly. List what you tried. Ask the user for: (a) access to whatever environment reproduces it, (b) a redacted captured artifact (HAR file, log dump, core dump, screen recording with timestamps), or (c) permission to add temporary production instrumentation. Do **not** proceed to hypothesise without a loop.
 
 ### Completion criterion: a tight loop that goes red
 
@@ -93,8 +87,6 @@ Do not proceed until you have reproduced **and** minimised.
 
 ## Phase 3: Hypothesise
 
-Seed the hypotheses with the `how` skill over the affected subsystem and the `why` skill for its regression history: what changed there, and when.
-
 Generate **3–5 ranked hypotheses** before testing any of them. Single-hypothesis generation anchors on the first plausible idea.
 
 Each hypothesis must be **falsifiable**: state the prediction it makes.
@@ -104,8 +96,6 @@ Each hypothesis must be **falsifiable**: state the prediction it makes.
 If you cannot state the prediction, the hypothesis is a vibe: discard or sharpen it.
 
 **Show the ranked list to the user before testing.** They often have domain knowledge that re-ranks instantly ("we just deployed a change to #3"), or know hypotheses they've already ruled out. Cheap checkpoint, big time saver. Don't block on it; proceed with your ranking if the user is AFK.
-
-Done when the ranked list, each with its prediction, is in front of the user.
 
 ## Phase 4: Instrument
 
@@ -121,15 +111,7 @@ Tool preference:
 
 **Perf branch.** For performance regressions, logs are usually wrong. Instead: establish a baseline measurement (timing harness, `performance.now()`, profiler, query plan), then bisect. Measure first, fix second.
 
-When evidence refutes a hypothesis, revert every change it motivated. A change that "might help" is a hypothesis, not a fix.
-
-Done when one hypothesis survives and runtime evidence shows its mechanism.
-
 ## Phase 5: Fix + regression test
-
-*Principles: `principle-fix-root-causes`, `principle-sequence-verifiable-units`, `principle-prove-it-works`.*
-
-The smallest change the evidence supports ships, at the root cause the surviving hypothesis names. If the fix crosses a function boundary, run the `architect` skill first. To hand the fix to a `code` helper, give it a specific scope; you stay the lead and verify its work.
 
 Write the regression test **before the fix**, but only if there is a **correct seam** for it.
 
@@ -145,25 +127,12 @@ If a correct seam exists:
 4. Watch it pass.
 5. Re-run the Phase 1 feedback loop against the original (un-minimised) scenario.
 
-Then verify on the same surface: re-run the surface repro Phase 1 recorded. It passes. "Inconclusive", or a pass on a different surface, is not a pass; flag it to the user. A green unit test shows branch behavior, not that the bug is gone.
-
-Done when the surface repro passes and you have its output from before and after the fix.
-
-## Phase 6: Cleanup + post-mortem
+## Phase 6: Cleanup
 
 Required before declaring done:
 
-- [ ] Original repro no longer reproduces (re-run the Phase 1 loop, and the surface repro on the same surface)
-- [ ] Every change a refuted hypothesis motivated is reverted
+- [ ] Original repro no longer reproduces (re-run the Phase 1 loop)
 - [ ] Regression test passes (or absence of seam is documented)
 - [ ] All `[DEBUG-...]` instrumentation removed (`grep` the prefix)
 - [ ] Throwaway prototypes deleted (or moved to a clearly-marked debug location)
 - [ ] The hypothesis that turned out correct is stated in the commit / PR message, so the next debugger learns
-
-**Then ask: what would have prevented this bug?** If the answer involves architectural change (no good test seam, tangled callers, hidden coupling) hand off to the `improve-codebase-architecture` skill with the specifics. Make the recommendation **after** the fix is in, not before: you have more information now than when you started.
-
-When the user asks for a PR, open it through the `opening-a-pr` skill, with the failing test landing before the fix.
-
-**Reply:** what was broken, the root cause, the fix, and how you verified it. Paste the failing-then-passing repro output word for word, secrets redacted.
-
-Adapted from Matt Pocock's diagnosing-bugs (mattpocock/skills, MIT) and pstack's bug-fix playbook (MIT, Lauren Tan).

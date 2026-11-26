@@ -33,6 +33,33 @@ if (!r.ok) return r;
 return r.data;
 ```
 
+## Send a file
+
+An upload op whose body is `multipart/form-data` takes the file as a `ToolFile` in its file field: `{ _tag: "ToolFile", name, mimeType, encoding: "base64", data, byteLength }`. A plain string there arrives as a missing field (Notion answers `body.file should be defined`). The sandbox has no `btoa` or `TextEncoder`, so build a text file's bytes with this helper:
+
+```typescript
+const toolFile = (name, mimeType, text) => {
+  const bytes = [];
+  for (const ch of text) {
+    const c = ch.codePointAt(0);
+    if (c < 0x80) bytes.push(c);
+    else if (c < 0x800) bytes.push(0xc0 | (c >> 6), 0x80 | (c & 63));
+    else if (c < 0x10000) bytes.push(0xe0 | (c >> 12), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));
+    else bytes.push(0xf0 | (c >> 18), 0x80 | ((c >> 12) & 63), 0x80 | ((c >> 6) & 63), 0x80 | (c & 63));
+  }
+  const A = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  let data = "";
+  for (let i = 0; i < bytes.length; i += 3) {
+    const a = bytes[i], b = bytes[i + 1], c = bytes[i + 2];
+    const n = (a << 16) | ((b ?? 0) << 8) | (c ?? 0);
+    data += A[(n >> 18) & 63] + A[(n >> 12) & 63] + (b === undefined ? "=" : A[(n >> 6) & 63]) + (c === undefined ? "=" : A[n & 63]);
+  }
+  return { _tag: "ToolFile", name, mimeType, encoding: "base64", data, byteLength: bytes.length };
+};
+```
+
+Put the file's text in the `execute` code as a string literal, built outside the sandbox with `JSON.stringify(text)`. Done when the reply shows the upload received, with any byte count it reports equal to `byteLength`.
+
 ## Paused calls
 
 A call that needs approval pauses and returns an `approvalUrl` and an `executionId`. Give the user the URL; once they approve, call the same server's `resume` tool with the `executionId`.

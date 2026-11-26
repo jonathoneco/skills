@@ -7,7 +7,7 @@ Every page is built with the kit in [scripts/](scripts/): you write the suite's 
 The command is the skill's `scripts/render`, named `render` below. It writes into `~/.local/state/agent-runs/<effort>/out/`, one folder per target, where `<effort>` is the folder under `agent-notes/` that holds the suite; `out` below means that folder. The renders stay out of the synced notes; `--out <dir>` moves them.
 
 1. Write the suite's sources (Sources below) in the build folder, the design plan's values in `suite.yaml`.
-2. `render <suite> --to page` writes `out/page/<page>.html` and its `<page>.context.md`. It fails when a source cites an id that `calls.yaml`, `facts.yaml` or `figures/` lacks, and when a page is over 128 KiB once JSON-escaped, the limit of one artifact publish.
+2. `render <suite> --to page` writes `out/page/<page>.html` and its `<page>.context.md`. It fails when a source cites an id that `calls.yaml`, `facts.yaml` or `figures/` lacks, and when a page is over 8 MiB once JSON-escaped, the explainer's page budget.
 3. `render <suite> --to check` opens each page at 1440 × 900 and 390 × 844 in both themes. Fix the source it names and run it again until it passes.
 4. A ruling, a fact, or a look change is an edit to one source file and the same command again: only the pages whose inputs changed rebuild. `out/.kit/index.json` lists the pages that cite each call and fact.
 5. Other targets from the same sources: `--to notion` ([notion.md](notion.md)), `--to cold` ([cold-read.md](cold-read.md)), `--to brief` (one fixed one-pager: the takeaway, the asks, the first figure's still frame, the open calls), and `--to pdf`. Join targets with commas.

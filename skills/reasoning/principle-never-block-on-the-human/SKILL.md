@@ -1,19 +1,14 @@
 ---
 name: principle-never-block-on-the-human
-description: "Apply when tempted to ask the user about a call inside the work they asked for: decide it, log it, and present it, and bring them as a proposal anything outside the ask."
+description: "Apply when tempted to ask 'should I do X?' on reversible work."
 ---
 
 # Never Block on the Human
 
-The human supervises asynchronously. A question about a call the agent can make stalls the work and makes the human the bottleneck. Inside the work the user asked for, make the call and keep going; the user reviews it afterwards.
+The human supervises asynchronously. Agents must stay unblocked. Make reasonable decisions, proceed, and let the human course-correct after the fact. Since code changes are reversible and reviewable, a wrong decision usually costs less than blocking.
 
-**Inside the ask: decide, log, present.**
-- An execution call within the requested work, such as a bind address, a file layout, a choice between two equivalent libraries, or how to split a task: decide it, record it with the `decision-log` skill, and name it in the result.
-- A fact a tool can answer is never a question for the human. Look it up.
-- Before a proof or a write goes to the user as a manual step, search the repo docs for a documented route and list the CLIs logged in on the host. Bring the manual step only when both come up empty, and say what was searched.
-- A problem you notice inside the ask gets fixed in the next round. A small defect met on the way is fixed and named in the PR body.
-
-**Outside the ask: propose, then wait.**
-- Work the user didn't name, such as a new mechanism, a wider fix, or a change to a rule, a default, or a skill's behavior, is a proposal. State it with what it changes for the user, and wait for a yes. Building a change of policy before the user rules on it, even as a reviewable PR, takes the decision from them.
-- Product direction comes from the human.
-- Irreversible actions, such as a force-push, deleting data, or sending an external message, need confirmation.
+- Proceed, then present. Do the work, show the result. Don't ask "should I do X?" Do X, explain why.
+- Make the system self-healing. When you notice a problem, log it and fix it in the next round.
+- Irreversible actions (force-push, delete production data, send external messages) still require confirmation.
+- Reversible actions (write code, edit notes, split tasks) should proceed without blocking.
+- Product direction comes from the human. Execution should not block.
