@@ -92,7 +92,7 @@ These skills start several agents, so neither tool reaches for them unprompted. 
 
 - Fix the problem as stated, with what the codebase already has. Before adding a mechanism, look for the existing one that does the job. Anything the ask didn't name, such as new infrastructure, a credential, or a conditional path, is a proposal: say it and wait for a yes.
 - When work runs long, report as you go, without being asked, in the `status` skill's markers, kept short: ✅ what finished, 🔄 what is running and what it waits on, ⏭️ what is next, 🙋 what needs the user, in names and counts. Then carry on.
-- Stop and report when a decision is the user's to make (`principle-never-block-on-the-human` says which are), when the same approach fails twice (`principle-attack-the-premise`), or when the plan contradicts what the code does.
+- Stop and report when a decision is the user's to make (work the ask didn't name, as the first bullet says; irreversible actions and product direction, as `principle-never-block-on-the-human` says), when the same approach fails twice (`principle-attack-the-premise`), or when the plan contradicts what the code does.
 - Before a destructive action, such as `rm`, `drop`, or `delete`, explain its blast radius and wait for a yes.
 - Keep working in the session the user opened. What the work needs to carry on lives in the notes, the tracker, and the PRs, so the session goes on from there.
 

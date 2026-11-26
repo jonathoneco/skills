@@ -20,7 +20,3 @@ The invocation cut of splitting (the sequence cut lives in `SKILL.md`): split of
 ## Router skills
 
 When user-invoked skills multiply past what you can remember, that piled-up cognitive load is cured by a **router skill**: one user-invoked skill that names the others and when to reach for each, so the human has one skill to remember instead of many. It can only hint, never fire them: user-invoked skills have no description, so nothing but the human can reach them.
-
-## Pointers into another skill
-
-A pointer from one skill into another names the skill, or the skill and one of its files: "the `ticket` skill's `kinds.md`". Inside its own skill, a pointer can name a section or a step, because both sides change in the same edit. Another skill's sections and step numbers move without that skill's author seeing the pointer, and the pointer then reaches nothing: one cold read found "the `ticket` skill's Kinds" naming a section that had never existed, and "Filing steps 4 to 6" naming steps by number. When a reader needs one part of a large file, give that part its own file and name the file.

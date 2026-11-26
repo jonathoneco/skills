@@ -165,7 +165,7 @@ async function main(argv: string[]) {
     const r = await runTarget(suite, name, args);
     const ms = Math.round(performance.now() - t);
     console.log(`${name}: rebuilt ${r.rebuilt.length} (${r.rebuilt.join(" ") || "none"}), kept ${r.kept.length}, ${ms} ms → ${path.join(args.out, name)}`);
-    for (const f of r.oversize) console.error(`${name}: ${f} is over ${SIZE_LIMIT} bytes once JSON-escaped, the limit of one artifact publish`);
+    for (const f of r.oversize) console.error(`${name}: ${f} is over ${SIZE_LIMIT} bytes once JSON-escaped, the explainer's page budget`);
     failed = failed || r.oversize.length > 0;
   }
   const { closeBrowser } = await import("./browser.ts");

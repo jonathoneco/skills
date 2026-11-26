@@ -5,7 +5,7 @@ description: "Apply when product, UX, or feature-scope tradeoffs come up. Choose
 
 # Experience First
 
-When implementation convenience conflicts with user delight, choose delight. A tradeoff the product's users would see is the user's call: bring it with delight as your pick (the `weighing` skill).
+When implementation convenience conflicts with user delight, choose delight.
 
 - Every feature, control, and option must be justified
 - Ship less, ship better (polished experience with three features beats rough one with ten)

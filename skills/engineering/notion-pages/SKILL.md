@@ -35,10 +35,11 @@ A rebuild writes the page again from its source. A page that holds HTML blocks i
 | Create a page from a template | `notion-create-pages` with the database as parent, `template_id`, the title, and its properties | No template parameter is known: `POST /v1/pages` under the data source, then Frame's hand-over for the template's settings |
 | Write or replace the body | `notion-update-page` with the page's markdown | `PATCH /v1/pages/{id}/markdown`, or `ntn pages edit <id>`; the blocks API (`PATCH /v1/blocks/{id}/children`) for a block the markdown can't make |
 | Set the icon or cover | `notion-update-page` with `icon` or `cover` | `PATCH /v1/pages/{id}` with `icon` or `cover` |
-| Make an HTML block | `notion-create-attachment` with the file's HTML as `content` (up to 200 KiB), then `<embed src="file-upload://<id>"></embed>` on its own line in a page update; the bare upload link lands as plain text | `POST /v1/file_uploads` or `ntn files create --filename "<title>.html" --content-type text/html`, then an `embed` block with `file_upload.id` and the caption through the blocks API |
+| Make an HTML block | `notion-create-attachment` with the file's HTML as `content` (up to 200 KiB), then `<embed src="file-upload://<id>"></embed>` on its own line in a page update; the bare upload link lands as plain text | `POST /v1/file_uploads` with the `.html` filename and `content_type: text/html`, then `POST /v1/file_uploads/{id}/send` with the file as multipart `file`; or `ntn files create --filename "<title>.html" --content-type text/html`. Then an `embed` block with `file_upload.id` and the caption through the blocks API |
 | Delete a block | — | `DELETE /v1/blocks/{id}` |
 | Make a child page | `notion-create-pages` with the page as parent | `POST /v1/pages` with the page as parent, or `ntn pages create --parent page:<id>` |
 
+- Through Executor, the send call's `file` is a `ToolFile` (the `executor-calls` skill's Send a file).
 - The blocks API nests children two levels deep per request and takes 100 blocks per array; Notion averages about three requests a second. Retry an append only on `rate_limited`: a retried append once duplicated a table.
 - A long call through `ntn` is usually stdin waiting: redirect it from `/dev/null`. A timed-out call usually didn't apply, so read before retrying.
 
