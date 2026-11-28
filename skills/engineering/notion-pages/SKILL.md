@@ -40,7 +40,7 @@ A rebuild writes the page again from its source. A page that holds HTML blocks i
 | Make a child page | `notion-create-pages` with the page as parent | `POST /v1/pages` with the page as parent, or `ntn pages create --parent page:<id>` |
 
 - Through Executor, the send call's `file` is a `ToolFile` (the `executor-calls` skill's Send a file).
-- The blocks API nests children two levels deep per request and takes 100 blocks per array; Notion averages about three requests a second. Retry an append only on `rate_limited`: a retried append once duplicated a table.
+- The blocks API nests children two levels deep per request and takes 100 blocks per array; Notion averages about three requests a second. Retry an append only on `rate_limited`, since a retried append can duplicate its blocks.
 - A long call through `ntn` is usually stdin waiting: redirect it from `/dev/null`. A timed-out call usually didn't apply, so read before retrying.
 
 ## Markdown

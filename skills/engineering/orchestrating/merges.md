@@ -18,7 +18,7 @@ Done when you know which checks run at this head.
 - (you) Every Done box is met, judged by behavior, not by shape (the `ticket` skill's Done). The builder proves each box, naming each test that ran; a test that skipped, such as one whose gitignored fixtures or credentials are missing from the builder's worktree, proves nothing. The orchestrator reads that proof and spot-checks one against the real artifact, as the `principle-prove-it-works` skill says. A box whose prover is merge-time CI is ticked when the merge lands (step 5).
 - (you) The cross-ticket check is clean (step 3).
 - (you) Each new exemption or allowlist label in the diff is read for what it stops checking, and the merge waits on a label that stops a check the change needs.
-- (you) The PR body is read against the ticket's Decided section, not only against the diff. A body that states a target nobody ruled, or cites a question as the ruling, is corrected before the merge. The orchestrator edits a builder's PR body after the builder's last evidence publish and before the merge gate. The evidence publish rewrites the PR body, so an edit made before it is lost. The edit lives in a script that can run again, and the gate waits for any check the edit reruns.
+- (you) The PR body is read against the ticket's Decided section, not only against the diff. A body that states a target nobody ruled, or cites a question as the ruling, is corrected before the merge. Edit the body after the builder's last write to it, since a later write replaces the edit. Keep the edit in a script that can run again, and wait for any check the edit reruns.
 - (you) No question to the user about this PR is open.
 
 A check run by hand gates the merge through its exit code, as in `git merge-base --is-ancestor origin/main <head> && gh pr merge …`. A check whose result is only printed, such as `echo`'s output before `&&`, lets the merge run whatever it found.
@@ -43,7 +43,7 @@ A merge is an Ask ([calls.md](calls.md)) unless a standing rule authorizes merge
 
 **When `main` has a merge queue, enqueue each PR as soon as it passes.** The queue tests each PR against everything ahead of it and merges them one at a time, so the orchestrator doesn't wait for the previous merge's production deploy before enqueueing the next. The queue deploys a PR as soon as it merges, so a PR with a step that must run before its production deploy, such as a feature-flag check or a production migration's precondition, is enqueued only after that step is read.
 
-A PR that touches Convex functions first merges current main, regenerates codegen on the merged tree, and commits the drift, since the queue regenerates and rejects drift. Enqueue the PR with the labels its builder gave it; the merge queue runs the full test tier, and a red there comes back to the builder. When the queue removes a PR, the builder reports it ready again once it has fixed the failure or judged it outside the change; enqueue it again then.
+A PR whose queue regenerates code and rejects drift first merges current main, regenerates on the merged tree, and commits the drift. Enqueue the PR with the labels its builder gave it; the merge queue runs the full test tier, and a red there comes back to the builder. When the queue removes a PR, the builder reports it ready again once it has fixed the failure or judged it outside the change; enqueue it again then.
 
 **Without a merge queue, merge one at a time.** Confirm the merge commit is on `origin/main` and its production deploy succeeded before the next merge.
 

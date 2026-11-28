@@ -1,8 +1,8 @@
 # Vendored skills
 
-These skills were copied in from upstream repos and are edited here; this repo owns them now. Each row says where a skill came from and the upstream commit it was last brought up to. The `updating-vendored` skill in `.agents/skills/` walks through bringing in upstream changes, and bumps the commit here when they are in.
+These skills were copied in from upstream repos and change here only where something breaks, as `.agents/skills/AGENTS.md` says. Each row says where a skill came from and the upstream commit it was last brought up to. The `updating-vendored` skill in `.agents/skills/` walks through bringing in upstream changes, and bumps the commit here when they are in.
 
-The three repo sources are MIT licensed; the copies listed at the end keep their own licence file. `dataviz` and `simplify` are copied from skills Claude Code bundles, which ship with no licence file; they stay under Anthropic's terms, not this repo's MIT licence. Its palette checker carries Color.js's MIT notice in `scripts/validate_palette.py`. Their licence texts are kept word for word in [`licenses/`](./licenses/): [mattpocock/skills](./licenses/mattpocock.txt), [cursor/plugins pstack](./licenses/pstack.txt), and [DietrichGebert/ponytail](./licenses/ponytail.txt).
+The three repo sources are MIT licensed; the copies listed at the end keep their own licence file where upstream has one. `dataviz` and `simplify` are copied from skills Claude Code bundles, which ship with no licence file; they stay under Anthropic's terms, not this repo's MIT licence. Its palette checker carries Color.js's MIT notice in `scripts/validate_palette.py`. Their licence texts are kept word for word in [`licenses/`](./licenses/): [mattpocock/skills](./licenses/mattpocock.txt), [cursor/plugins pstack](./licenses/pstack.txt), and [DietrichGebert/ponytail](./licenses/ponytail.txt).
 
 | Skill | Here | Source | Upstream path | Last synced |
 | --- | --- | --- | --- | --- |
@@ -78,7 +78,7 @@ The three repo sources are MIT licensed; the copies listed at the end keep their
 
 ## Third-party skills kept as copies
 
-These are upstream's text, copied in rather than pinned in `skills-lock.json`, and refreshed by hand. `notion-cli` keeps two local notes in its `ntn api` section (close stdin on every `-d` call, and send `position` with a block insert); keep them when refreshing.
+These are upstream's text, copied in rather than pinned in `skills-lock.json`, and refreshed by hand. `notion-cli` keeps two local notes in its `ntn api` section (close stdin on every `-d` call, and send `position` with a block insert); keep them when refreshing. `performance-audit` names no `multi_tool_use.parallel` tool, and `guided-review` has no `guided-plan` pointer and no Identity section, and proposes its install rather than running it; keep these fixes when refreshing.
 
 | Skill | Upstream |
 |---|---|
@@ -87,3 +87,5 @@ These are upstream's text, copied in rather than pinned in `skills-lock.json`, a
 | one-pager, big-pics-little-words | plannotator/effective-html, `skills/` at `5ce160a`; MIT (`LICENSE`) |
 | theme-factory | anthropics/skills, `skills/theme-factory/` at `2c5958ecac7cee2b583967a2c4981d0f4a75c579`; Apache-2.0 (`LICENSE.txt`) |
 | write-better, asd-ste100 | plannotator/write-better, `skills/<name>/` at `8f0ed39`; MIT (`LICENSE`) |
+| performance-audit | plannotator/performance-audit, `skills/performance-audit/` at `f434d5d`; no licence file |
+| guided-review | plannotator/guides, `skills/guided-review/` at `3fc8c84`; no licence file |

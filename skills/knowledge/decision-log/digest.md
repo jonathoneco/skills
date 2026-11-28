@@ -36,7 +36,7 @@ Done when every log entry since the last digest appears in this one with its id,
 - **Confirmed**, including everything a blanket "ok" leaves unnamed: mark the entry confirmed.
 - **Overturned:** undo the call if it can be undone, and say what the undo did and whether the call reached anything hard to undo. Record the correction as a new entry in the overturn form below, with the user's reason in their words, and set the overturned entry's Status to `overturned <date> (see D-<m>)`.
 - **Answered question:** act on the answer, log it in the entry form graded `user`, and remove it from the user queue.
-- **Candidate promoted, dropped, or edited:** a candidate binds once the user promotes it. A promoted one goes into the doc that owns it: a general principle into the judgment reference of the skill that made the call, such as the `blueprint` skill's `sizing.md`, or the one the user's rules name; a repo rule into the repo's judgment doc through that repo's PR process. The promotion is the approval for that edit. A dropped one's line becomes `Candidate: dropped <date>`; an edited one takes the user's wording.
+- **Candidate promoted, dropped, or edited:** a candidate binds once the user promotes it. A promoted one goes into the doc that owns it: a general principle into the calling skill's judgment reference, as [precedent.md](precedent.md) names it; a repo rule into the repo's judgment doc through that repo's PR process. The promotion is the approval for that edit. A dropped one's line becomes `Candidate: dropped <date>`; an edited one takes the user's wording.
 
 The overturn form:
 

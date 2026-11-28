@@ -15,7 +15,7 @@ A decision brief puts calls in front of the user so they can rule on each one re
 
 - Tangled calls come first, grouped, with the upstream call on top.
 - Each call that isn't small is a decision card.
-- The small calls follow in one table, a row each: the call, its options with what each means for the people it affects, and the pick.
+- The small calls follow in one table, a row each, as step 3 says.
 - The items that turned out not to be calls sit in one short list.
 
 A **decision card** holds one call, in order: a heading with the question and the call's state; a paragraph giving its **Goal** and how it works **Today**; a table with one row per option and columns for what it **Buys**, what changes and for whom, the product's users included, and its **Cost**; and the **Pick** in one line, labelled as a pick while the call is open, with what gets measured after the ruling and what result would reverse it.

@@ -13,7 +13,7 @@ Three branches:
 
 - **Has this been decided?** Before any call in the user's place, search as [precedent.md](precedent.md) says. A covering ruling decides the call; with none, the calling skill says whether the call is asked or may rest on being undoable.
 - **Log a call.** Write the entry below in the same turn as the action, before the next call. An answer given to a worker is labelled "call D-<n>", since workers copy answers into PR bodies; "relayed from the user" is reserved for the user's own words.
-- **The user checks in.** Build the digest and apply their answers as [digest.md](digest.md) says; `scripts/digest DECISIONS.md` drafts the digest from the log.
+- **The user checks in.** Build the digest and apply their answers as [digest.md](digest.md) says.
 
 ## The file
 
@@ -49,5 +49,5 @@ Last digest: <date -Iseconds>, through D-<n>.
 ```
 
 - One `Precedent:` line per covering ruling, graded as precedent.md says.
-- `Look first:` is present on a product choice nobody made, on a route around a hard stop, and wherever the calling skill marks a call for the top of the digest; the digest also lifts principle-level calls, scope changes, and calls that reached anything hard to undo on its own.
+- `Look first:` is present on a product choice nobody made, on a route around a hard stop, and wherever the calling skill marks a call for the top of the digest.
 - `Candidate:` is required when the precedent is analog or principle, and on every overturn.

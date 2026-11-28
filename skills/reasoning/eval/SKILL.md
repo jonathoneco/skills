@@ -22,8 +22,8 @@ description: Eval, a blinded experiment that runs candidates on an organic promp
 1. **Frame.** State what variant is under test and what behavior counts as success. Write the rubric (3-6 concrete criteria) for the judge only. Hold it back from candidates.
 2. **Set up sanitized environments.** Per-candidate working dir with the variant in place. Plant any context an organic task would have: a project skeleton, the skills the candidate would naturally read.
 3. **Author one organic prompt.** What a user would type. No leakage of what's being measured.
-4. **Spawn N parallel candidates** on different models per the **arena** skill's Phase B. Each works in its own sanitized dir. Same prompt to each.
-5. **Spawn one blinded judge** on a different model family per the **arena** skill's Phase C. Judge sees outputs by sanitized label and the rubric, never a model name.
+4. **Spawn N parallel candidates** on different models as the **arena** skill starts its runners. Each works in its own sanitized dir. Same prompt to each.
+5. **Spawn one blinded judge** on a different model family as the **arena** skill's cross-judge runs.
 6. **Verify the chain from transcripts, not self-report.** Read each candidate's local transcript: find it as the `recall` skill's `transcripts.md` says, where a file belongs to the candidate when its first line's `"cwd"` is the candidate's sanitized dir. Read only those files. Other projects' folders hold private chats from unrelated work. Look at which files each candidate actually opened. Grade chain-following from the files it really read plus the shape of the code, never from the candidate's own claims.
 7. **Read every candidate output yourself** end to end. Compare to the judge's verdict. Disagreement means a model is biased or the rubric is ambiguous. Synthesize.
 

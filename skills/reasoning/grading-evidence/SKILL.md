@@ -13,17 +13,17 @@ Five grades, one tag each in notes and reports, one wording each on a page. A cl
 
 | Grade | Means | In notes and reports | On a page |
 |---|---|---|---|
-| **observed** | You saw it: ran the command, read the rows or the logs, reproduced it, or read the text itself in its source at a named SHA or date. For why something exists, observed means someone wrote the reason down: a commit, a PR, a ticket, a comment, a doc. | `[obs]` | Stated plainly, with its source where a reader would check it. |
-| **supported** | Several observations converge on it and none states it outright, such as a PR titled "improve performance", a `perf` label, and every nearby commit touching the same hot path. | `[sup]`, naming the observations | "The evidence points to X: A, B, and C." |
+| **observed** | You saw it: ran the command, read the rows or the logs, reproduced it, or read the text itself in its source at a named SHA or date. | `[obs]` | Stated plainly, with its source where a reader would check it. |
+| **supported** | Several observations converge on it and none states it outright. | `[sup]`, naming the observations | "The evidence points to X: A, B, and C." |
 | **inferred** | You reasoned it out from things observed. | `[hyp]`, with what would measure it | Hedged, with the chain shown: "Given A and B, C is likely, because D." Add what would measure it where that bears on what the reader decides. |
 | **speculative** | It fits, but the evidence is thin and other explanations fit as well. | `[spec]`, beside the competing explanations | "One possibility is X, but nothing shows it", listed with the other candidates, never alone. |
 | **unknown** | You looked and could not find out. | `[unk]`, with what was searched | "We searched X, Y, and Z for this and found nothing." |
 
 When a claim's grade is a close call, or the question is why something exists, read [grades.md](grades.md): examples of each grade, and the reasons behind the wording rules.
 
-An unknown is a finding, not a gap to fill with a guess: name the question, each source searched, what was searched for in each, and what came back. The reader learns the answer isn't in the obvious places and who could answer it.
+An unknown is a finding, not a gap to fill with a guess: name the question, each source searched, what was searched for in each, and what came back.
 
-A claim a person, a worker, a doc, or a ticket made and you have not checked is theirs, not yours: quote it, name the source, and grade only what you checked. A worker's self-report or a note written from memory is often wrong; the file at the exact head is what you observe.
+A claim a person, a worker, a doc, or a ticket made and you have not checked is theirs, not yours: quote it, name the source, and grade only what you checked. A worker's self-report or a note written from memory can be wrong; the file at the exact head is what you observe.
 
 ### Wording
 
@@ -34,7 +34,7 @@ A claim a person, a worker, a doc, or a ticket made and you have not checked is 
 
 ## Rules every graded claim meets
 
-- **Count before saying how often.** A word for frequency, such as "often" or "rare", carries its count, and every number carries its denominator and its date window: "9 of 16 in production this week". One case is an anecdote. Fetch the measurement rather than estimating it. The denominator covers everyone the claim is about: a claim about how much a tool is used counts its writes where they are stored, across every client, since one machine's transcripts see one client.
+- **Count before saying how often.** A word for frequency, such as "often" or "rare", carries its count, and every number carries its denominator and its date window: "9 of 16 in production this week". One case is an anecdote. Fetch the measurement rather than estimating it. The denominator covers everyone the claim is about, such as every client of a tool, not one machine's transcripts.
 - **Quote a wrong value exactly** as the reader saw it, such as the label or the field's contents.
 - **The cheapest measurement first.** For each hypothesis, find the cheapest measurement that turns it into an observation, and run it. When it can't be run, for lack of access or because it would write to production, say what blocks it.
 - **Break a heavy number down** until its parts explain it, and say where the breakdown stops and why.

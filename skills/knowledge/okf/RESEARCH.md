@@ -1,7 +1,5 @@
 # Research
 
-Part of the `okf` skill. `SKILL.md` comes first: its Ingest steps define placement, the timestamp and log entry, validation, and landing, and this file builds on them.
-
 Starting an investigation (a vendor evaluation, a design question, a deep-dive):
 
 1. **Route it.** Pick the owning bundle from the table in `knowledge/README.md`

@@ -1,12 +1,6 @@
 # Publish
 
-Part of the `okf` skill. `SKILL.md` comes first: its Ingest steps define placement, the timestamp and log entry, validation, and landing, and this file builds on them.
-
-After an ingest is green, inspect touched concept frontmatter for `sources` and `mirrors`.
-`sources` records established material pulled into or materially shaping the concept;
-`mirrors` records renderings of the concept. The direction is inbound through `sources`
-and outbound through `mirrors`; `resource` remains the underlying thing the concept
-describes.
+After an ingest is green, inspect touched concept frontmatter for `sources` and `mirrors` (`knowledge/README.md`'s Frontmatter template defines both).
 
 The bundles are private to the user, and a published copy is read by people who can't open them. Make the copy stand alone: where the source links to another bundle doc, a repo path, or a local file, carry over the content the reader needs or link to something they can reach, such as the matching page at the destination. When several docs publish together, link them to each other at the destination, with one page as their index.
 

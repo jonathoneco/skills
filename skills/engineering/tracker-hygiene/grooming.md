@@ -2,7 +2,7 @@
 
 Grooming brings filed work back to the **clean state** ([SKILL.md](SKILL.md)). A pass covers one project or a whole workspace. Until the user says go, every change is a proposal; after it, each write gets a line in the effort's ledger, as the `linear` skill says.
 
-Open a todo list before the first step. Its first todo loads every `principle-*` skill the pass could reach: those the latest `[mode]` reminder names, or, when none came, each one whose moment the full principle list shows the pass reaching. Then one todo per step below, each checked off when its Done when holds, or marked `skip: <reason>`. The effort's folder is the pass's notes folder (the `agent-notes` skill).
+The effort's folder is the pass's notes folder (the `agent-notes` skill).
 
 1. **Re-read the rules:** this skill's clean state and Metadata, and the tracker doc's values; confirm the `linear` skill's GraphQL route answers. Done when you can name the tracker's Kind labels and estimate scale.
 2. **Read the state.** In one list read, fetch every open issue and project in scope with its body, project, assignee, priority, labels, estimate, milestone, state, parent, and last update; for projects, also their lead, status, and overview. This read is the pass's before-read: step 6 compares against it rather than reading each ticket again. Done when the read is saved in the effort's folder.

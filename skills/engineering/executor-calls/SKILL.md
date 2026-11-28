@@ -1,6 +1,6 @@
 ---
 name: executor-calls
-description: "Use when calling Executor or a tool is missing. Look inside."
+description: "Use before writing Executor `execute` code, or when an Executor path is missing."
 ---
 
 # Executor calls
@@ -62,7 +62,7 @@ Put the file's text in the `execute` code as a string literal, built outside the
 
 ## Paused calls
 
-A call that needs approval pauses and returns an `approvalUrl` and an `executionId`. Give the user the URL; once they approve, call the same server's `resume` tool with the `executionId`.
+A call that needs approval pauses and returns an `executionId`. In `browser` mode it also returns an `approvalUrl`, and only that URL approves it: give it to the user, and once they approve, call the same server's `resume` tool with the `executionId`. While pending, `resume` returns the same URL, so end the turn. In `model` mode, the default when the client's URL sets no `elicitation_mode`, call `resume` with `accept` only for a call the user approved in this task. A second `execute` writes twice.
 
 ## Find a missing path
 
@@ -73,6 +73,6 @@ const { items } = await tools.search({ query: "<intent and key nouns>", limit: 1
 return items;
 ```
 
-`tools.search` returns `{ items }`, not a list. For a matching `path`, read its input with `tools.describe.tool({path})`, then call it. Learn behavior from `describe`, and call a write tool only for the write the user approved: a search hit that looked like a "who am I" read was once a create-comment op, and probing it posted an empty comment.
+`tools.search` returns `{ items }`, not a list. For a matching `path`, read its input with `tools.describe.tool({path})`, then call it. Learn behavior from `describe`, and call a write tool only for the write the user approved: a hit that reads like a lookup can be a write.
 
 If the search returns nothing, probe single nouns from different expected connections in the same `execute` call. If every probe is empty, stop and name the affected connections. A missing connection or a `tool_blocked` error can be transient: check again when the user asks or before the next step that needs it, rather than carrying an old outage forward as fact.

@@ -2,7 +2,7 @@
 
 Examples of each grade, and the reasons behind the wording rules. Read it when a claim's grade is a close call, or before grading a why question, where the evidence is historical, fragmentary, and sometimes contradictory.
 
-Code doesn't carry its own motivation. You can read what code does. You can't read *why it exists*. That lives in commits, PRs, tickets, docs, and conversations, all incomplete, biased, and sometimes missing entirely. Pretending otherwise produces confident-sounding guesses that mislead the user.
+Why code exists lives in commits, PRs, tickets, docs, and conversations, all incomplete, biased, and sometimes missing. Pretending otherwise produces confident guesses that mislead the user.
 
 ## Observed
 
@@ -51,19 +51,6 @@ A gap filled with a confident guess harms the user: they act on the guess.
 
 ## Why the wording rules
 
-- **Words that claim certainty** ("because", "the reason is", "was designed to", "fixes", "addresses", "solves", "the team decided") each claim a cause, an author's intent, a goal reached, or a group decision. Each needs a source beside it.
-- **Hedges** ("appears to", "seems to", "likely", "suggests", "is consistent with", "one reading is", "plausibly", "may have been", "the evidence points toward") tell the reader you are interpreting, not reporting.
+- **Words that claim certainty** each claim a cause, an intent, a goal reached, or a group decision, so each needs a source.
+- **Hedges** tell the reader you are interpreting, not reporting.
 - **Words that hide uncertainty:** "obviously": if it were obvious, the user wouldn't be asking. "Clearly" almost always comes before a claim that isn't clear; "of course" is the same. "Just" ("it's just X for performance") is dismissive and usually hides uncertainty. "I think" and "I believe" put an opinion where the evidence goes: "the evidence suggests" says the same with its source.
-
-## The asker's hypothesis
-
-People often ask with a hypothesis inside the question: "Why do we do it this way, I assume it's for performance?" Treat it as one candidate among others and check the evidence for it independently. When the evidence supports it, say so with citations. When it doesn't, say so and present what the evidence *does* support. The asker's guess is a prompt for investigation, not a conclusion to validate.
-
-## Sources that disagree
-
-When two sources disagree, show both rather than the one that fits a tidier story. A typical pattern:
-
-- **The ticket says** "we need this for customer X's compliance requirement"
-- **The PR says** "cleaning up tech debt in this area"
-
-Both may be true (the ticket motivated the work, the PR is the author's framing of it), or one may be wrong. Present both with their citations and let the user make the call.

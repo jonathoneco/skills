@@ -78,10 +78,10 @@ and each validation reports zero errors and zero warnings.
 
 ## Other branches
 
-Each of these has its own file beside this one. Read it when its case comes up.
+Each of these has its own file beside this one and builds on the Ingest steps above. Read it when its case comes up.
 
 - Moving, renaming, or retiring a doc: read `REORGANIZE.md`.
 - Publishing a bundle doc anywhere outside the bundles: read `PUBLISH.md`.
 - Starting an investigation, such as a vendor evaluation, a design question, or a deep-dive: read `RESEARCH.md`.
 - A periodic health check, or a request to lint a bundle: read `LINT.md`.
-- Creating a bundle: read `NEW-BUNDLE.md`.
+- Creating a bundle: follow "Bootstrapping a new bundle" in `knowledge/README.md`, then validate. A bundle is one domain for one audience: split rather than mix.
