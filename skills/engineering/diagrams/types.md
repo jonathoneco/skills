@@ -1,6 +1,6 @@
 # Diagram types
 
-One entry per row of SKILL.md's table, in table order, then the forms outside the table. Each fact links its source page; a line marked inference joins the facts named in it. "Reader" is the audience a source names, not a role this skill assigns. "Scenario" has three meanings in the sources, so each entry names the kind: a runtime scenario is one run of the system through its parts, a quality scenario makes a quality requirement concrete, and a usage scenario is one way a user uses the system.
+One entry per row of SKILL.md's table, in table order, then the forms outside the table. Each fact links its source page; a line marked inference joins the facts named in it. "Reader" is the audience a source names, not a role this skill assigns.
 
 ## Boundary
 
@@ -135,4 +135,3 @@ Each answers one question. Source for all: vendor pages.
 - Org chart: how roles and reporting lines are structured. ([Miro](https://miro.com/organizational-chart/))
 - Venn diagram: how different concepts overlap. ([Miro](https://miro.com/diagramming/types-of-diagrams/))
 - Sitemap: the structure and navigation of a website or app. ([Miro](https://miro.com/diagramming/sitemap/))
-- Mind map: the topics around one central idea. ([Miro](https://miro.com/mind-map/what-is-a-mind-map/))

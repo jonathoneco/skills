@@ -12,7 +12,7 @@ The command is the skill's `scripts/render`, named `render` below. It writes int
 4. A ruling, a fact, or a look change is an edit to one source file and the same command again: only the pages whose inputs changed rebuild. `out/.kit/index.json` lists the pages that cite each call and fact.
 5. Other targets from the same sources: `--to notion` ([notion.md](notion.md)), `--to cold` ([cold-read.md](cold-read.md)), `--to brief` (one fixed one-pager: the takeaway, the asks, the first figure's still frame, the open calls), and `--to pdf`. Join targets with commas.
 
-`--only <page>` renders one page, and `--force` rebuilds every page. The first run fills the kit's dependency cache from the network. `check`, `pdf` and the still frames need Chromium: Playwright's own build, or the one `KIT_CHROMIUM` names. Playwright looks for its build under `XDG_CACHE_HOME`, so set `KIT_CHROMIUM` when that variable is moved.
+`--only <page>` renders one page, and `--force` rebuilds every page. The first run fills the kit's dependency cache from the network. `check`, `pdf` and the still frames need Chromium: Playwright's own build, or the one `KIT_CHROMIUM` names (see [scripts/README.md](scripts/README.md) when `XDG_CACHE_HOME` moves).
 
 ## Sources
 
@@ -43,12 +43,8 @@ The register is a field manual: flat colour and plain marks, with no gradients o
 
 The kit's shell in [scripts/components/](scripts/components/) carries the themes, the rail, the embedded type, the agent entry, and the controls on its own parts. In the HTML you write, these hold:
 
-- **Depth.** Optional depth, such as raw data or a long reference table, folds behind `<x-detail summary="…">`. What the reader must read stays open.
-- **Wide content.** A table or a code block wider than the column scrolls inside a `<div class="scroll">`, so the page body never scrolls sideways.
 - **Structure marks.** An eyebrow, a number, or a divider states something true about the content. Numbers mark a real order.
-- **State.** A state the reader scans for, such as held, open, or settled, shows as a pill or a chip in a status colour, with its word. A call's state comes from `calls.yaml` through `<x-call form="pill">`.
 - **Controls.** A figure's controls work from the keyboard and show their focus, and motion stops under `prefers-reduced-motion`, as the `diagrams` skill says.
-- **Sections.** Each `<h2>` is a rail link; `data-group="…"` on it groups the rail's links under that heading.
 
 ## Check
 

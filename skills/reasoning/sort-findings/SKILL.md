@@ -24,17 +24,17 @@ Every item lands in one bucket. The bucket describes the finding:
 - **Fix:** a certain defect, wrong under every option. Name the lowest PR or file that owns it.
 - **Repair:** one record is wrong, not the mechanism. Name the record and the correction.
 - **Call:** a choice whose options differ in what the product's users see, or a change the user must rule on. Weigh it as the `weighing` skill says.
-- **Noted:** valid, not actionable now: context-dependent, low impact at this stage, or a preference ("I would have done it differently") with no concrete problem behind it. A finding that proposes hardening, tests for unreached cases, or future-proofing the spec did not ask for is Noted.
-- **Dismissed:** wrong, or made without the context you have, with one line why. The dismissed list stays visible: it is how the user overrides your judgment where they disagree.
+- **Noted:** valid, not actionable now: context-dependent, low impact at this stage, or a preference ("I would have done it differently") with no concrete problem behind it. A finding that proposes tests for unreached cases, or future-proofing the spec did not ask for, is Noted.
+- **Dismissed:** wrong, made without the context you have, or changing nothing, with one line why. The dismissed list stays visible: it is how the user overrides your judgment where they disagree.
 
-Who acts: an item inside the ask, you do. An item outside it is a proposal to the user: say what it changes and wait for a yes (global agent rules, Working habits). Heavy work outside this change gets a ticket, named in the PR body.
+Who acts: you act on an item inside the ask; an item outside it is a proposal to the user.
 
 Rules for the sort:
 
-- **Reuse before new machinery.** Before an item becomes a fix that adds a mechanism, find the existing mechanism that reaches the same outcome. A benefit means simpler code, less machinery, or something the product's users notice.
+- **A benefit** means simpler code, less machinery, or something the product's users notice.
 - **Trace the path.** "What if this is null?" is a finding only when a caller can pass null. Read the call site. A finding with a concrete execution path outranks a hypothetical one.
 - **Agreement is signal.** A finding two independent readers raised is read first; one reader's finding is still read.
-- **Your own open questions:** close the ones you can by reading code or querying production; the ones only the user can rule on are calls.
+- **Your own open questions** that only the user can rule on are calls.
 - **Pick.** Every recommendation is your own, with one sentence why.
 
 Done when every item has one bucket and its reason, every fix and repair names where it lands, and every call carries your pick.

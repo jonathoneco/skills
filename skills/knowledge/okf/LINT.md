@@ -1,7 +1,5 @@
 # Lint
 
-Part of the `okf` skill. `SKILL.md` comes first: its Ingest steps define placement, the timestamp and log entry, validation, and landing, and this file builds on them.
-
 Periodic health check (weekly review, or on request). The validator catches the
 mechanical rot (broken links, orphans); lint hunts what it can't:
 

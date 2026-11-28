@@ -9,13 +9,13 @@ The bar: a reader who never opens the source sees what happens and why, and can 
 
 You write every page yourself, as a teacher who knows what this one reader has not seen. A page is one self-contained HTML file. Beside it sits its **agent context**, `<page>.context.md`: what the reader's agent needs to act, and the source and grade of each claim.
 
-- A walk through a pull request or a diff goes to the `guided-review` skill.
+- A walk through a pull request or a diff goes to a guided-review skill, where one is installed.
 - When the page will go to Notion, because the ask says so or the install's rules send it there, read [notion.md](notion.md) before step 3.
 - A draft or report made before this skill was called is source material. Every step still runs.
 - Reading across a repo goes to an evidence run. A page with four or more diagrams sends each to a diagram run, side by side. For either, read [runs.md](runs.md).
 - A change to this skill leaves existing artifacts as they are; rebuild one only when the user asks.
 
-Every file of the work lives in one **build folder** under the effort's notes: the suite's sources ([build.md](build.md)), `PUBLISHED.md` with the artifact's id and links on its host, and each helper run's brief and result. The kit's renders go to `~/.local/state/agent-runs/<effort>/out/` ([build.md](build.md), Commands), and so do other screenshots and renders of 1 MB or more, except the cold read's, which stay in the build folder.
+Every file of the work lives in one **build folder** under the effort's notes: the suite's sources ([build.md](build.md)), `PUBLISHED.md` with the artifact's id and links on its host, and each helper run's brief and result. Renders, and other screenshots of 1 MB or more, stay out of the notes ([build.md](build.md), Commands), except the cold read's, which stay in the build folder.
 
 ## 1. Frame
 
@@ -73,7 +73,7 @@ Done when the page's text and its agent context are written, and each item on th
 
 ## 4. Build
 
-Build the page as [build.md](build.md) says, from the design plan it asks for, written into the notes before any page code. Draw each frame of the storyboard as [figures.md](figures.md) says. Read `scripts/components/` before writing a page; a part a second page could use becomes a component.
+Build the page as [build.md](build.md) says, from the design plan it asks for, written into the notes before any page code. Draw each frame of the storyboard as [figures.md](figures.md) says. Read [scripts/components/README.md](scripts/components/README.md) before writing a page.
 
 Done when each frame of the storyboard is on the page and `render <suite> --to check` passes ([build.md](build.md), Check).
 
@@ -85,7 +85,7 @@ Done when each frame of the storyboard is on the page and `render <suite> --to c
 - **Cold read:** run it once, as [cold-read.md](cold-read.md) says. Fix what it found, on the page. When its takeaway or its asks differ from yours, fix the page and run it once more. A second read that still differs goes to the user at hand-over, as both takeaways.
 - **Prose:** check the built text against the `technical-writing` skill.
 
-Done when each shape check the file names passes, the caption walk passes, the worked case traces on the built page, each section that reports live state is read again, the cold reader's takeaway and asks match yours or both are set aside for the user, the prose check leaves nothing, and each item in the third list of the last `COLD-<n>.md` is taught on the page, or kept for the user at hand-over with the reason it stays.
+Done when every check above passes, or is set aside for the user as it says, and each item in the third list of the last `COLD-<n>.md` is taught on the page, or kept for the user at hand-over with the reason it stays.
 
 ## 6. Hand over
 

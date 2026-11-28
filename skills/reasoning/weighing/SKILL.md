@@ -7,7 +7,7 @@ description: "Use when you put a question or a call to the user, when a decision
 
 The bar: the pick rests on the goal and on measured costs, and the reader can see what would reverse it.
 
-A **small call**, cheap and easy to undo either way, gets one line: the call, the pick, and why. When the cost is unmeasured, the call waits on the measurement, as Presenting a call says. Every other call runs every question below, in order.
+A **small call**, cheap and easy to undo either way, gets one line: the call, the pick, and why. Every other call runs every question below, in order.
 
 1. **Goal:** what does this call serve, and what premise does it rest on? State both before any option. An option that quietly drops the premise is wrong even when it is cheaper.
 2. **Tangles:** which calls are tangled together, and which one is upstream? Rule the upstream call first, and weigh the others under its ruling.
@@ -25,4 +25,4 @@ Done when each question has an answer the reader can check, each option carries 
 
 A call opens with where it came from (the finding or file that raised it), one sentence on what the product's user sees today, and the mechanism in the user's words, with no internal name left unexplained. When more than five calls queue, first collapse them under the rulings the user already made.
 
-Put each option's consequence inside the option, so one word answers the call. An offered word is a verb whose subject is the agent, such as `take-picks` or `show-me-each`. It is never a noun phrase that reads both as "I will do X" and "do X for me". Act on an answer that reads two ways only after asking which way it reads. When calls are tangled, the upstream call comes first. A call that waits on a measurement not yet taken is listed as coming, with the measurement named, rather than ruled on a guess.
+Put each option's consequence inside the option, so one word answers the call. An offered word is a verb whose subject is the agent, such as `take-picks` or `show-me-each`. It is never a noun phrase that reads both as "I will do X" and "do X for me". Act on an answer that reads two ways only after asking which way it reads. A call that waits on a measurement not yet taken is listed as coming, with the measurement named, rather than ruled on a guess.

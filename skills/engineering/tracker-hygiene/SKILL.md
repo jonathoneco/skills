@@ -9,7 +9,7 @@ This skill holds the rules for where work goes in the tracker and what each tick
 
 ## The clean state
 
-The **clean state** is what every write leaves the tracker in, and what grooming restores. It follows Linear's own method where the user adopted it. Each filing, move, or close is checked against it; a field Linear leaves optional and the clean state doesn't name is left as it is.
+The **clean state** is what every write leaves the tracker in, and what grooming restores. Each filing, move, or close is checked against it; a field Linear leaves optional and the clean state doesn't name is left as it is.
 
 - **An issue is one unit of work,** with a deliverable a builder or a person can finish. A stage of a project is a milestone; a bundle too big for one PR is a parent with sub-issues (the `ticket` skill); a plan or a brief is a project document. An issue named for a stage or a brief ("Milestone 0", "Brief 1") is converted at the next grooming pass.
 - **An issue joins the project whose outcome it serves.** An issue that serves no project's outcome is standalone team work, reached through its owner and priority. When several standalone issues share an outcome, they become a project, proposed to the user.
@@ -21,7 +21,7 @@ The **clean state** is what every write leaves the tracker in, and what grooming
 - **Triage holds only work from outside the team**: automatic filings such as error trackers and in-product QA reports, intake flows, other teams, customers, and filings from a QA pass, whoever runs it. A filing by a team member or an agent carries its project, owner, and priority and skips triage. Work leaves triage one of four ways: accepted (project, owner, and priority set), declined (canceled with a reason a later search for the same request will find), duplicate (related to the original first), or snoozed (with the reason and a wake date).
 - **Open work moves.** An open issue untouched for 30 days gets a disposition at the next grooming pass: re-prioritized, re-assigned, folded into another, or closed with a reason. The team's auto-close, at the period the tracker doc names, catches what grooming misses.
 - **A project's plan and its record agree.** After a blueprint filing or a grooming pass that changes a project, draft a project update (health, decisions, blockers, scope changes) and publish it on the user's word.
-- Cycles are off; no ticket is placed in one.
+- Place a ticket in a cycle only when the tracker doc turns cycles on.
 
 ### Where new work goes
 
@@ -34,7 +34,7 @@ Each starting point ends with every ticket it touched meeting the clean state.
 
 ## Metadata
 
-Each field below is set when the ticket is filed. The `blueprint` skill's cut proposes each value, on either of its paths, and the user confirms it with the cut; a grooming pass proposes changed values in its proposal. The tracker doc names the values.
+Each field below is set when the ticket is filed. The `blueprint` skill's cut proposes each value, on either of its paths, and the user confirms it with the cut; a grooming pass proposes changed values in its proposal.
 
 | Field | Rule |
 |---|---|

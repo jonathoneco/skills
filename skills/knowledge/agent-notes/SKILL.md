@@ -22,7 +22,7 @@ Every note shares the language below, so notes can be found and gathered. A note
 
 **Kinds.** Name each new file by its kind, alone (`HANDOFF.md`, `RULINGS.md`) or as a folder of them (`briefs/extract.md`, `reports/latency.md`): handoff, log, return, brief, report, rulings, ledger, draft, facts, rules. A file another skill names, such as the explainer's `COLD-<n>.md`, keeps that skill's name.
 
-- **handoff:** one per effort, in that effort's folder, rewritten in place so it holds only the current state, and a reader never has to work out which handoff is current. What it held before goes to the effort's log. A handoff written elsewhere, such as into a temp directory, is folded into the effort's handoff. It names every helper, job, and paid resource still running, and says whether each was stopped or left running for the next session on purpose. It names the skills the next session loads first. When the user asks to stop, stop at a safe boundary: finish or back out of the current step and start nothing new, then write the handoff.
+- **handoff:** one per effort, in that effort's folder, rewritten in place so it holds only the current state, and a reader never has to work out which handoff is current. What it held before goes to the effort's log. A handoff written elsewhere, such as into a temp directory, is folded into the effort's handoff. It names every helper, job, and paid resource still running, and says whether each was stopped or left running for the next session on purpose. It names the skills the next session loads first.
 - **log:** `log.md`, the effort's history, newest entry first, each entry stamped.
 - **rulings:** numbered, each with the decider's words, the date, the reason, and what was turned down. A reversed ruling stays, marked with the one that replaced it.
 - **rules:** how a group of efforts works, as `RULES.md` in the group folder.
@@ -43,8 +43,6 @@ Bump `Touched:` whenever you change a note.
 
 **Evidence tags.** Every finding carries one of `[obs]`, `[sup]`, `[hyp]`, `[spec]`, or `[unk]`, graded as the `grading-evidence` skill says.
 
-**Old marks.** Entries in older notes end with `→ <destination>`, `→ open`, or `→ declined <date>`. They need no upkeep.
-
 ## Keeping notes findable
 
 - Keep one copy of each draft; an older version worth keeping goes in a `vN/` folder beside it.
@@ -62,6 +60,8 @@ Two machines that save one file within seconds leave a `*.sync-conflict-*` copy 
 To resume an effort, read its handoff here first; the `recall` skill rebuilds the rest of its context.
 
 ## Closing an effort
+
+When the user asks to stop, stop at a safe boundary: finish or back out of the current step and start nothing new, then write the handoff.
 
 When an effort ends, move what lasts to its owner:
 

@@ -4,11 +4,10 @@ A figure is anything the reader looks at: a diagram, a screenshot, a real record
 
 ## Which figures
 
-SKILL.md's step 3 lists the frames. This file says what each frame is made of. For each diagram, the `diagrams` skill decides its question, its type, and how much it holds.
+For each diagram, the `diagrams` skill decides its question, its type, and how much it holds.
 
-- **The whole in one picture.** Step 3 says what the first frame is for each kind of page. Where it is a picture of the whole subject, it shows that whole at the level a newcomer needs, with groups folded into black boxes as the `diagrams` skill says. A later frame that opens a box draws the parts outside it faint.
+- **The whole in one picture.** Where it is a picture of the whole subject, it shows that whole at the level a newcomer needs, with groups folded into black boxes as the `diagrams` skill says. A later frame that opens a box draws the parts outside it faint.
 - **A table is a frame** when the reader compares things: options against what each means for each person, today against the proposal, or cases against outcomes.
-
 - **Screenshots.** Where the subject has screens the reader has not seen, take real screenshots and caption each with what to look at. Replace or blur any personal data before the shot.
 - **Code beside it.** When the reader also judges code shape, put a code view beside the drawing: pseudocode, a call tree, a file tree, or a `diff` of one of these.
 - **The difference, when comparing.** Draw both designs on one layout with the same worked case, and mark the one edge each adds or removes. In a table of today against the proposal, mark each cell that changes.

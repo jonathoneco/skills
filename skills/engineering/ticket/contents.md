@@ -6,10 +6,10 @@ The sections a ticket carries and the rules each holds. The `ticket` skill's SKI
 
 The ticket carries what its implementer can't find by looking, and names what it can open: the repo by path and workspace symbol, other tickets by tracker key with the one fact used stated inline, and public URLs.
 
-- **Inline** rulings, words the product's users read, new shapes, gotchas, and anything learned in private notes or the conversation. The user: "They shouldn't point to rulings.md, the tickets should be self contained."
-- **A ruling code travels with the ruling's words.** `D-1366` or `Q40` appears only beside the decision it names; one effort cited codes bare in 47 of 74 tickets.
-- **Existing code is read from `main`** (name the ref when it is another). The ticket states the change; current code and listings of how things stand today stay in the repo. Steps and Done name a file and its symbol, since a line number drifts before the ticket is picked up: 17 of 22 line numbers checked in one effort pointed elsewhere. Evidence is where a `path:line` belongs, as a record of what was read at its SHA.
-- **Standing rules the repo documents**, such as its code, testing, and CI rules, are named by doc path; a restated copy goes stale, and one that disagrees with the docs makes the builder stop and ask (29 answers to building agents in one week restated a standing rule). Decided holds what is specific to this ticket. A constraint the repo's docs don't hold, such as a ruling or contract kept in private notes, is written in as far as this ticket uses it: 4 building agents in one effort stopped to ask for contract rulings they couldn't open.
+- **Inline** rulings, words the product's users read, new shapes, gotchas, and anything learned in private notes or the conversation.
+- **A ruling code travels with the ruling's words.** `D-1366` or `Q40` appears only beside the decision it names.
+- **Existing code is read from `main`** (name the ref when it is another). The ticket states the change; current code and listings of how things stand today stay in the repo. Steps and Done name a file and its symbol, since a line number drifts before the ticket is picked up. Evidence is where a `path:line` belongs, as a record of what was read at its SHA.
+- **Standing rules the repo documents**, such as its code, testing, and CI rules, are named by doc path; a restated copy goes stale, and one that disagrees with the docs makes the builder stop and ask. Decided holds what is specific to this ticket. A constraint the repo's docs don't hold, such as a ruling or contract kept in private notes, is written in as far as this ticket uses it.
 - **A team doc**, such as a Notion page, is context; the decision it informs is written into Decided with its own reason.
 
 ## Fidelity
@@ -18,7 +18,7 @@ These hold in every section:
 
 - Each shape the ticket produces or changes appears verbatim, as a code snippet in Shapes and surface; other sections refer to it by name.
 - Every quote is exact and findable. Every link resolves; open it before the ticket ships.
-- **A shared contract has one owner.** A shape several tickets use, such as a chunk of a schema contract, belongs to the ticket that introduces it, which carries it verbatim. Each dependent names the shape and its owner, lists the owner under Blocked by, and reads the shape from `main`. One batch defined `vConfirmedStatement` in 6 tickets, and 37 tickets carried 120 "whichever lands first" clauses.
+- **A shared contract has one owner.** A shape several tickets use, such as a chunk of a schema contract, belongs to the ticket that introduces it, which carries it verbatim. Each dependent names the shape and its owner, lists the owner under Blocked by, and reads the shape from `main`.
 
 ## Contents, in order
 
@@ -33,7 +33,7 @@ Every ticket carries the **core**: Title, Outcome, Steps, Done, and Estimate, pl
   - A defect ticket states its fix here like any other decision, unless the ticket exists to ratify a fix already chosen.
   - A decision that contradicts an ADR names the ADR and why it is reopened; reopening it is the user's call.
 - **Evidence,** when an investigation fed the ticket: its findings with their date and SHA, each graded as the `grading-evidence` skill says. A defect ticket's Evidence carries observed behavior and a reproduction against current `main` or production.
-- **Refresh if drifted,** on every ticket that is filed rather than built at once: how the implementer brings the ticket up to date before Step 1, since `main` moves while filed work waits:
+- **Refresh if drifted:** how the implementer brings the ticket up to date before Step 1, since `main` moves while filed work waits:
   - one base SHA and the date the ticket was written against; a refresh replaces both;
   - the paths the ticket touches, in a fenced block opened with ```` ```paths ````, one path per line, so a script can read them; the command that lists what changed in them since the base, and which symbols to re-read when one did;
   - the tickets whose landing changes this one, and how, as information for the refresh; what the builder waits on is in Relationships;
@@ -47,14 +47,15 @@ Every ticket carries the **core**: Title, Outcome, Steps, Done, and Estimate, pl
     - **The builder:** its worktree, the tests it runs, its own dev deployment with the seeded data Verification names, and the CI results it reads.
     - **Merge-time CI,** when the repo runs part of its suite only at merge, such as a full test tier in a merge queue: the box names the exact check. The builder can't see that run, so the box is ticked when the merge lands.
 
-    A check that needs production, an operator, another ticket's merge, a paid run the ticket doesn't allow, or a tracker or GitHub action goes under After merge, with the exact action and its owner. In one week of agent builds, the building agents asked 40 times how to prove a box only the merge-time run could prove, and 54 times about checks someone else owed.
+    A check that needs production, an operator, another ticket's merge, a paid run the ticket doesn't allow, or a tracker or GitHub action goes under After merge, with the exact action and its owner.
   - One test or command whose single run proves several boxes is named once, with the boxes it covers; the builder proves them together. A condensed ticket's places usually share one such run.
   - A box states what to measure or observe. Done names the result the product's user sees on a real record.
   - A feature that calls an external provider proves one real call in each target environment.
+  - A ticket that replaces a surface holds a parity check in Done: both builds driven on the same real record in a browser, each control clicked, screenshots side by side. A parity table read from code is a list of leads.
   - A ticket that adds a path to a user-visible concept (a label, a choice, a figure) names the one builder it reuses.
   - Each box checks what the code does: a test that passes, an observable result, a symbol that exists, or a grep for something that must be gone.
   - Use a line count or fixed-text match only when the code's exact form is the decision.
-  - A Done list is judged by behavior, not by shape, by the writer and by whoever merges: a box that fails only because the code took an equivalent form is a note on the PR, not a blocker. A grep in a Done list printed 7 lines instead of 6 because a return type was annotated; recommended: fix first. The user: "this feels like an overly pedantic reading of the ticket and it sounds like the ticket was resolved in a better way." **Counter-example**: a recommendation the user turned down.
+  - A Done list is judged by behavior, not by shape, by the writer and by whoever merges: a box that fails only because the code took an equivalent form is a note on the PR, not a blocker.
 - **After merge,** when a check holds only once the change is merged and deployed: each check, the exact read or command, the result that shows it holds, and who runs it.
 - **Out of scope,** when a reader would assume something is included that isn't: what a reader would assume is included and is not.
 - **Relationships:** as SKILL.md's Relationships says.
@@ -66,4 +67,3 @@ Every ticket carries the **core**: Title, Outcome, Steps, Done, and Estimate, pl
   - Words the product's users read, such as labels, errors, and confirmations, in a table: where, what they read, and the existing string on that screen it matches. They are in the language the screen is written in, and use the users' words rather than internal terms.
   - Exclusive paths this ticket alone changes, and shared paths where it touches only its own entries.
 - **PR description,** when the PR must carry wording as written, such as a `Closes …` line or a sentence the team asked for.
-

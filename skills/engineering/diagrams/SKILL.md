@@ -85,5 +85,4 @@ For one sketch inside a reply, the question is the thing you are about to explai
 ## Reference
 
 - [types.md](types.md) has one entry per row: what each source says, and the pick where sources disagree. Open a row's entry when its last cell needs its reason, or when two rows seem to fit.
-- [drawing.md](drawing.md) has how to draw a diagram on an HTML page.
 - [basis.md](basis.md) has the source of each rule in the steps. Open it before you change this skill, or when the user asks why a rule holds.

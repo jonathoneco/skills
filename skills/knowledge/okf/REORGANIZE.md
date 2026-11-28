@@ -1,7 +1,5 @@
 # Reorganize and retire
 
-Part of the `okf` skill. `SKILL.md` comes first: its Ingest steps define placement, the timestamp and log entry, validation, and landing, and this file builds on them.
-
 Path is concept identity, so a move or rename carries the ingest maintenance obligations
 and a wider completion gate:
 

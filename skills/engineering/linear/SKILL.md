@@ -5,7 +5,7 @@ description: Use before any write to Linear (filing a batch, rewriting, relating
 
 # Linear
 
-Linear has two routes, and this skill assumes both are connected for the workspace: its MCP server, for single edits, and its GraphQL API, for a batch, a body long enough that a model shouldn't carry it (it takes the body from a file), up to 50 issues in one update, and what the MCP lacks, such as Initiatives. Use the routes your setup provides, and check which workspace each reaches before writing. When the GraphQL route is missing, stop and ask the user to connect it before filing: Linear's official MCP server is `https://mcp.linear.app/mcp`, and its GraphQL API is `https://api.linear.app/graphql` with a personal API key. Eight efforts each wrote their own filer and relearned the quirks below; follow these steps instead.
+Linear has two routes, and this skill assumes both are connected for the workspace: its MCP server, for single edits, and its GraphQL API, for a batch, a body long enough that a model shouldn't carry it (it takes the body from a file), up to 50 issues in one update, and what the MCP lacks, such as Initiatives. Use the routes your setup provides, and check which workspace each reaches before writing. When the GraphQL route is missing, stop and ask the user to connect it before filing: Linear's official MCP server is `https://mcp.linear.app/mcp`, and its GraphQL API is `https://api.linear.app/graphql` with a personal API key.
 
 What a ticket's fields hold, and where it belongs, is the `tracker-hygiene` skill's; each workspace's tracker doc holds the values. Write only after the user's go for this effort, such as "file the batch"; until then tickets are drafts in the effort's folder.
 
@@ -13,7 +13,7 @@ What a ticket's fields hold, and where it belongs, is the `tracker-hygiene` skil
 
 Keep a **ledger** in the effort's folder, `linear-ledger.jsonl`, beside the drafts: `scripts/ledger-append` writes one line per write as it returns. A rerun from any session reads it first and skips what is done.
 
-A rewrite of a filed ticket changes what the draft changes (body, estimate, labels, relations) and keeps its state and assignee unless the user confirmed a change to them in the proposal, since a regroom touches tickets other people own (39 of 62 in one batch).
+A rewrite of a filed ticket changes what the draft changes (body, estimate, labels, relations) and keeps its state and assignee unless the user confirmed a change to them in the proposal, since a regroom touches tickets other people own.
 
 The scripts in `scripts/` make no network calls, so they work beside any route. `python3 -I scripts/selftest.py` checks them.
 
@@ -35,7 +35,7 @@ Linear stores a description with its markdown rewritten and its words unchanged;
 
 Fix these in the draft before writing:
 
-- A bare dotted identifier whose last part is a real top-level domain, such as `fact.es`, `approved.map` or `source.id`, becomes a link. Put each in a code span; one batch wrapped 289 and read back clean. `ctx.run` was linked even inside backticks, so reword around that one.
+- A bare dotted identifier whose last part is a real top-level domain, such as `fact.es`, `approved.map` or `source.id`, becomes a link. Put each in a code span; `ctx.run` is linked even inside backticks, so reword around it.
 - A backslash-backtick inside a code span is re-escaped and breaks the span. Write a span holding a backtick with double backticks: ``` `` a`b `` ```.
 - A table indented inside a list item loses each cell's leading characters, and the lines after it can turn into a code block. Put tables at the left margin.
 - An ordered list is renumbered by position. Renumber after moving or removing an item, and keep numbers out of bold item names inside another item.
@@ -57,4 +57,4 @@ Write around these:
 - `initiativeCreate` fails with "Initiatives are disabled for this workspace." until someone turns Initiatives on in the workspace's settings; no API call turns them on.
 - An initiative's `projects` come back unordered. Read the stored order through `initiativeToProjects` and its `sortOrder`.
 
-When you find a new quirk, propose it for this list in the session's report; the change lands through a PR to the skills repo.
+When you find a new quirk, propose it for this list in the session's report; the change lands through a PR to the repo that holds this skill.

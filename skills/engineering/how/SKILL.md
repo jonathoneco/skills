@@ -36,4 +36,4 @@ When the user asks to be taught, or to really understand something, the goal is 
 
 **One-shot.** When nobody is there to reply, such as a run with no live user or a written page, deliver the layers in order in one piece and put the offer to go deeper at the end.
 
-**Voice.** Speak as to a colleague across a desk: the concrete mechanism in short sentences, one or two commas each, and one name per concept kept throughout. Each point is said directly, its weight carried by the content alone. The words in these steps direct you; the reply is the explanation itself, never a report of what you did.
+**Voice.** The reply is the explanation itself, never a report of what you did.

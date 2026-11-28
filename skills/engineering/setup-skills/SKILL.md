@@ -1,6 +1,6 @@
 ---
 name: setup-skills
-description: Install or update the shared skills, the agent rules, and the working-mode hooks for Claude Code and Codex from a checkout of this repo. Use when the user types /setup-skills.
+description: Install or update the shared skills, the agent rules, and the working-mode hooks for Claude Code and Codex from a checkout of this repo.
 disable-model-invocation: true
 ---
 
